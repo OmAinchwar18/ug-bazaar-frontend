@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile — UG Bazaar</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange:#F47820; --blue:#1A5FB4; --blue-dark:#0D3A6E;
+    --blue-light:#3A82D4; --gold:#E8A020; --off-white:#F4F6FB;
+    --gray:#6B7280; --gray-light:#F3F4F6; --text:#1A1A2E;
+    --text-soft:#4B5563; --border:#E2E8F0;
+    --success:#16A34A; --success-bg:#F0FDF4;
+    --error:#DC2626; --radius:14px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Baloo 2',sans-serif; background:var(--off-white); color:var(--text); }
+
+  /* TOPBAR */
+  .topbar { background:var(--blue-dark); color:rgba(255,255,255,0.85); font-size:0.78rem; padding:0.4rem 2rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.3rem; }
+  .topbar a { color:#FFD580; text-decoration:none; font-weight:600; }
+
+  /* NAVBAR */
+  nav { background:#fff; display:flex; justify-content:space-between; align-items:center; padding:0.8rem 2rem; box-shadow:0 2px 12px rgba(26,95,180,0.08); position:sticky; top:0; z-index:200; }
+  .logo-area { display:flex; align-items:center; gap:0.7rem; text-decoration:none; }
+  .logo-icon { width:44px; height:44px; background:linear-gradient(135deg,var(--orange),var(--gold)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; font-weight:800; color:#fff; }
+  .logo-text .ug { font-size:1.2rem; font-weight:800; color:var(--blue); display:block; line-height:1; }
+  .logo-text .sub { font-size:0.7rem; font-weight:600; color:var(--orange); letter-spacing:1.5px; text-transform:uppercase; }
+  .nav-right { display:flex; align-items:center; gap:1rem; }
+  .nav-link { color:var(--text-soft); text-decoration:none; font-size:0.88rem; font-weight:600; transition:color 0.2s; }
+  .nav-link:hover { color:var(--orange); }
+
+  /* HERO BANNER */
+  .profile-hero { background:linear-gradient(135deg,var(--blue-dark),var(--blue)); padding:2.5rem 2rem 5rem; position:relative; overflow:hidden; }
+  .hero-bg { position:absolute; inset:0; opacity:0.05; background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%); background-size:20px 20px; }
+  .profile-hero-inner { max-width:900px; margin:0 auto; position:relative; z-index:2; display:flex; align-items:center; gap:1.5rem; color:#fff; }
+  .avatar-wrap { position:relative; flex-shrink:0; }
+  .avatar { width:90px; height:90px; border-radius:50%; background:linear-gradient(135deg,var(--orange),var(--gold)); display:flex; align-items:center; justify-content:center; font-size:2.2rem; font-weight:800; color:#fff; border:4px solid rgba(255,255,255,0.3); }
+  .avatar-edit { position:absolute; bottom:0; right:0; width:28px; height:28px; background:var(--orange); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; cursor:pointer; border:2px solid #fff; }
+  .hero-info h1 { font-size:1.6rem; font-weight:800; margin-bottom:0.2rem; }
+  .hero-info p { opacity:0.75; font-size:0.88rem; }
+  .hero-badges { display:flex; gap:0.5rem; margin-top:0.6rem; flex-wrap:wrap; }
+  .hero-badge { background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.25); color:#fff; font-size:0.72rem; font-weight:700; padding:3px 10px; border-radius:20px; }
+
+  /* MAIN */
+  .main { max-width:900px; margin:-3rem auto 3rem; padding:0 1.5rem; position:relative; z-index:10; }
+
+  /* TABS */
+  .tab-bar { display:flex; gap:0; background:#fff; border-radius:var(--radius); border:1px solid var(--border); overflow:hidden; margin-bottom:1.5rem; box-shadow:0 4px 16px rgba(26,95,180,0.08); }
+  .tab { flex:1; padding:0.9rem 0.5rem; text-align:center; font-size:0.85rem; font-weight:700; cursor:pointer; transition:all 0.2s; color:var(--text-soft); border-right:1px solid var(--border); border-bottom:3px solid transparent; }
+  .tab:last-child { border-right:none; }
+  .tab.active { color:var(--orange); border-bottom-color:var(--orange); background:rgba(244,120,32,0.04); }
+  .tab:hover:not(.active) { background:var(--off-white); }
+
+  /* PAGE SECTIONS */
+  .section { display:none; } .section.active { display:block; }
+
+  /* CARDS */
+  .card { background:#fff; border-radius:var(--radius); border:1px solid var(--border); overflow:hidden; margin-bottom:1.2rem; box-shadow:0 2px 12px rgba(26,95,180,0.06); }
+  .card-head { padding:1rem 1.4rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+  .card-head h3 { font-size:0.95rem; font-weight:800; }
+  .card-body { padding:1.4rem; }
+  .edit-btn { padding:0.35rem 0.9rem; border-radius:8px; border:1.5px solid var(--border); background:#fff; color:var(--text-soft); font-size:0.78rem; font-weight:700; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:all 0.2s; }
+  .edit-btn:hover { border-color:var(--orange); color:var(--orange); }
+  .save-btn { padding:0.35rem 0.9rem; border-radius:8px; border:none; background:var(--orange); color:#fff; font-size:0.78rem; font-weight:700; cursor:pointer; font-family:'Baloo 2',sans-serif; }
+
+  /* PROFILE FORM */
+  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+  .form-group { display:flex; flex-direction:column; gap:0.35rem; }
+  .form-label { font-size:0.78rem; font-weight:700; color:var(--gray); letter-spacing:0.3px; }
+  .form-value { font-size:0.92rem; font-weight:600; color:var(--text); padding:0.55rem 0; border-bottom:1.5px solid transparent; }
+  .form-input { padding:0.6rem 0.9rem; border:1.5px solid var(--border); border-radius:9px; font-size:0.9rem; font-family:'Baloo 2',sans-serif; color:var(--text); background:var(--off-white); outline:none; transition:border-color 0.2s; }
+  .form-input:focus { border-color:var(--blue); background:#fff; }
+  .form-full { grid-column:1/-1; }
+
+  /* STATS ROW */
+  .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem; }
+  .stat-box { background:#fff; border-radius:var(--radius); border:1px solid var(--border); padding:1rem; text-align:center; }
+  .stat-num { font-size:1.6rem; font-weight:800; color:var(--text); line-height:1; }
+  .stat-lbl { font-size:0.72rem; color:var(--gray); font-weight:600; margin-top:0.3rem; }
+
+  /* ORDER CARDS */
+  .order-item { border:1px solid var(--border); border-radius:12px; padding:1rem 1.2rem; margin-bottom:0.8rem; transition:border-color 0.2s; }
+  .order-item:hover { border-color:var(--blue-light); }
+  .order-item-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:0.6rem; flex-wrap:wrap; gap:0.5rem; }
+  .order-id { font-size:0.92rem; font-weight:800; color:var(--text); }
+  .order-date { font-size:0.75rem; color:var(--gray); }
+  .status-pill { display:inline-block; padding:3px 10px; border-radius:20px; font-size:0.7rem; font-weight:700; }
+  .sp-delivered { background:var(--success-bg); color:var(--success); }
+  .sp-pending { background:#FFFBEB; color:#D97706; }
+  .sp-out { background:rgba(244,120,32,0.1); color:var(--orange); }
+  .sp-cancelled { background:#FEF2F2; color:var(--error); }
+  .order-products { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.6rem; }
+  .order-prod-chip { background:var(--off-white); border:1px solid var(--border); border-radius:8px; padding:3px 8px; font-size:0.75rem; color:var(--text-soft); display:flex; align-items:center; gap:0.3rem; }
+  .order-footer { display:flex; align-items:center; justify-content:space-between; }
+  .order-total { font-size:1rem; font-weight:800; color:var(--orange); }
+  .order-actions-row { display:flex; gap:0.5rem; }
+  .action-chip { padding:0.3rem 0.8rem; border-radius:8px; font-size:0.75rem; font-weight:700; cursor:pointer; border:1.5px solid var(--border); background:#fff; color:var(--text-soft); font-family:'Baloo 2',sans-serif; transition:all 0.2s; }
+  .action-chip:hover { border-color:var(--blue); color:var(--blue); }
+  .action-chip.wa { background:#25D366; color:#fff; border-color:#25D366; }
+
+  /* ADDRESS CARDS */
+  .address-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+  .address-card { border:1.5px solid var(--border); border-radius:12px; padding:1.2rem; position:relative; transition:border-color 0.2s; }
+  .address-card.default { border-color:var(--blue); background:rgba(26,95,180,0.03); }
+  .address-card:hover { border-color:var(--blue-light); }
+  .addr-type { font-size:0.72rem; font-weight:700; color:var(--blue); letter-spacing:1px; text-transform:uppercase; margin-bottom:0.5rem; }
+  .addr-name { font-size:0.95rem; font-weight:800; margin-bottom:0.3rem; }
+  .addr-detail { font-size:0.83rem; color:var(--text-soft); line-height:1.7; }
+  .addr-default-badge { position:absolute; top:10px; right:10px; background:rgba(26,95,180,0.1); color:var(--blue); font-size:0.65rem; font-weight:700; padding:2px 8px; border-radius:10px; }
+  .addr-actions { display:flex; gap:0.5rem; margin-top:0.8rem; }
+  .add-address-card { border:1.5px dashed var(--border); border-radius:12px; padding:1.2rem; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.5rem; cursor:pointer; transition:all 0.2s; min-height:140px; }
+  .add-address-card:hover { border-color:var(--orange); background:rgba(244,120,32,0.03); }
+  .add-icon { font-size:1.8rem; opacity:0.4; }
+  .add-label { font-size:0.85rem; font-weight:700; color:var(--gray); }
+
+  /* WISHLIST */
+  .wishlist-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:1rem; }
+  .wish-card { border:1px solid var(--border); border-radius:12px; overflow:hidden; transition:all 0.2s; }
+  .wish-card:hover { border-color:var(--orange); transform:translateY(-3px); }
+  .wish-img { height:100px; background:var(--off-white); display:flex; align-items:center; justify-content:center; font-size:2.5rem; position:relative; }
+  .wish-remove { position:absolute; top:6px; right:6px; width:24px; height:24px; background:rgba(220,38,38,0.1); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; cursor:pointer; transition:background 0.2s; }
+  .wish-remove:hover { background:rgba(220,38,38,0.2); }
+  .wish-body { padding:0.7rem; }
+  .wish-name { font-size:0.82rem; font-weight:700; margin-bottom:0.2rem; }
+  .wish-price { font-size:0.9rem; font-weight:800; color:var(--orange); }
+  .wish-add { width:100%; margin-top:0.5rem; padding:0.4rem; border:none; background:var(--orange); color:#fff; border-radius:8px; font-size:0.78rem; font-weight:700; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:background 0.2s; }
+  .wish-add:hover { background:var(--blue); }
+
+  /* SETTINGS */
+  .setting-row { display:flex; align-items:center; justify-content:space-between; padding:1rem 0; border-bottom:1px solid var(--border); }
+  .setting-row:last-child { border-bottom:none; }
+  .setting-info h4 { font-size:0.92rem; font-weight:700; margin-bottom:0.1rem; }
+  .setting-info p { font-size:0.78rem; color:var(--gray); }
+  .toggle { width:44px; height:24px; background:var(--border); border-radius:12px; position:relative; cursor:pointer; transition:background 0.3s; flex-shrink:0; }
+  .toggle.on { background:var(--success); }
+  .toggle-knob { position:absolute; top:3px; left:3px; width:18px; height:18px; background:#fff; border-radius:50%; transition:transform 0.3s; box-shadow:0 1px 4px rgba(0,0,0,0.2); }
+  .toggle.on .toggle-knob { transform:translateX(20px); }
+
+  /* TOAST */
+  .toast { position:fixed; bottom:2rem; right:2rem; background:var(--blue); color:#fff; padding:0.8rem 1.4rem; border-radius:12px; font-weight:600; font-size:0.88rem; z-index:999; box-shadow:0 8px 24px rgba(0,0,0,0.2); display:none; }
+
+  @media(max-width:640px) {
+    .form-grid { grid-template-columns:1fr; }
+    .stats-row { grid-template-columns:repeat(2,1fr); }
+    .address-grid { grid-template-columns:1fr; }
+    .wishlist-grid { grid-template-columns:repeat(2,1fr); }
+    .profile-hero-inner { flex-direction:column; text-align:center; }
+    .hero-badges { justify-content:center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <span>📍 Bhangaram, Talodhi, Dist. Chandrapur</span>
+  <span>🕐 9AM–9PM &nbsp;|&nbsp; <a href="tel:8390901925">📞 8390901925</a></span>
+</div>
+
+<!-- NAVBAR -->
+<nav>
+  <a class="logo-area" href="index.html">
+    <div class="logo-icon">UG</div>
+    <div class="logo-text">
+      <span class="ug">UG Bazaar</span>
+      <span class="sub">Your Local Superstore</span>
+    </div>
+  </a>
+  <div class="nav-right">
+    <a class="nav-link" href="index.html">🛒 Shop</a>
+    <a class="nav-link" href="cart.html">🛒 Cart <span class="cart-count-badge"></span></a>
+    <a class="nav-link" href="tracking.html">📦 Orders</a>
+    <a class="nav-link" href="notifications.html">🔔 Alerts</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="profile-hero">
+  <div class="hero-bg"></div>
+  <div class="profile-hero-inner">
+    <div class="avatar-wrap">
+      <div class="avatar" id="avatar-initials">RB</div>
+      <div class="avatar-edit" onclick="showToast('Photo upload coming soon!')">📷</div>
+    </div>
+    <div class="hero-info">
+      <h1 id="hero-name">Ramesh Borkar</h1>
+      <p id="hero-mobile">📱 9876543210 &nbsp;|&nbsp; 📍 Bhangaram, Talodhi</p>
+      <div class="hero-badges">
+        <span class="hero-badge">⭐ Regular Customer</span>
+        <span class="hero-badge">📦 5 Orders</span>
+        <span class="hero-badge">✅ Verified</span>
+        <span class="hero-badge">Member since Jan 2026</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-box"><div class="stat-num">5</div><div class="stat-lbl">Total Orders</div></div>
+    <div class="stat-box"><div class="stat-num">₹3.2k</div><div class="stat-lbl">Total Spent</div></div>
+    <div class="stat-box"><div class="stat-num">3</div><div class="stat-lbl">Wishlist Items</div></div>
+    <div class="stat-box"><div class="stat-num">₹120</div><div class="stat-lbl">Coupon Savings</div></div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tab-bar">
+    <div class="tab active" onclick="switchTab('profile',this)">👤 Profile</div>
+    <div class="tab" onclick="switchTab('orders',this)">📦 My Orders</div>
+    <div class="tab" onclick="switchTab('address',this)">📍 Addresses</div>
+    <div class="tab" onclick="switchTab('wishlist',this)">❤️ Wishlist</div>
+    <div class="tab" onclick="switchTab('settings',this)">⚙️ Settings</div>
+  </div>
+
+  <!-- ═══ PROFILE TAB ═══ -->
+  <div class="section active" id="tab-profile">
+    <div class="card">
+      <div class="card-head">
+        <h3>👤 Personal Information</h3>
+        <div style="display:flex;gap:0.5rem">
+          <button class="edit-btn" id="edit-toggle" onclick="toggleEdit()">✏️ Edit</button>
+          <button class="save-btn" id="save-btn" style="display:none" onclick="saveProfile()">✅ Save</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="form-grid" id="profile-form"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>🔒 Change Password</h3></div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Current Password</label>
+            <input class="form-input" type="password" placeholder="••••••••">
+          </div>
+          <div class="form-group">
+            <label class="form-label">New Password</label>
+            <input class="form-input" type="password" placeholder="Min 6 characters">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirm New Password</label>
+            <input class="form-input" type="password" placeholder="Repeat new password">
+          </div>
+        </div>
+        <button style="margin-top:1rem;padding:0.6rem 1.4rem;border-radius:10px;border:none;background:var(--blue);color:#fff;font-weight:700;cursor:pointer;font-family:'Baloo 2',sans-serif;" onclick="showToast('✅ Password change hua!')">Update Password</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ ORDERS TAB ═══ -->
+  <div class="section" id="tab-orders">
+    <div class="card">
+      <div class="card-head">
+        <h3>📦 My Orders</h3>
+        <select style="padding:0.3rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;font-size:0.8rem;font-family:'Baloo 2',sans-serif;color:var(--text);outline:none;" onchange="filterOrders(this.value)">
+          <option value="all">All Orders</option>
+          <option value="Delivered">Delivered</option>
+          <option value="Pending">Pending</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div class="card-body" id="orders-list"></div>
+    </div>
+  </div>
+
+  <!-- ═══ ADDRESS TAB ═══ -->
+  <div class="section" id="tab-address">
+    <div class="card">
+      <div class="card-head"><h3>📍 Saved Addresses</h3></div>
+      <div class="card-body">
+        <div class="address-grid" id="address-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ WISHLIST TAB ═══ -->
+  <div class="section" id="tab-wishlist">
+    <div class="card">
+      <div class="card-head">
+        <h3>❤️ My Wishlist</h3>
+        <span style="font-size:0.8rem;color:var(--gray)" id="wish-count">3 items</span>
+      </div>
+      <div class="card-body">
+        <div class="wishlist-grid" id="wishlist-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SETTINGS TAB ═══ -->
+  <div class="section" id="tab-settings">
+    <div class="card">
+      <div class="card-head"><h3>🔔 Notifications</h3></div>
+      <div class="card-body" id="notif-settings"></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>🌐 Language</h3></div>
+      <div class="card-body">
+        <div style="display:flex;gap:0.7rem;flex-wrap:wrap">
+          <button onclick="setLang(this)" style="padding:0.5rem 1.2rem;border-radius:20px;border:2px solid var(--blue);background:var(--blue);color:#fff;font-weight:700;font-size:0.85rem;cursor:pointer;font-family:'Baloo 2',sans-serif;">English</button>
+          <button onclick="setLang(this)" style="padding:0.5rem 1.2rem;border-radius:20px;border:2px solid var(--border);background:#fff;color:var(--text-soft);font-weight:700;font-size:0.85rem;cursor:pointer;font-family:'Baloo 2',sans-serif;">हिंदी</button>
+          <button onclick="setLang(this)" style="padding:0.5rem 1.2rem;border-radius:20px;border:2px solid var(--border);background:#fff;color:var(--text-soft);font-weight:700;font-size:0.85rem;cursor:pointer;font-family:'Baloo 2',sans-serif;">मराठी</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>⚠️ Account</h3></div>
+      <div class="card-body" style="display:flex;gap:1rem;flex-wrap:wrap">
+        <button onclick="User.logout(); window.location='index.html'" style="padding:0.6rem 1.4rem;border-radius:10px;border:1.5px solid var(--border);background:#fff;color:var(--text-soft);font-weight:700;cursor:pointer;font-family:'Baloo 2',sans-serif;">🚪 Logout</button>
+        <button onclick="if(confirm('Account delete karna chahte ho?'))showToast('Request bhej di!');" style="padding:0.6rem 1.4rem;border-radius:10px;border:1.5px solid #FECACA;background:#FEF2F2;color:var(--error);font-weight:700;cursor:pointer;font-family:'Baloo 2',sans-serif;">🗑 Delete Account</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ──
+let profileData = {
+  name:'Ramesh Borkar', mobile:'9876543210',
+  email:'ramesh@gmail.com', village:'Bhangaram',
+  taluka:'Talodhi', district:'Chandrapur',
+  pincode:'441222', dob:'15 March 1990'
+};
+
+let profileFields = [
+  { key:'name', label:'Full Name', icon:'👤' },
+  { key:'mobile', label:'Mobile Number', icon:'📱' },
+  { key:'email', label:'Email Address', icon:'📧' },
+  { key:'village', label:'Village / Area', icon:'🏘' },
+  { key:'taluka', label:'Taluka', icon:'📍' },
+  { key:'district', label:'District', icon:'🗺' },
+  { key:'pincode', label:'PIN Code', icon:'🔢' },
+  { key:'dob', label:'Date of Birth', icon:'🎂' },
+];
+
+let isEditing = false;
+
+function renderProfile() {
+  document.getElementById('profile-form').innerHTML = profileFields.map(f => `
+    <div class="form-group ${f.key==='email'||f.key==='village'?'form-full':''}">
+      <label class="form-label">${f.icon} ${f.label}</label>
+      ${isEditing
+        ? `<input class="form-input" id="pf-${f.key}" value="${profileData[f.key]}">`
+        : `<div class="form-value">${profileData[f.key]}</div>`
+      }
+    </div>
+  `).join('');
+}
+
+function toggleEdit() {
+  isEditing = true;
+  renderProfile();
+  document.getElementById('edit-toggle').style.display = 'none';
+  document.getElementById('save-btn').style.display = 'inline-block';
+}
+
+function saveProfile() {
+  profileFields.forEach(f => {
+    const el = document.getElementById('pf-'+f.key);
+    if(el) profileData[f.key] = el.value;
+  });
+  isEditing = false;
+  renderProfile();
+  document.getElementById('edit-toggle').style.display = 'inline-block';
+  document.getElementById('save-btn').style.display = 'none';
+  document.getElementById('hero-name').textContent = profileData.name;
+  document.getElementById('hero-mobile').textContent = `📱 ${profileData.mobile} | 📍 ${profileData.village}, ${profileData.taluka}`;
+  const initials = profileData.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('avatar-initials').textContent = initials;
+  showToast('✅ Profile save hua!');
+}
+
+// ── ORDERS ──
+const allOrders = [
+  { id:'#UG10001', date:'Apr 3, 2026', items:[{e:'🌾',n:'Basmati Rice 5kg'},{e:'🫘',n:'Toor Dal 1kg'}], amount:785, status:'Out for Delivery', type:'Delivery' },
+  { id:'#UG10003', date:'Mar 30, 2026', items:[{e:'🔨',n:'Steel Hammer'},{e:'🌱',n:'Hybrid Seeds'}], amount:580, status:'Delivered', type:'Delivery' },
+  { id:'#UG10006', date:'Mar 20, 2026', items:[{e:'💡',n:'LED Bulb 9W'}], amount:195, status:'Delivered', type:'Pickup' },
+  { id:'#UG10007', date:'Mar 10, 2026', items:[{e:'📱',n:'Mobile Charger'}], amount:199, status:'Cancelled', type:'Delivery' },
+  { id:'#UG10008', date:'Feb 28, 2026', items:[{e:'🛋',n:'Wooden Chair'}], amount:1200, status:'Delivered', type:'Delivery' },
+];
+
+const spMap = {'Out for Delivery':'sp-out','Delivered':'sp-delivered','Cancelled':'sp-cancelled','Pending':'sp-pending','Confirmed':'sp-pending'};
+
+function renderOrders(filter='all') {
+  const filtered = filter==='all' ? allOrders : allOrders.filter(o=>o.status===filter);
+  document.getElementById('orders-list').innerHTML = filtered.length === 0
+    ? `<div style="text-align:center;padding:2rem;color:var(--gray)">Koi order nahi mila</div>`
+    : filtered.map(o => `
+    <div class="order-item">
+      <div class="order-item-head">
+        <div>
+          <div class="order-id">${o.id}</div>
+          <div class="order-date">📅 ${o.date} &nbsp;|&nbsp; ${o.type==='Delivery'?'🚀 Home Delivery':'🏪 Pickup'}</div>
+        </div>
+        <span class="status-pill ${spMap[o.status]||'sp-pending'}">${o.status}</span>
+      </div>
+      <div class="order-products">
+        ${o.items.map(i=>`<div class="order-prod-chip">${i.e} ${i.n}</div>`).join('')}
+      </div>
+      <div class="order-footer">
+        <div class="order-total">₹${o.amount}</div>
+        <div class="order-actions-row">
+          ${o.status==='Delivered'?`<button class="action-chip" onclick="window.location='reviews.html'">⭐ Review</button>`:''}
+          <button class="action-chip" onclick="window.location='tracking.html'">📦 Track</button>
+          <a class="action-chip wa" href="https://wa.me/918390901925?text=Order ${o.id} ke baare mein poochna tha" target="_blank">💬</a>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterOrders(val) { renderOrders(val); }
+
+// ── ADDRESSES ──
+const addresses = [
+  { type:'Home', name:'Ramesh Borkar', detail:'Bhangaram Village\nTalodhi, Dist. Chandrapur\nMaharashtra — 441222', default:true },
+  { type:'Shop', name:'Ramesh Borkar', detail:'Near Main Road, Talodhi\nDist. Chandrapur\nMaharashtra — 441222', default:false },
+];
+
+function renderAddresses() {
+  document.getElementById('address-grid').innerHTML =
+    addresses.map((a,i) => `
+      <div class="address-card ${a.default?'default':''}">
+        ${a.default?'<div class="addr-default-badge">✅ Default</div>':''}
+        <div class="addr-type">${a.type==='Home'?'🏠':'🏪'} ${a.type}</div>
+        <div class="addr-name">${a.name}</div>
+        <div class="addr-detail">${a.detail.replace(/\n/g,'<br>')}</div>
+        <div class="addr-actions">
+          <button class="action-chip" onclick="showToast('Address edit hua!')">✏️ Edit</button>
+          ${!a.default?`<button class="action-chip" onclick="setDefault(${i})">⭐ Set Default</button>`:''}
+          ${!a.default?`<button class="action-chip" style="color:var(--error)" onclick="deleteAddr(${i})">🗑</button>`:''}
+        </div>
+      </div>
+    `).join('') +
+    `<div class="add-address-card" onclick="showToast('New address form coming!')">
+      <div class="add-icon">➕</div>
+      <div class="add-label">Naya Address Add Karo</div>
+    </div>`;
+}
+
+function setDefault(i) { addresses.forEach((a,j)=>a.default=j===i); renderAddresses(); showToast('✅ Default address set hua!'); }
+function deleteAddr(i) { addresses.splice(i,1); renderAddresses(); showToast('🗑 Address delete hua!'); }
+
+// ── WISHLIST ──
+let wishlist = [
+  { emoji:'🌀', name:'Table Fan', price:850, dept:'Electronics' },
+  { emoji:'🌿', name:'DAP Fertilizer 5kg', price:650, dept:'Krushi' },
+  { emoji:'🔌', name:'Electric Wire 10m', price:280, dept:'Electrical' },
+];
+
+function renderWishlist() {
+  document.getElementById('wish-count').textContent = `${wishlist.length} items`;
+  document.getElementById('wishlist-grid').innerHTML = wishlist.length === 0
+    ? `<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--gray)">❤️ Wishlist khali hai!</div>`
+    : wishlist.map((w,i) => `
+      <div class="wish-card">
+        <div class="wish-img">
+          <span style="font-size:2.5rem">${w.emoji}</span>
+          <div class="wish-remove" onclick="removeWish(${i})">✕</div>
+        </div>
+        <div class="wish-body">
+          <div class="wish-name">${w.name}</div>
+          <div style="font-size:0.7rem;color:var(--gray);margin-bottom:0.3rem">${w.dept}</div>
+          <div class="wish-price">₹${w.price}</div>
+          <button class="wish-add" onclick="showToast('🛒 ${w.name} cart mein add hua!')">+ Cart</button>
+        </div>
+      </div>
+    `).join('');
+}
+
+function removeWish(i) { wishlist.splice(i,1); renderWishlist(); showToast('❤️ Wishlist se remove hua!'); }
+
+// ── SETTINGS ──
+const notifSettings = [
+  { label:'Order Updates', desc:'Har order status change par notify karo', on:true },
+  { label:'WhatsApp Alerts', desc:'WhatsApp par order confirm bhejo', on:true },
+  { label:'SMS Alerts', desc:'SMS par order status bhejo', on:true },
+  { label:'Offer Notifications', desc:'Naye offers aur coupons ke baare mein batao', on:false },
+  { label:'New Products', desc:'Naye products aane par notify karo', on:false },
+];
+
+function renderSettings() {
+  document.getElementById('notif-settings').innerHTML = notifSettings.map((s,i) => `
+    <div class="setting-row">
+      <div class="setting-info">
+        <h4>${s.label}</h4>
+        <p>${s.desc}</p>
+      </div>
+      <div class="toggle ${s.on?'on':''}" onclick="toggleNotif(${i}, this)">
+        <div class="toggle-knob"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleNotif(i, el) {
+  notifSettings[i].on = !notifSettings[i].on;
+  el.classList.toggle('on');
+  showToast(notifSettings[i].on ? '🔔 Notification on!' : '🔕 Notification off!');
+}
+
+function setLang(btn) {
+  document.querySelectorAll('.card-body button[onclick*=setLang]').forEach(b => {
+    b.style.background='#fff'; b.style.color='var(--text-soft)'; b.style.borderColor='var(--border)';
+  });
+  btn.style.background='var(--blue)'; btn.style.color='#fff'; btn.style.borderColor='var(--blue)';
+  showToast(`✅ Language set: ${btn.textContent}`);
+}
+
+// ── TAB SWITCH ──
+function switchTab(name, el) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  el.classList.add('active');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent=msg; t.style.display='block';
+  setTimeout(()=>t.style.display='none',2800);
+}
+
+// ── INIT ──
+async function initProfile() {
+  if (!Auth.isLoggedIn()) { window.location.href = 'auth.html'; return; }
+
+  const r = await AuthAPI.getMe();
+  if (!r.success) { renderProfile(); return; }
+
+  const u = r.data.user;
+  const nameEl   = document.getElementById('hero-name');
+  const mobileEl = document.getElementById('hero-mobile');
+  const emailEl  = document.getElementById('hero-email');
+  if (nameEl)   nameEl.textContent   = u.name;
+  if (mobileEl) mobileEl.textContent = '📱 ' + u.mobile;
+  if (emailEl)  emailEl.textContent  = u.email || '—';
+
+  // Fill edit form
+  const pf = { 'pf-name': u.name, 'pf-email': u.email || '', 'pf-village': u.village || '' };
+  Object.entries(pf).forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if (el) el.value = val;
+  });
+
+  // Load orders
+  const ro = await OrderAPI.getMyOrders();
+  if (ro.success) {
+    const statsEl = document.getElementById('orders-count');
+    if (statsEl) statsEl.textContent = ro.data.count;
+  }
+
+  renderProfile();
+}
+
+async function saveProfileAPI() {
+  const data = {
+    name:    document.getElementById('pf-name')?.value?.trim(),
+    email:   document.getElementById('pf-email')?.value?.trim(),
+    village: document.getElementById('pf-village')?.value?.trim()
+  };
+  const r = await AuthAPI.updateProfile(data);
+  if (r.success) showToast('✅ Profile save hua!');
+  else showToast('❌ ' + r.error);
+}
+
+initProfile();
+renderOrders();
+renderAddresses();
+renderWishlist();
+renderSettings();
+</script>
+<script src="api.js"></script>
+<script src="nav-fix.js"></script>
+</body>
+</html>

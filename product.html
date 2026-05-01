@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Detail — UG Bazaar</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange:#F47820; --blue:#1A5FB4; --blue-dark:#0D3A6E;
+    --blue-light:#3A82D4; --gold:#E8A020; --off-white:#F4F6FB;
+    --gray:#6B7280; --gray-light:#F3F4F6; --text:#1A1A2E;
+    --text-soft:#4B5563; --border:#E2E8F0;
+    --success:#16A34A; --success-bg:#F0FDF4;
+    --error:#DC2626; --star:#F59E0B; --radius:14px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { font-family:'Baloo 2',sans-serif; background:var(--off-white); color:var(--text); }
+
+  /* TOPBAR */
+  .topbar { background:var(--blue-dark); color:rgba(255,255,255,0.85); font-size:0.78rem; padding:0.4rem 2rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.3rem; }
+  .topbar a { color:#FFD580; text-decoration:none; font-weight:600; }
+
+  /* NAVBAR */
+  nav { background:#fff; display:flex; justify-content:space-between; align-items:center; padding:0.8rem 2rem; box-shadow:0 2px 12px rgba(26,95,180,0.08); position:sticky; top:0; z-index:200; }
+  .logo-area { display:flex; align-items:center; gap:0.7rem; text-decoration:none; }
+  .logo-icon { width:44px; height:44px; background:linear-gradient(135deg,var(--orange),var(--gold)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; font-weight:800; color:#fff; }
+  .logo-text .ug { font-size:1.2rem; font-weight:800; color:var(--blue); display:block; line-height:1; }
+  .logo-text .sub { font-size:0.7rem; font-weight:600; color:var(--orange); letter-spacing:1.5px; text-transform:uppercase; }
+  .nav-right { display:flex; align-items:center; gap:1rem; }
+  .nav-link { color:var(--text-soft); text-decoration:none; font-size:0.88rem; font-weight:600; transition:color 0.2s; }
+  .nav-link:hover { color:var(--orange); }
+  .cart-btn { background:var(--orange); color:#fff; border:none; padding:0.5rem 1.2rem; border-radius:25px; font-weight:700; font-size:0.85rem; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:background 0.2s; }
+  .cart-btn:hover { background:var(--blue); }
+
+  /* BREADCRUMB */
+  .breadcrumb { max-width:1100px; margin:1rem auto; padding:0 1.5rem; display:flex; align-items:center; gap:0.4rem; font-size:0.8rem; color:var(--gray); flex-wrap:wrap; }
+  .breadcrumb a { color:var(--blue); text-decoration:none; font-weight:600; }
+  .breadcrumb a:hover { color:var(--orange); }
+  .bc-sep { opacity:0.4; }
+
+  /* MAIN */
+  .main { max-width:1100px; margin:0 auto; padding:0 1.5rem 4rem; }
+
+  /* PRODUCT TOP SECTION */
+  .product-top { display:grid; grid-template-columns:1fr 1fr; gap:2.5rem; margin-bottom:2.5rem; align-items:start; }
+
+  /* IMAGE SECTION */
+  .image-section { position:sticky; top:80px; }
+  .main-image { background:#fff; border-radius:20px; border:1px solid var(--border); height:380px; display:flex; align-items:center; justify-content:center; font-size:8rem; margin-bottom:1rem; position:relative; overflow:hidden; box-shadow:0 4px 24px rgba(26,95,180,0.08); }
+  .img-badge { position:absolute; top:16px; left:16px; background:var(--error); color:#fff; font-size:0.78rem; font-weight:800; padding:4px 10px; border-radius:8px; }
+  .img-wish { position:absolute; top:16px; right:16px; width:36px; height:36px; background:#fff; border-radius:50%; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:1.1rem; transition:all 0.2s; box-shadow:0 2px 8px rgba(0,0,0,0.08); }
+  .img-wish:hover { border-color:var(--error); transform:scale(1.1); }
+  .img-wish.active { background:#FEF2F2; border-color:var(--error); }
+  .thumb-row { display:flex; gap:0.6rem; }
+  .thumb { width:64px; height:64px; background:#fff; border-radius:10px; border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:1.8rem; cursor:pointer; transition:all 0.2s; }
+  .thumb.active, .thumb:hover { border-color:var(--orange); background:rgba(244,120,32,0.04); }
+
+  /* INFO SECTION */
+  .info-section {}
+  .info-dept { font-size:0.72rem; font-weight:700; color:var(--blue); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:0.4rem; }
+  .info-name { font-size:clamp(1.4rem,3vw,1.9rem); font-weight:800; color:var(--text); line-height:1.2; margin-bottom:0.3rem; }
+  .info-marathi { font-size:0.9rem; color:var(--gray); font-family:'Noto Sans Devanagari',sans-serif; margin-bottom:0.8rem; }
+  .rating-row { display:flex; align-items:center; gap:0.7rem; margin-bottom:1rem; flex-wrap:wrap; }
+  .stars { display:flex; gap:1px; }
+  .star { font-size:1rem; color:var(--star-empty,#E5E7EB); }
+  .star.on { color:var(--star); }
+  .rating-val { font-size:0.92rem; font-weight:800; }
+  .rating-cnt { font-size:0.78rem; color:var(--blue); font-weight:600; cursor:pointer; text-decoration:underline; }
+  .verified-count { font-size:0.75rem; color:var(--success); font-weight:700; }
+
+  /* PRICE */
+  .price-box { background:var(--off-white); border-radius:14px; padding:1.2rem; margin-bottom:1.2rem; border:1px solid var(--border); }
+  .price-main { font-size:2.2rem; font-weight:800; color:var(--text); line-height:1; }
+  .price-row { display:flex; align-items:center; gap:0.8rem; margin-bottom:0.4rem; }
+  .price-old { font-size:1.1rem; color:var(--gray); text-decoration:line-through; }
+  .price-save { background:var(--success-bg); color:var(--success); font-size:0.8rem; font-weight:800; padding:3px 10px; border-radius:8px; }
+  .price-note { font-size:0.78rem; color:var(--gray); }
+  .price-note span { color:var(--success); font-weight:700; }
+
+  /* VARIANTS */
+  .variant-section { margin-bottom:1.2rem; }
+  .variant-label { font-size:0.82rem; font-weight:700; color:var(--text); margin-bottom:0.5rem; }
+  .variant-opts { display:flex; gap:0.5rem; flex-wrap:wrap; }
+  .variant-opt { padding:0.4rem 1rem; border-radius:9px; border:1.5px solid var(--border); background:#fff; color:var(--text-soft); font-size:0.85rem; font-weight:700; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:all 0.2s; }
+  .variant-opt.active { border-color:var(--orange); color:var(--orange); background:rgba(244,120,32,0.04); }
+  .variant-opt.out { opacity:0.4; text-decoration:line-through; cursor:not-allowed; }
+
+  /* QTY + ADD CART */
+  .qty-row { display:flex; align-items:center; gap:1rem; margin-bottom:1rem; flex-wrap:wrap; }
+  .qty-label { font-size:0.82rem; font-weight:700; color:var(--text); }
+  .qty-control { display:flex; align-items:center; gap:0.5rem; background:#fff; border:1.5px solid var(--border); border-radius:10px; padding:0.3rem 0.6rem; }
+  .qty-btn-ctrl { width:30px; height:30px; border:none; background:transparent; font-size:1.2rem; font-weight:800; cursor:pointer; color:var(--text); transition:color 0.2s; font-family:'Baloo 2',sans-serif; display:flex; align-items:center; justify-content:center; }
+  .qty-btn-ctrl:hover { color:var(--orange); }
+  .qty-num { font-size:1rem; font-weight:800; min-width:28px; text-align:center; }
+  .action-btns { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; margin-bottom:1rem; }
+  .btn-add-cart { padding:0.9rem; border-radius:12px; border:none; background:linear-gradient(135deg,var(--orange),#D4620F); color:#fff; font-size:0.95rem; font-weight:800; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:all 0.2s; box-shadow:0 4px 16px rgba(244,120,32,0.35); }
+  .btn-add-cart:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(244,120,32,0.45); }
+  .btn-buy-now { padding:0.9rem; border-radius:12px; border:2px solid var(--blue); background:#fff; color:var(--blue); font-size:0.95rem; font-weight:800; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:all 0.2s; }
+  .btn-buy-now:hover { background:var(--blue); color:#fff; }
+  .wa-order { display:flex; align-items:center; justify-content:center; gap:0.5rem; background:#25D366; color:#fff; padding:0.7rem; border-radius:12px; font-weight:700; font-size:0.88rem; text-decoration:none; transition:background 0.2s; }
+  .wa-order:hover { background:#1DA050; }
+
+  /* DELIVERY INFO */
+  .delivery-info { background:#fff; border-radius:12px; border:1px solid var(--border); padding:1rem 1.2rem; margin-bottom:1rem; }
+  .di-row { display:flex; align-items:center; gap:0.8rem; padding:0.5rem 0; border-bottom:1px solid var(--border); font-size:0.85rem; }
+  .di-row:last-child { border-bottom:none; }
+  .di-icon { font-size:1.1rem; flex-shrink:0; }
+  .di-text { color:var(--text-soft); }
+  .di-text strong { color:var(--text); }
+
+  /* STOCK STATUS */
+  .stock-status { display:flex; align-items:center; gap:0.5rem; margin-bottom:1rem; font-size:0.85rem; font-weight:700; }
+  .stock-dot { width:8px; height:8px; border-radius:50%; }
+  .in-stock { color:var(--success); }
+  .in-stock .stock-dot { background:var(--success); }
+  .low-stock { color:var(--warn,#D97706); }
+  .low-stock .stock-dot { background:#D97706; }
+
+  /* TABS */
+  .tabs-section { background:#fff; border-radius:var(--radius); border:1px solid var(--border); overflow:hidden; margin-bottom:2rem; }
+  .tab-bar { display:flex; border-bottom:1px solid var(--border); }
+  .tab { padding:0.9rem 1.5rem; font-size:0.88rem; font-weight:700; cursor:pointer; color:var(--text-soft); border-bottom:3px solid transparent; transition:all 0.2s; }
+  .tab.active { color:var(--orange); border-bottom-color:var(--orange); background:rgba(244,120,32,0.03); }
+  .tab-content { padding:1.5rem; display:none; }
+  .tab-content.active { display:block; }
+
+  /* DESCRIPTION */
+  .desc-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem; }
+  .desc-item { background:var(--off-white); border-radius:10px; padding:0.8rem 1rem; }
+  .desc-key { font-size:0.72rem; font-weight:700; color:var(--gray); letter-spacing:0.5px; text-transform:uppercase; margin-bottom:0.2rem; }
+  .desc-val { font-size:0.88rem; font-weight:700; color:var(--text); }
+  .feature-list { list-style:none; display:flex; flex-direction:column; gap:0.5rem; }
+  .feature-list li { font-size:0.88rem; color:var(--text-soft); display:flex; align-items:flex-start; gap:0.5rem; line-height:1.5; }
+  .feature-list li::before { content:'✓'; color:var(--success); font-weight:800; flex-shrink:0; }
+
+  /* REVIEWS IN TAB */
+  .reviews-summary { display:flex; gap:2rem; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; }
+  .big-rating { text-align:center; }
+  .big-num { font-size:3rem; font-weight:800; color:var(--text); line-height:1; }
+  .big-stars { display:flex; gap:2px; justify-content:center; margin:0.3rem 0; }
+  .big-star { font-size:1.1rem; }
+  .big-cnt { font-size:0.78rem; color:var(--gray); }
+  .rating-bars { flex:1; min-width:160px; }
+  .rb-row { display:flex; align-items:center; gap:0.5rem; margin-bottom:0.3rem; }
+  .rb-lbl { font-size:0.72rem; font-weight:700; color:var(--gray); width:14px; }
+  .rb-wrap { flex:1; height:7px; background:var(--gray-light); border-radius:4px; overflow:hidden; }
+  .rb-fill { height:100%; background:var(--star); border-radius:4px; }
+  .rb-cnt { font-size:0.7rem; color:var(--gray); width:18px; }
+  .review-card { border:1px solid var(--border); border-radius:12px; padding:1rem 1.2rem; margin-bottom:0.8rem; }
+  .rev-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem; flex-wrap:wrap; gap:0.4rem; }
+  .rev-user { display:flex; align-items:center; gap:0.6rem; }
+  .rev-avatar { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--blue),var(--blue-light)); color:#fff; display:flex; align-items:center; justify-content:center; font-size:0.78rem; font-weight:800; flex-shrink:0; }
+  .rev-name { font-size:0.88rem; font-weight:800; }
+  .rev-date { font-size:0.7rem; color:var(--gray); }
+  .rev-stars { display:flex; gap:1px; font-size:0.85rem; }
+  .rev-title { font-size:0.88rem; font-weight:800; margin-bottom:0.3rem; }
+  .rev-text { font-size:0.82rem; color:var(--text-soft); line-height:1.6; }
+  .verified-pill { background:var(--success-bg); color:var(--success); font-size:0.65rem; font-weight:700; padding:2px 7px; border-radius:6px; }
+  .owner-reply { background:rgba(26,95,180,0.04); border-left:3px solid var(--blue); padding:0.7rem 0.9rem; border-radius:0 8px 8px 0; margin-top:0.7rem; font-size:0.8rem; }
+  .reply-who { font-size:0.7rem; font-weight:800; color:var(--blue); margin-bottom:0.2rem; }
+
+  /* RELATED PRODUCTS */
+  .related-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:1rem; }
+  .rel-card { background:#fff; border-radius:var(--radius); border:1px solid var(--border); overflow:hidden; cursor:pointer; transition:all 0.2s; }
+  .rel-card:hover { border-color:var(--orange); transform:translateY(-3px); box-shadow:0 8px 24px rgba(26,95,180,0.1); }
+  .rel-img { height:110px; background:var(--off-white); display:flex; align-items:center; justify-content:center; font-size:2.8rem; }
+  .rel-body { padding:0.8rem; }
+  .rel-name { font-size:0.82rem; font-weight:800; margin-bottom:0.3rem; color:var(--text); }
+  .rel-price { font-size:0.95rem; font-weight:800; color:var(--orange); }
+  .rel-old { font-size:0.72rem; color:var(--gray); text-decoration:line-through; }
+
+  /* TOAST */
+  .toast { position:fixed; bottom:2rem; right:2rem; background:var(--blue); color:#fff; padding:0.8rem 1.4rem; border-radius:12px; font-weight:600; font-size:0.88rem; z-index:999; box-shadow:0 8px 24px rgba(0,0,0,0.2); display:none; }
+
+  @media(max-width:768px) {
+    .product-top { grid-template-columns:1fr; }
+    .image-section { position:static; }
+    .main-image { height:280px; font-size:6rem; }
+    .action-btns { grid-template-columns:1fr; }
+    .desc-grid { grid-template-columns:1fr; }
+    .reviews-summary { flex-direction:column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <span>📍 Bhangaram, Talodhi, Dist. Chandrapur</span>
+  <span>🕐 9AM–9PM &nbsp;|&nbsp; <a href="tel:8390901925">📞 8390901925</a></span>
+</div>
+
+<!-- NAVBAR -->
+<nav>
+  <a class="logo-area" href="index.html">
+    <div class="logo-icon">UG</div>
+    <div class="logo-text">
+      <span class="ug">UG Bazaar</span>
+      <span class="sub">Your Local Superstore</span>
+    </div>
+  </a>
+  <div class="nav-right">
+    <a class="nav-link" href="index.html">🛒 Shop</a>
+    <a class="nav-link" href="search.html">🔍 Search</a>
+    <a class="nav-link" href="offers.html">🏷️ Offers</a>
+    <a class="nav-link nav-login-link" href="auth.html">👤 Login</a>
+    <button class="cart-btn nav-cart" onclick="addToCart(); setTimeout(()=>window.location='cart.html',400)">🛒 Cart <span class="cart-count-badge">(0)</span></button>
+  </div>
+</nav>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb">
+  <a href="index.html">Home</a><span class="bc-sep">›</span>
+  <a href="search.html?dept=grocery">Grocery</a><span class="bc-sep">›</span>
+  <span>Basmati Rice 5kg</span>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="product-top">
+
+    <!-- IMAGE SECTION -->
+    <div class="image-section">
+      <div class="main-image">
+        <span id="main-emoji">🌾</span>
+        <div class="img-badge">-26% OFF</div>
+        <div class="img-wish" id="wish-btn" onclick="toggleWish()">🤍</div>
+      </div>
+      <div class="thumb-row">
+        <div class="thumb active" onclick="setEmoji('🌾',this)">🌾</div>
+        <div class="thumb" onclick="setEmoji('🛒',this)">🛒</div>
+        <div class="thumb" onclick="setEmoji('📦',this)">📦</div>
+        <div class="thumb" onclick="setEmoji('🏷️',this)">🏷️</div>
+      </div>
+    </div>
+
+    <!-- INFO SECTION -->
+    <div class="info-section">
+      <div class="info-dept">🛒 Grocery</div>
+      <div class="info-name">Basmati Rice 5kg</div>
+      <div class="info-marathi">बासमती तांदूळ ५ किलो</div>
+
+      <div class="rating-row">
+        <div class="stars">
+          <span class="star on">★</span><span class="star on">★</span><span class="star on">★</span>
+          <span class="star on">★</span><span class="star" style="color:#F59E0B;opacity:0.4">★</span>
+        </div>
+        <span class="rating-val">4.5</span>
+        <a class="rating-cnt" onclick="switchTab('reviews')">28 reviews</a>
+        <span class="verified-count">✅ 24 verified</span>
+      </div>
+
+      <div class="price-box">
+        <div class="price-row">
+          <div class="price-main">₹280</div>
+          <div class="price-old">₹380</div>
+          <div class="price-save">Save ₹100</div>
+        </div>
+        <div class="price-note">🎉 Free delivery on orders above ₹500 &nbsp;|&nbsp; <span>UG10 code se aur 10% off!</span></div>
+      </div>
+
+      <div class="stock-status in-stock">
+        <div class="stock-dot"></div>
+        In Stock — 45 pieces available
+      </div>
+
+      <div class="variant-section">
+        <div class="variant-label">Size / Weight:</div>
+        <div class="variant-opts">
+          <div class="variant-opt" onclick="setVariant(this,'1kg',120)">1kg — ₹120</div>
+          <div class="variant-opt active" onclick="setVariant(this,'5kg',280)">5kg — ₹280</div>
+          <div class="variant-opt" onclick="setVariant(this,'10kg',520)">10kg — ₹520</div>
+          <div class="variant-opt out">25kg — Out of Stock</div>
+        </div>
+      </div>
+
+      <div class="qty-row">
+        <span class="qty-label">Quantity:</span>
+        <div class="qty-control">
+          <button class="qty-btn-ctrl" onclick="changeQty(-1)">−</button>
+          <span class="qty-num" id="qty">1</span>
+          <button class="qty-btn-ctrl" onclick="changeQty(1)">+</button>
+        </div>
+        <span style="font-size:0.8rem;color:var(--gray)">Max 10 per order</span>
+      </div>
+
+      <div class="action-btns">
+        <button class="btn-add-cart" onclick="addToCart()">🛒 Add to Cart</button>
+        <button class="btn-buy-now" onclick="addToCart(); setTimeout(()=>window.location='cart.html',400)">⚡ Buy Now</button>
+      </div>
+      <a class="wa-order" href="https://wa.me/918390901925?text=Mujhe Basmati Rice 5kg order karna hai" target="_blank">
+        💬 WhatsApp par Order Karo
+      </a>
+
+      <div class="delivery-info" style="margin-top:1rem">
+        <div class="di-row"><div class="di-icon">🚀</div><div class="di-text"><strong>Home Delivery</strong> — Bhangaram & nearby villages</div></div>
+        <div class="di-row"><div class="di-icon">🏪</div><div class="di-text"><strong>Shop Pickup</strong> — Bhangaram, Talodhi (9AM–9PM)</div></div>
+        <div class="di-row"><div class="di-icon">💵</div><div class="di-text"><strong>Payment</strong> — UPI, Card, Cash on Delivery</div></div>
+        <div class="di-row"><div class="di-icon">🔄</div><div class="di-text"><strong>Return</strong> — 7 din mein return/exchange</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs-section">
+    <div class="tab-bar">
+      <div class="tab active" onclick="switchTab('description')">📋 Description</div>
+      <div class="tab" onclick="switchTab('reviews')">⭐ Reviews (28)</div>
+      <div class="tab" onclick="switchTab('shipping')">🚀 Delivery Info</div>
+    </div>
+
+    <!-- DESCRIPTION TAB -->
+    <div class="tab-content active" id="tab-description">
+      <div class="desc-grid">
+        <div class="desc-item"><div class="desc-key">Brand</div><div class="desc-val">India Gate / Local Premium</div></div>
+        <div class="desc-item"><div class="desc-key">Weight</div><div class="desc-val">5 Kilogram</div></div>
+        <div class="desc-item"><div class="desc-key">Type</div><div class="desc-val">Long Grain Basmati</div></div>
+        <div class="desc-item"><div class="desc-key">Origin</div><div class="desc-val">Punjab, India</div></div>
+        <div class="desc-item"><div class="desc-key">Shelf Life</div><div class="desc-val">12 Months</div></div>
+        <div class="desc-item"><div class="desc-key">Department</div><div class="desc-val">Grocery / Kirana</div></div>
+      </div>
+      <div style="margin-top:1rem">
+        <div style="font-size:0.88rem;font-weight:800;margin-bottom:0.7rem">✨ Product Features:</div>
+        <ul class="feature-list">
+          <li>Extra long grain basmati rice — khushbu aur taste dono laajawab</li>
+          <li>Premium quality — manually sorted aur cleaned</li>
+          <li>Sehat ke liye achha — low glycemic index</li>
+          <li>Cooking ke baad grains alag alag rehte hain</li>
+          <li>Biryani, pulao, khichdi sab ke liye perfect</li>
+          <li>Airtight packing — freshness guaranteed</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- REVIEWS TAB -->
+    <div class="tab-content" id="tab-reviews">
+      <div class="reviews-summary">
+        <div class="big-rating">
+          <div class="big-num">4.5</div>
+          <div class="big-stars">
+            <span class="big-star" style="color:var(--star)">★</span>
+            <span class="big-star" style="color:var(--star)">★</span>
+            <span class="big-star" style="color:var(--star)">★</span>
+            <span class="big-star" style="color:var(--star)">★</span>
+            <span class="big-star" style="color:var(--star);opacity:0.4">★</span>
+          </div>
+          <div class="big-cnt">28 reviews</div>
+        </div>
+        <div class="rating-bars">
+          <div class="rb-row"><span class="rb-lbl">5</span><div class="rb-wrap"><div class="rb-fill" style="width:70%"></div></div><span class="rb-cnt">13</span></div>
+          <div class="rb-row"><span class="rb-lbl">4</span><div class="rb-wrap"><div class="rb-fill" style="width:43%"></div></div><span class="rb-cnt">8</span></div>
+          <div class="rb-row"><span class="rb-lbl">3</span><div class="rb-wrap"><div class="rb-fill" style="width:22%"></div></div><span class="rb-cnt">4</span></div>
+          <div class="rb-row"><span class="rb-lbl">2</span><div class="rb-wrap"><div class="rb-fill" style="width:11%"></div></div><span class="rb-cnt">2</span></div>
+          <div class="rb-row"><span class="rb-lbl">1</span><div class="rb-wrap"><div class="rb-fill" style="width:5%"></div></div><span class="rb-cnt">1</span></div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="rev-head">
+          <div class="rev-user">
+            <div class="rev-avatar">RB</div>
+            <div><div class="rev-name">Ramesh Borkar <span class="verified-pill">✅ Verified</span></div><div class="rev-date">Apr 2, 2026</div></div>
+          </div>
+          <div class="rev-stars">★★★★★</div>
+        </div>
+        <div class="rev-title">Ekdum changli quality!</div>
+        <div class="rev-text">Rice bahut achha hai. Pehli baar online order kiya UG Bazaar se. Quality market se bilkul better hai. Jarur dobara order karunga. Delivery bhi fast thi!</div>
+        <div class="owner-reply"><div class="reply-who">💬 Uday Ainchwar (UG Bazaar):</div>Dhanyawad Ramesh ji! Aapka vishwas hamare liye bahut important hai. 🙏</div>
+      </div>
+      <div class="review-card">
+        <div class="rev-head">
+          <div class="rev-user">
+            <div class="rev-avatar">SM</div>
+            <div><div class="rev-name">Sunita Meshram <span class="verified-pill">✅ Verified</span></div><div class="rev-date">Mar 28, 2026</div></div>
+          </div>
+          <div class="rev-stars">★★★★<span style="opacity:0.3">★</span></div>
+        </div>
+        <div class="rev-title">Accha product, thoda mehnga</div>
+        <div class="rev-text">Rice quality bilkul thik hai, lekin price thoda zyada laga. Delivery fast thi, 1 din mein aa gaya. Overall satisfied hoon.</div>
+      </div>
+      <div class="review-card">
+        <div class="rev-head">
+          <div class="rev-user">
+            <div class="rev-avatar">AT</div>
+            <div><div class="rev-name">Anil Thakre <span class="verified-pill">✅ Verified</span></div><div class="rev-date">Mar 20, 2026</div></div>
+          </div>
+          <div class="rev-stars">★★★★★</div>
+        </div>
+        <div class="rev-title">Best rice in Talodhi area!</div>
+        <div class="rev-text">Hamara poora parivaar khush hai. Subah subah paka ke dekha — bilkul best quality. UG Bazaar se hi order karta rahunga. Uday bhai ka bahut shukriya!</div>
+      </div>
+      <button onclick="window.location='reviews.html'" style="margin-top:0.5rem;padding:0.6rem 1.4rem;border-radius:10px;border:1.5px solid var(--border);background:#fff;color:var(--blue);font-weight:700;cursor:pointer;font-family:'Baloo 2',sans-serif;">Sab Reviews Dekho →</button>
+    </div>
+
+    <!-- SHIPPING TAB -->
+    <div class="tab-content" id="tab-shipping">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div style="background:rgba(26,95,180,0.04);border:1px solid rgba(26,95,180,0.12);border-radius:12px;padding:1.2rem;">
+          <div style="font-size:1.2rem;margin-bottom:0.5rem">🚀</div>
+          <div style="font-size:0.92rem;font-weight:800;margin-bottom:0.4rem">Home Delivery</div>
+          <div style="font-size:0.82rem;color:var(--text-soft);line-height:1.7">Bhangaram, Talodhi aur aaspaas ke gaon. ₹500 se upar FREE delivery. Niche ₹30 charge.</div>
+        </div>
+        <div style="background:rgba(244,120,32,0.04);border:1px solid rgba(244,120,32,0.15);border-radius:12px;padding:1.2rem;">
+          <div style="font-size:1.2rem;margin-bottom:0.5rem">🏪</div>
+          <div style="font-size:0.92rem;font-weight:800;margin-bottom:0.4rem">Shop Pickup</div>
+          <div style="font-size:0.82rem;color:var(--text-soft);line-height:1.7">Bhangaram, Talodhi. Timing: 9AM–9PM. Order ready hone par call milega.</div>
+        </div>
+        <div style="background:var(--success-bg);border:1px solid rgba(22,163,74,0.15);border-radius:12px;padding:1.2rem;">
+          <div style="font-size:1.2rem;margin-bottom:0.5rem">🔄</div>
+          <div style="font-size:0.92rem;font-weight:800;margin-bottom:0.4rem">Return Policy</div>
+          <div style="font-size:0.82rem;color:var(--text-soft);line-height:1.7">7 din mein return ya exchange. Product original condition mein hona chahiye.</div>
+        </div>
+        <div style="background:#FFFBEB;border:1px solid rgba(217,119,6,0.15);border-radius:12px;padding:1.2rem;">
+          <div style="font-size:1.2rem;margin-bottom:0.5rem">📞</div>
+          <div style="font-size:0.92rem;font-weight:800;margin-bottom:0.4rem">Contact</div>
+          <div style="font-size:0.82rem;color:var(--text-soft);line-height:1.7">Uday Ainchwar: <a href="tel:9422137293" style="color:var(--blue);font-weight:700">9422137293</a><br>Shop: <a href="tel:8390901925" style="color:var(--blue);font-weight:700">8390901925</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RELATED PRODUCTS -->
+  <div style="margin-bottom:1rem">
+    <div style="font-size:0.75rem;font-weight:700;color:var(--orange);letter-spacing:2px;text-transform:uppercase;margin-bottom:0.3rem">More from Grocery</div>
+    <div style="font-size:1.3rem;font-weight:800;margin-bottom:1rem">Related <span style="color:var(--blue)">Products</span></div>
+  </div>
+  <div class="related-grid">
+    <div class="rel-card" onclick="window.location='product.html'"><div class="rel-img">🫘</div><div class="rel-body"><div class="rel-name">Toor Dal 1kg</div><div class="rel-price">₹145 <span class="rel-old">₹170</span></div></div></div>
+    <div class="rel-card" onclick="window.location='product.html'"><div class="rel-img">🛢</div><div class="rel-body"><div class="rel-name">Sunflower Oil 1L</div><div class="rel-price">₹165 <span class="rel-old">₹185</span></div></div></div>
+    <div class="rel-card" onclick="window.location='product.html'"><div class="rel-img">🧂</div><div class="rel-body"><div class="rel-name">Salt 1kg</div><div class="rel-price">₹22 <span class="rel-old">₹30</span></div></div></div>
+    <div class="rel-card" onclick="window.location='product.html'"><div class="rel-img">🌶</div><div class="rel-body"><div class="rel-name">Red Chilli Powder</div><div class="rel-price">₹85 <span class="rel-old">₹110</span></div></div></div>
+    <div class="rel-card" onclick="window.location='product.html'"><div class="rel-img">🍚</div><div class="rel-body"><div class="rel-name">Poha 500g</div><div class="rel-price">₹38 <span class="rel-old">₹50</span></div></div></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let qty = 1;
+let cartCount = 0;
+let wishlisted = false;
+
+function changeQty(delta) {
+  qty = Math.max(1, Math.min(10, qty + delta));
+  document.getElementById('qty').textContent = qty;
+}
+
+function addToCart() {
+  for(let i=0; i<qty; i++) Cart.add('Basmati Rice 5kg');
+  document.querySelectorAll('.cart-count-badge').forEach(b => b.textContent = `(${Cart.count})`);
+  showToast(`✅ Basmati Rice 5kg × ${qty} cart mein add hua!`);
+}
+
+function toggleWish() {
+  wishlisted = !wishlisted;
+  const btn = document.getElementById('wish-btn');
+  btn.textContent = wishlisted ? '❤️' : '🤍';
+  btn.classList.toggle('active', wishlisted);
+  showToast(wishlisted ? '❤️ Wishlist mein add hua!' : '🤍 Wishlist se remove hua!');
+}
+
+function setEmoji(emoji, thumb) {
+  document.getElementById('main-emoji').textContent = emoji;
+  document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+  thumb.classList.add('active');
+}
+
+function setVariant(el, size, price) {
+  document.querySelectorAll('.variant-opt:not(.out)').forEach(v => v.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelector('.price-main').textContent = '₹' + price;
+  document.querySelector('.img-badge').textContent = size + ' selected';
+  showToast(`✅ ${size} variant selected — ₹${price}`);
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  const tabs = ['description','reviews','shipping'];
+  const idx = tabs.indexOf(name);
+  document.querySelectorAll('.tab')[idx].classList.add('active');
+  document.querySelector('.tabs-section').scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 2800);
+}
+</script>
+<script src="nav-fix.js"></script>
+</body>
+</html>

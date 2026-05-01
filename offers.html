@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offers & Sale — UG Bazaar</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange:#F47820; --blue:#1A5FB4; --blue-dark:#0D3A6E;
+    --blue-light:#3A82D4; --gold:#E8A020; --off-white:#F4F6FB;
+    --gray:#6B7280; --gray-light:#F3F4F6; --text:#1A1A2E;
+    --text-soft:#4B5563; --border:#E2E8F0;
+    --success:#16A34A; --success-bg:#F0FDF4;
+    --error:#DC2626; --radius:14px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { font-family:'Baloo 2',sans-serif; background:var(--off-white); color:var(--text); }
+
+  /* TOPBAR */
+  .topbar { background:var(--blue-dark); color:rgba(255,255,255,0.85); font-size:0.78rem; padding:0.4rem 2rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.3rem; }
+  .topbar a { color:#FFD580; text-decoration:none; font-weight:600; }
+
+  /* NAVBAR */
+  nav { background:#fff; display:flex; justify-content:space-between; align-items:center; padding:0.8rem 2rem; box-shadow:0 2px 12px rgba(26,95,180,0.08); position:sticky; top:0; z-index:200; }
+  .logo-area { display:flex; align-items:center; gap:0.7rem; text-decoration:none; }
+  .logo-icon { width:44px; height:44px; background:linear-gradient(135deg,var(--orange),var(--gold)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; font-weight:800; color:#fff; }
+  .logo-text .ug { font-size:1.2rem; font-weight:800; color:var(--blue); display:block; line-height:1; }
+  .logo-text .sub { font-size:0.7rem; font-weight:600; color:var(--orange); letter-spacing:1.5px; text-transform:uppercase; }
+  .nav-right { display:flex; align-items:center; gap:1rem; }
+  .nav-link { color:var(--text-soft); text-decoration:none; font-size:0.88rem; font-weight:600; transition:color 0.2s; }
+  .nav-link:hover { color:var(--orange); }
+
+  /* HERO */
+  .hero { background:linear-gradient(135deg,var(--blue-dark) 0%,var(--blue) 60%,var(--blue-light) 100%); padding:3rem 2rem; text-align:center; color:#fff; position:relative; overflow:hidden; }
+  .hero-bg { position:absolute; inset:0; opacity:0.05; background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%); background-size:20px 20px; }
+  .hero-blob1 { position:absolute; right:-60px; top:-60px; width:250px; height:250px; background:var(--orange); border-radius:50%; opacity:0.12; }
+  .hero-blob2 { position:absolute; left:-40px; bottom:-40px; width:180px; height:180px; background:var(--gold); border-radius:50%; opacity:0.1; }
+  .hero-inner { position:relative; z-index:2; }
+  .hero-badge { display:inline-block; background:rgba(244,120,32,0.25); border:1px solid rgba(244,120,32,0.5); color:#FFD580; font-size:0.75rem; font-weight:700; padding:0.3rem 1rem; border-radius:20px; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:1rem; }
+  .hero h1 { font-size:clamp(2rem,5vw,3rem); font-weight:800; margin-bottom:0.5rem; }
+  .hero h1 span { color:var(--gold); }
+  .hero p { opacity:0.8; font-size:0.95rem; margin-bottom:2rem; }
+  .hero-stats { display:flex; justify-content:center; gap:2.5rem; flex-wrap:wrap; }
+  .hero-stat .num { font-size:1.8rem; font-weight:800; color:var(--gold); }
+  .hero-stat .lbl { font-size:0.72rem; opacity:0.7; }
+
+  /* COUNTDOWN */
+  .countdown-bar { background:var(--orange); padding:0.7rem 2rem; text-align:center; }
+  .countdown-inner { display:flex; align-items:center; justify-content:center; gap:1rem; flex-wrap:wrap; }
+  .countdown-label { color:#fff; font-size:0.85rem; font-weight:700; }
+  .countdown-boxes { display:flex; gap:0.5rem; align-items:center; }
+  .cb { background:rgba(0,0,0,0.25); border-radius:8px; padding:0.3rem 0.7rem; text-align:center; min-width:48px; }
+  .cb-num { font-size:1.2rem; font-weight:800; color:#fff; line-height:1; }
+  .cb-lbl { font-size:0.6rem; color:rgba(255,255,255,0.75); font-weight:600; }
+  .cb-sep { color:#fff; font-weight:800; font-size:1.1rem; opacity:0.6; }
+
+  /* MAIN */
+  .main { max-width:1100px; margin:0 auto; padding:2rem 1.5rem 4rem; }
+
+  /* SECTION HEADER */
+  .sec-header { margin-bottom:1.5rem; }
+  .sec-label { font-size:0.75rem; font-weight:700; color:var(--orange); letter-spacing:2px; text-transform:uppercase; margin-bottom:0.3rem; }
+  .sec-title { font-size:clamp(1.3rem,3vw,1.7rem); font-weight:800; color:var(--text); }
+  .sec-title span { color:var(--blue); }
+  .sec-line { width:40px; height:3px; background:linear-gradient(90deg,var(--orange),var(--gold)); border-radius:2px; margin-top:0.5rem; }
+
+  /* COUPON SECTION */
+  .coupons-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1.2rem; margin-bottom:3rem; }
+  .coupon-card { border-radius:16px; padding:1.5rem; position:relative; overflow:hidden; color:#fff; }
+  .cc-blue { background:linear-gradient(135deg,#1A5FB4,#0D3A6E); border:1px solid rgba(26,95,180,0.3); }
+  .cc-orange { background:linear-gradient(135deg,#F47820,#C45A10); border:1px solid rgba(244,120,32,0.3); }
+  .cc-green { background:linear-gradient(135deg,#16A34A,#0D6E3F); border:1px solid rgba(22,163,74,0.3); }
+  .cc-purple { background:linear-gradient(135deg,#7C3AED,#5B21B6); border:1px solid rgba(124,58,237,0.3); }
+  .cc-dark { background:linear-gradient(135deg,#1A1A2E,#2D2D44); border:1px solid rgba(255,255,255,0.1); }
+  .cc-gold { background:linear-gradient(135deg,#B45309,#78350F); border:1px solid rgba(180,83,9,0.3); }
+  .coupon-bg-icon { position:absolute; right:-10px; top:50%; transform:translateY(-50%); font-size:5rem; opacity:0.12; }
+  .coupon-tag { display:inline-block; background:rgba(255,255,255,0.2); color:#fff; font-size:0.68rem; font-weight:700; padding:2px 8px; border-radius:6px; letter-spacing:1px; margin-bottom:0.7rem; }
+  .coupon-code-wrap { display:flex; align-items:center; gap:0.7rem; margin-bottom:0.5rem; }
+  .coupon-code { font-size:1.5rem; font-weight:800; letter-spacing:2px; color:#FFD580; }
+  .copy-btn { background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.3); color:#fff; font-size:0.72rem; font-weight:700; padding:3px 10px; border-radius:8px; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:background 0.2s; }
+  .copy-btn:hover { background:rgba(255,255,255,0.35); }
+  .coupon-title { font-size:1rem; font-weight:800; margin-bottom:0.3rem; }
+  .coupon-desc { font-size:0.8rem; opacity:0.85; line-height:1.6; margin-bottom:0.7rem; }
+  .coupon-marathi { font-size:0.73rem; opacity:0.7; font-family:'Noto Sans Devanagari',sans-serif; margin-bottom:0.8rem; }
+  .coupon-footer { display:flex; align-items:center; justify-content:space-between; }
+  .coupon-validity { font-size:0.7rem; opacity:0.7; }
+  .coupon-min { font-size:0.7rem; background:rgba(255,255,255,0.15); padding:2px 8px; border-radius:6px; }
+  .coupon-used { display:flex; align-items:center; gap:0.4rem; margin-top:0.6rem; }
+  .used-bar-wrap { flex:1; height:4px; background:rgba(255,255,255,0.2); border-radius:2px; overflow:hidden; }
+  .used-bar { height:100%; background:rgba(255,255,255,0.7); border-radius:2px; }
+  .used-label { font-size:0.65rem; opacity:0.7; white-space:nowrap; }
+
+  /* DEALS GRID */
+  .deals-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:1.2rem; margin-bottom:3rem; }
+  .deal-card { background:#fff; border-radius:var(--radius); border:1px solid var(--border); overflow:hidden; transition:all 0.25s; box-shadow:0 2px 12px rgba(26,95,180,0.06); }
+  .deal-card:hover { transform:translateY(-5px); box-shadow:0 12px 32px rgba(26,95,180,0.12); border-color:var(--orange); }
+  .deal-img { height:140px; background:var(--off-white); display:flex; align-items:center; justify-content:center; font-size:3.5rem; position:relative; }
+  .deal-discount-badge { position:absolute; top:10px; left:10px; background:var(--error); color:#fff; font-size:0.72rem; font-weight:800; padding:3px 8px; border-radius:8px; }
+  .deal-hot-badge { position:absolute; top:10px; right:10px; background:var(--orange); color:#fff; font-size:0.65rem; font-weight:800; padding:2px 7px; border-radius:6px; animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.7} }
+  .deal-body { padding:1rem; }
+  .deal-dept { font-size:0.68rem; font-weight:700; color:var(--blue); letter-spacing:1px; text-transform:uppercase; margin-bottom:0.2rem; }
+  .deal-name { font-size:0.92rem; font-weight:800; color:var(--text); margin-bottom:0.2rem; }
+  .deal-marathi { font-size:0.72rem; color:var(--gray); font-family:'Noto Sans Devanagari',sans-serif; margin-bottom:0.5rem; }
+  .deal-price-row { display:flex; align-items:center; gap:0.5rem; margin-bottom:0.6rem; }
+  .deal-price { font-size:1.1rem; font-weight:800; color:var(--text); }
+  .deal-old { font-size:0.8rem; color:var(--gray); text-decoration:line-through; }
+  .deal-save { font-size:0.72rem; font-weight:700; color:var(--success); background:var(--success-bg); padding:2px 7px; border-radius:6px; }
+  .deal-stock { font-size:0.72rem; color:var(--error); font-weight:700; margin-bottom:0.5rem; }
+  .stock-bar-wrap { height:4px; background:var(--gray-light); border-radius:2px; overflow:hidden; margin-bottom:0.6rem; }
+  .stock-bar { height:100%; border-radius:2px; background:linear-gradient(90deg,var(--success),var(--orange)); transition:width 0.5s; }
+  .add-btn { width:100%; padding:0.55rem; background:var(--orange); color:#fff; border:none; border-radius:10px; font-size:0.85rem; font-weight:800; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:all 0.2s; }
+  .add-btn:hover { background:var(--blue); }
+
+  /* COMBO OFFERS */
+  .combo-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1.2rem; margin-bottom:3rem; }
+  .combo-card { background:#fff; border-radius:16px; border:1px solid var(--border); padding:1.5rem; box-shadow:0 2px 12px rgba(26,95,180,0.06); transition:all 0.25s; }
+  .combo-card:hover { transform:translateY(-4px); box-shadow:0 12px 30px rgba(26,95,180,0.1); }
+  .combo-head { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:1rem; gap:0.5rem; }
+  .combo-title { font-size:1.05rem; font-weight:800; color:var(--text); }
+  .combo-badge { background:var(--orange); color:#fff; font-size:0.7rem; font-weight:800; padding:3px 10px; border-radius:20px; white-space:nowrap; flex-shrink:0; }
+  .combo-items { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1rem; }
+  .combo-item-chip { background:var(--off-white); border:1px solid var(--border); border-radius:8px; padding:0.35rem 0.7rem; font-size:0.78rem; font-weight:600; color:var(--text-soft); display:flex; align-items:center; gap:0.3rem; }
+  .combo-price-row { display:flex; align-items:center; gap:0.8rem; margin-bottom:1rem; }
+  .combo-price { font-size:1.4rem; font-weight:800; color:var(--orange); }
+  .combo-old { font-size:0.9rem; color:var(--gray); text-decoration:line-through; }
+  .combo-save-pill { background:var(--success-bg); color:var(--success); font-size:0.75rem; font-weight:800; padding:3px 10px; border-radius:20px; }
+  .combo-btn { width:100%; padding:0.75rem; background:linear-gradient(135deg,var(--orange),#D4620F); color:#fff; border:none; border-radius:12px; font-size:0.92rem; font-weight:800; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:transform 0.2s, box-shadow 0.2s; box-shadow:0 4px 16px rgba(244,120,32,0.35); }
+  .combo-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(244,120,32,0.45); }
+
+  /* SEASONAL BANNER */
+  .seasonal-banner { border-radius:20px; padding:2.5rem 2rem; margin-bottom:3rem; display:flex; align-items:center; gap:2rem; flex-wrap:wrap; position:relative; overflow:hidden; background:linear-gradient(135deg,#7C3AED,#5B21B6); color:#fff; }
+  .sb-icon { font-size:4rem; flex-shrink:0; }
+  .sb-content { flex:1; }
+  .sb-tag { display:inline-block; background:rgba(255,255,255,0.2); font-size:0.72rem; font-weight:700; padding:3px 10px; border-radius:20px; letter-spacing:1px; margin-bottom:0.5rem; }
+  .sb-title { font-size:clamp(1.3rem,3vw,1.8rem); font-weight:800; margin-bottom:0.4rem; }
+  .sb-desc { opacity:0.85; font-size:0.9rem; margin-bottom:1.2rem; line-height:1.7; }
+  .sb-btn { display:inline-block; background:#FFD580; color:#1A1A2E; padding:0.75rem 2rem; border-radius:25px; font-weight:800; font-size:0.92rem; text-decoration:none; border:none; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:transform 0.2s; }
+  .sb-btn:hover { transform:translateY(-2px); }
+  .sb-bg-text { position:absolute; right:-20px; bottom:-20px; font-size:8rem; opacity:0.06; }
+
+  /* FILTER ROW */
+  .filter-row { display:flex; gap:0.6rem; flex-wrap:wrap; margin-bottom:1.5rem; }
+  .fpill { padding:0.4rem 1.1rem; border-radius:20px; border:1.5px solid var(--border); background:#fff; color:var(--text-soft); font-size:0.82rem; font-weight:700; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:all 0.2s; }
+  .fpill.active, .fpill:hover { background:var(--orange); color:#fff; border-color:var(--orange); }
+
+  /* TOAST */
+  .toast { position:fixed; bottom:2rem; right:2rem; background:var(--blue); color:#fff; padding:0.8rem 1.4rem; border-radius:12px; font-weight:600; font-size:0.88rem; z-index:999; box-shadow:0 8px 24px rgba(0,0,0,0.2); display:none; }
+
+  @media(max-width:640px) {
+    .hero-stats { gap:1.5rem; }
+    .seasonal-banner { flex-direction:column; text-align:center; }
+    .sb-icon { font-size:3rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <span>📍 Bhangaram, Talodhi, Dist. Chandrapur</span>
+  <span>🕐 9AM–9PM &nbsp;|&nbsp; <a href="tel:8390901925">📞 8390901925</a></span>
+</div>
+
+<!-- NAVBAR -->
+<nav>
+  <a class="logo-area" href="index.html">
+    <div class="logo-icon">UG</div>
+    <div class="logo-text">
+      <span class="ug">UG Bazaar</span>
+      <span class="sub">Your Local Superstore</span>
+    </div>
+  </a>
+  <div class="nav-right">
+    <a class="nav-link" href="index.html">🛒 Shop</a>
+    <a class="nav-link" href="search.html">🔍 Search</a>
+    <a class="nav-link" href="tracking.html">📦 Orders</a>
+    <a class="nav-link nav-login-link" href="auth.html">👤 Login</a>
+    <a class="nav-link" href="cart.html">🛒 Cart <span class="cart-count-badge"></span></a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-blob1"></div>
+  <div class="hero-blob2"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">🔥 Limited Time Deals</div>
+    <h1>Aaj ke <span>Best Offers</span></h1>
+    <p>Coupons, Flash Deals, Combo Packs — sab ek hi jagah!</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num">6</div><div class="lbl">Active Coupons</div></div>
+      <div class="hero-stat"><div class="num">12</div><div class="lbl">Flash Deals</div></div>
+      <div class="hero-stat"><div class="num">₹50</div><div class="lbl">Max Savings</div></div>
+      <div class="hero-stat"><div class="num">3</div><div class="lbl">Combo Offers</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- COUNTDOWN -->
+<div class="countdown-bar">
+  <div class="countdown-inner">
+    <span class="countdown-label">⏰ Flash Sale khatam hone mein:</span>
+    <div class="countdown-boxes">
+      <div class="cb"><div class="cb-num" id="cd-h">08</div><div class="cb-lbl">Hours</div></div>
+      <span class="cb-sep">:</span>
+      <div class="cb"><div class="cb-num" id="cd-m">34</div><div class="cb-lbl">Mins</div></div>
+      <span class="cb-sep">:</span>
+      <div class="cb"><div class="cb-num" id="cd-s">12</div><div class="cb-lbl">Secs</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- COUPONS -->
+  <div class="sec-header">
+    <div class="sec-label">Exclusive Codes</div>
+    <div class="sec-title">🎁 Active <span>Coupons</span></div>
+    <div class="sec-line"></div>
+  </div>
+  <div class="coupons-grid">
+    <div class="coupon-card cc-blue">
+      <div class="coupon-bg-icon">🛒</div>
+      <div class="coupon-tag">GROCERY OFFER</div>
+      <div class="coupon-code-wrap">
+        <div class="coupon-code">UG10</div>
+        <button class="copy-btn" onclick="copyCoupon('UG10')">📋 Copy</button>
+      </div>
+      <div class="coupon-title">10% Off on Everything!</div>
+      <div class="coupon-desc">Poore order par flat 10% discount. Kisi bhi department ke products par valid.</div>
+      <div class="coupon-marathi">सर्व उत्पादनांवर 10% सूट मिळवा!</div>
+      <div class="coupon-footer">
+        <div class="coupon-validity">🗓 Valid till Apr 30, 2026</div>
+        <div class="coupon-min">Min ₹200</div>
+      </div>
+      <div class="coupon-used">
+        <div class="used-bar-wrap"><div class="used-bar" style="width:68%"></div></div>
+        <div class="used-label">34/50 used</div>
+      </div>
+    </div>
+
+    <div class="coupon-card cc-orange">
+      <div class="coupon-bg-icon">💰</div>
+      <div class="coupon-tag">FLAT DISCOUNT</div>
+      <div class="coupon-code-wrap">
+        <div class="coupon-code">UDAY20</div>
+        <button class="copy-btn" onclick="copyCoupon('UDAY20')">📋 Copy</button>
+      </div>
+      <div class="coupon-title">₹20 Straight Off!</div>
+      <div class="coupon-desc">Owner special — Uday Ainchwar ji ki taraf se ₹20 flat discount sabke liye.</div>
+      <div class="coupon-marathi">उदय अनचवार यांच्याकडून ₹20 थेट सूट!</div>
+      <div class="coupon-footer">
+        <div class="coupon-validity">🗓 Valid till May 15, 2026</div>
+        <div class="coupon-min">Min ₹300</div>
+      </div>
+      <div class="coupon-used">
+        <div class="used-bar-wrap"><div class="used-bar" style="width:24%"></div></div>
+        <div class="used-label">12/50 used</div>
+      </div>
+    </div>
+
+    <div class="coupon-card cc-green">
+      <div class="coupon-bg-icon">🎉</div>
+      <div class="coupon-tag">FIRST ORDER</div>
+      <div class="coupon-code-wrap">
+        <div class="coupon-code">FIRST50</div>
+        <button class="copy-btn" onclick="copyCoupon('FIRST50')">📋 Copy</button>
+      </div>
+      <div class="coupon-title">₹50 Off — Pehle Order Par!</div>
+      <div class="coupon-desc">Naye customers ke liye — pehli baar order karo aur ₹50 straight off pao!</div>
+      <div class="coupon-marathi">पहिल्या ऑर्डरवर ₹50 सूट — नवीन ग्राहकांसाठी!</div>
+      <div class="coupon-footer">
+        <div class="coupon-validity">🗓 Valid till Dec 31, 2026</div>
+        <div class="coupon-min">Min ₹500</div>
+      </div>
+      <div class="coupon-used">
+        <div class="used-bar-wrap"><div class="used-bar" style="width:16%"></div></div>
+        <div class="used-label">8/50 used</div>
+      </div>
+    </div>
+
+    <div class="coupon-card cc-purple">
+      <div class="coupon-bg-icon">🌾</div>
+      <div class="coupon-tag">KRUSHI SPECIAL</div>
+      <div class="coupon-code-wrap">
+        <div class="coupon-code">KISAN30</div>
+        <button class="copy-btn" onclick="copyCoupon('KISAN30')">📋 Copy</button>
+      </div>
+      <div class="coupon-title">30% Off Krushi Products!</div>
+      <div class="coupon-desc">Shetkari bandhu ke liye — seeds, fertilizer, tools sab par 30% off. Limited time!</div>
+      <div class="coupon-marathi">शेतकऱ्यांसाठी — कृषी उत्पादनांवर 30% सूट!</div>
+      <div class="coupon-footer">
+        <div class="coupon-validity">🗓 Valid till Apr 20, 2026</div>
+        <div class="coupon-min">Min ₹1000</div>
+      </div>
+      <div class="coupon-used">
+        <div class="used-bar-wrap"><div class="used-bar" style="width:5%"></div></div>
+        <div class="used-label">2/40 used</div>
+      </div>
+    </div>
+
+    <div class="coupon-card cc-dark">
+      <div class="coupon-bg-icon">⚡</div>
+      <div class="coupon-tag">FLASH DEAL</div>
+      <div class="coupon-code-wrap">
+        <div class="coupon-code">FLASH15</div>
+        <button class="copy-btn" onclick="copyCoupon('FLASH15')">📋 Copy</button>
+      </div>
+      <div class="coupon-title">15% Flash Discount!</div>
+      <div class="coupon-desc">Sirf aaj — electrical aur electronics products par 15% extra off. Jaldi karo!</div>
+      <div class="coupon-marathi">फक्त आज — इलेक्ट्रिकल उत्पादनांवर 15% अतिरिक्त सूट!</div>
+      <div class="coupon-footer">
+        <div class="coupon-validity">⏰ Aaj raat 12 baje tak</div>
+        <div class="coupon-min">Min ₹400</div>
+      </div>
+      <div class="coupon-used">
+        <div class="used-bar-wrap"><div class="used-bar" style="width:82%"></div></div>
+        <div class="used-label">41/50 used — Jaldi karo!</div>
+      </div>
+    </div>
+
+    <div class="coupon-card cc-gold">
+      <div class="coupon-bg-icon">🏠</div>
+      <div class="coupon-tag">FREE DELIVERY</div>
+      <div class="coupon-code-wrap">
+        <div class="coupon-code">FREEDEL</div>
+        <button class="copy-btn" onclick="copyCoupon('FREEDEL')">📋 Copy</button>
+      </div>
+      <div class="coupon-title">Free Delivery on Any Order!</div>
+      <div class="coupon-desc">Kitna bhi order karo — delivery bilkul free. Koi minimum order nahi!</div>
+      <div class="coupon-marathi">कितीही ऑर्डर करा — डिलिव्हरी बिल्कुल मोफत!</div>
+      <div class="coupon-footer">
+        <div class="coupon-validity">🗓 Valid till Apr 15, 2026</div>
+        <div class="coupon-min">No minimum</div>
+      </div>
+      <div class="coupon-used">
+        <div class="used-bar-wrap"><div class="used-bar" style="width:44%"></div></div>
+        <div class="used-label">22/50 used</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEASONAL BANNER -->
+  <div class="seasonal-banner">
+    <div class="sb-icon">🌾</div>
+    <div class="sb-content">
+      <div class="sb-tag">SEASONAL OFFER</div>
+      <div class="sb-title">Rabi Season Special Sale!</div>
+      <div class="sb-desc">Shetkari bandhu — Rabi season ke liye special combo available hai. Seeds, fertilizer, tools sab ek saath lo aur maximum bachao. Sirf UG Bazaar mein!</div>
+      <button class="sb-btn" onclick="showToast('Krushi Kendra page kholenge!')">🌾 Abhi Dekho →</button>
+    </div>
+    <div class="sb-bg-text">🌾</div>
+  </div>
+
+  <!-- FLASH DEALS -->
+  <div class="sec-header">
+    <div class="sec-label">Limited Time</div>
+    <div class="sec-title">⚡ Flash <span>Deals</span></div>
+    <div class="sec-line"></div>
+  </div>
+  <div class="filter-row">
+    <button class="fpill active" onclick="filterDeals('all',this)">All</button>
+    <button class="fpill" onclick="filterDeals('Grocery',this)">🛒 Grocery</button>
+    <button class="fpill" onclick="filterDeals('Electrical',this)">💡 Electrical</button>
+    <button class="fpill" onclick="filterDeals('Hardware',this)">🔧 Hardware</button>
+    <button class="fpill" onclick="filterDeals('Krushi Kendra',this)">🌾 Krushi</button>
+    <button class="fpill" onclick="filterDeals('Electronics',this)">📱 Electronics</button>
+  </div>
+  <div class="deals-grid" id="deals-grid"></div>
+
+  <!-- COMBO OFFERS -->
+  <div class="sec-header">
+    <div class="sec-label">Bundle & Save</div>
+    <div class="sec-title">📦 Combo <span>Packs</span></div>
+    <div class="sec-line"></div>
+  </div>
+  <div class="combo-grid">
+    <div class="combo-card">
+      <div class="combo-head">
+        <div class="combo-title">🏠 Ghar Ka Rashan Pack</div>
+        <div class="combo-badge">25% OFF</div>
+      </div>
+      <div class="combo-items">
+        <div class="combo-item-chip">🌾 Basmati Rice 5kg</div>
+        <div class="combo-item-chip">🫘 Toor Dal 1kg</div>
+        <div class="combo-item-chip">🛢 Sunflower Oil 1L</div>
+        <div class="combo-item-chip">🧂 Salt 1kg</div>
+      </div>
+      <div class="combo-price-row">
+        <div class="combo-price">₹699</div>
+        <div class="combo-old">₹930</div>
+        <div class="combo-save-pill">Save ₹231</div>
+      </div>
+      <button class="combo-btn" onclick="Cart.add('Ghar Ka Rashan Pack'); showToast('✅ Cart mein add hua! ₹699'); setTimeout(()=>window.location='cart.html',1200)">Add to Cart →</button>
+    </div>
+
+    <div class="combo-card">
+      <div class="combo-head">
+        <div class="combo-title">🌾 Krushi Starter Kit</div>
+        <div class="combo-badge">30% OFF</div>
+      </div>
+      <div class="combo-items">
+        <div class="combo-item-chip">🌱 Hybrid Seeds 500g</div>
+        <div class="combo-item-chip">🌿 DAP Fertilizer 5kg</div>
+        <div class="combo-item-chip">💧 Pesticide Spray</div>
+      </div>
+      <div class="combo-price-row">
+        <div class="combo-price">₹999</div>
+        <div class="combo-old">₹1,430</div>
+        <div class="combo-save-pill">Save ₹431</div>
+      </div>
+      <button class="combo-btn" onclick="Cart.add('Krushi Starter Kit'); showToast('✅ Cart mein add hua! ₹999'); setTimeout(()=>window.location='cart.html',1200)">Add to Cart →</button>
+    </div>
+
+    <div class="combo-card">
+      <div class="combo-head">
+        <div class="combo-title">💡 Ghar Wiring Kit</div>
+        <div class="combo-badge">20% OFF</div>
+      </div>
+      <div class="combo-items">
+        <div class="combo-item-chip">💡 LED Bulb 9W × 5</div>
+        <div class="combo-item-chip">🔌 Electric Wire 10m</div>
+        <div class="combo-item-chip">🔲 Switch Board</div>
+      </div>
+      <div class="combo-price-row">
+        <div class="combo-price">₹749</div>
+        <div class="combo-old">₹936</div>
+        <div class="combo-save-pill">Save ₹187</div>
+      </div>
+      <button class="combo-btn" onclick="Cart.add('Ghar Wiring Kit'); showToast('✅ Cart mein add hua! ₹749'); setTimeout(()=>window.location='cart.html',1200)">Add to Cart →</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DEALS DATA ──
+const deals = [
+  { emoji:'🌾', name:'Basmati Rice 5kg', marathi:'बासमती तांदूळ', dept:'Grocery', price:280, old:380, discount:26, stock:8, maxStock:50, hot:true },
+  { emoji:'💡', name:'LED Bulb 9W (Pack of 3)', marathi:'LED बल्ब पॅक', dept:'Electrical', price:150, old:270, discount:44, stock:15, maxStock:50, hot:true },
+  { emoji:'🌱', name:'Hybrid Seeds 500g', marathi:'हायब्रीड बियाणे', dept:'Krushi Kendra', price:126, old:180, discount:30, stock:22, maxStock:50, hot:false },
+  { emoji:'🔨', name:'Steel Hammer', marathi:'स्टील हातोडा', dept:'Hardware', price:176, old:280, discount:37, stock:5, maxStock:30, hot:false },
+  { emoji:'📱', name:'Mobile Charger', marathi:'मोबाईल चार्जर', dept:'Electronics', price:149, old:299, discount:50, stock:10, maxStock:40, hot:true },
+  { emoji:'🫘', name:'Toor Dal 1kg', marathi:'तूर डाळ', dept:'Grocery', price:116, old:170, discount:32, stock:30, maxStock:60, hot:false },
+  { emoji:'🔌', name:'Electric Wire 10m', marathi:'इलेक्ट्रिक तार', dept:'Electrical', price:196, old:340, discount:42, stock:3, maxStock:25, hot:true },
+  { emoji:'🌿', name:'DAP Fertilizer 5kg', marathi:'डीएपी खत', dept:'Krushi Kendra', price:455, old:650, discount:30, stock:18, maxStock:40, hot:false },
+  { emoji:'🛢', name:'Sunflower Oil 1L', marathi:'सूर्यफूल तेल', dept:'Grocery', price:132, old:185, discount:29, stock:40, maxStock:80, hot:false },
+  { emoji:'🌀', name:'Table Fan', marathi:'टेबल फॅन', dept:'Electronics', price:680, old:1100, discount:38, stock:6, maxStock:20, hot:true },
+  { emoji:'🔩', name:'Nut Bolt Set (50pcs)', marathi:'नट बोल्ट सेट', dept:'Hardware', price:85, old:130, discount:35, stock:25, maxStock:50, hot:false },
+  { emoji:'🌾', name:'Wheat Seeds 1kg', marathi:'गहू बियाणे', dept:'Krushi Kendra', price:90, old:140, discount:36, stock:12, maxStock:35, hot:false },
+];
+
+let cart = 0;
+
+function renderDeals(filter) {
+  const filtered = filter === 'all' ? deals : deals.filter(d => d.dept === filter);
+  document.getElementById('deals-grid').innerHTML = filtered.map(d => `
+    <div class="deal-card">
+      <div class="deal-img">
+        <span>${d.emoji}</span>
+        <div class="deal-discount-badge">-${d.discount}%</div>
+        ${d.hot ? '<div class="deal-hot-badge">🔥 HOT</div>' : ''}
+      </div>
+      <div class="deal-body">
+        <div class="deal-dept">${d.dept}</div>
+        <div class="deal-name">${d.name}</div>
+        <div class="deal-marathi">${d.marathi}</div>
+        <div class="deal-price-row">
+          <span class="deal-price">₹${d.price}</span>
+          <span class="deal-old">₹${d.old}</span>
+          <span class="deal-save">Save ₹${d.old - d.price}</span>
+        </div>
+        <div class="deal-stock">⚡ Sirf ${d.stock} bacha!</div>
+        <div class="stock-bar-wrap">
+          <div class="stock-bar" style="width:${Math.round((d.stock/d.maxStock)*100)}%"></div>
+        </div>
+        <button class="add-btn" onclick="addToCart('${d.name}')">🛒 Add to Cart</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterDeals(filter, btn) {
+  document.querySelectorAll('.fpill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderDeals(filter);
+}
+
+function addToCart(name) {
+  Cart.add(name);
+  showToast(`✅ ${name} cart mein add hua! 🛒`);
+}
+
+function copyCoupon(code) {
+  navigator.clipboard.writeText(code).catch(()=>{});
+  showToast(`📋 Coupon "${code}" copy ho gaya! Cart mein apply karo.`);
+}
+
+// ── COUNTDOWN TIMER ──
+let totalSecs = 8 * 3600 + 34 * 60 + 12;
+function updateCountdown() {
+  if(totalSecs <= 0) { document.querySelector('.countdown-bar').innerHTML = '<div style="color:#fff;font-weight:800;text-align:center">⏰ Flash Sale Khatam Ho Gaya!</div>'; return; }
+  totalSecs--;
+  const h = Math.floor(totalSecs / 3600);
+  const m = Math.floor((totalSecs % 3600) / 60);
+  const s = totalSecs % 60;
+  document.getElementById('cd-h').textContent = String(h).padStart(2,'0');
+  document.getElementById('cd-m').textContent = String(m).padStart(2,'0');
+  document.getElementById('cd-s').textContent = String(s).padStart(2,'0');
+}
+setInterval(updateCountdown, 1000);
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 2800);
+}
+
+// ── INIT ──
+renderDeals('all');
+</script>
+<script src="nav-fix.js"></script>
+</body>
+</html>

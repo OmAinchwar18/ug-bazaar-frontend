@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Tracking — UG Bazaar</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #F47820;
+    --blue: #1A5FB4;
+    --blue-dark: #0D3A6E;
+    --blue-light: #3A82D4;
+    --gold: #E8A020;
+    --off-white: #F4F6FB;
+    --gray: #6B7280;
+    --gray-light: #F3F4F6;
+    --text: #1A1A2E;
+    --text-soft: #4B5563;
+    --border: #E2E8F0;
+    --success: #16A34A;
+    --success-bg: #F0FDF4;
+    --radius: 14px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Baloo 2', sans-serif; background: var(--off-white); color: var(--text); min-height: 100vh; }
+
+  /* TOPBAR */
+  .topbar { background: var(--blue-dark); color: rgba(255,255,255,0.85); font-size: 0.78rem; padding: 0.4rem 2rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.3rem; }
+  .topbar a { color: #FFD580; text-decoration: none; font-weight: 600; }
+
+  /* NAVBAR */
+  nav { background: #fff; display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 2rem; box-shadow: 0 2px 12px rgba(26,95,180,0.08); position: sticky; top: 0; z-index: 200; }
+  .logo-area { display: flex; align-items: center; gap: 0.7rem; text-decoration: none; }
+  .logo-icon { width: 44px; height: 44px; background: linear-gradient(135deg, var(--orange), var(--gold)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 800; color: #fff; }
+  .logo-text .ug { font-size: 1.2rem; font-weight: 800; color: var(--blue); display: block; line-height: 1; }
+  .logo-text .sub { font-size: 0.7rem; font-weight: 600; color: var(--orange); letter-spacing: 1.5px; text-transform: uppercase; }
+  .nav-right { display: flex; align-items: center; gap: 1rem; }
+  .nav-link { color: var(--text-soft); text-decoration: none; font-size: 0.88rem; font-weight: 600; transition: color 0.2s; }
+  .nav-link:hover { color: var(--orange); }
+
+  /* HERO STRIP */
+  .hero-strip { background: linear-gradient(135deg, var(--blue-dark), var(--blue)); padding: 2.5rem 2rem; text-align: center; color: #fff; }
+  .hero-strip h1 { font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 800; margin-bottom: 0.4rem; }
+  .hero-strip p { opacity: 0.8; font-size: 0.95rem; }
+
+  /* SEARCH BOX */
+  .search-wrap { max-width: 560px; margin: -1.5rem auto 0; padding: 0 1.5rem; position: relative; z-index: 10; }
+  .search-card { background: #fff; border-radius: var(--radius); border: 1px solid var(--border); padding: 1.5rem; box-shadow: 0 8px 32px rgba(26,95,180,0.12); }
+  .search-card h3 { font-size: 1rem; font-weight: 800; color: var(--text); margin-bottom: 1rem; }
+  .search-row { display: flex; gap: 0.7rem; }
+  .search-input { flex: 1; padding: 0.75rem 1rem; border: 1.5px solid var(--border); border-radius: 10px; font-size: 0.92rem; font-family: 'Baloo 2', sans-serif; color: var(--text); background: var(--off-white); outline: none; transition: border-color 0.2s; }
+  .search-input:focus { border-color: var(--blue); background: #fff; }
+  .search-btn { padding: 0.75rem 1.4rem; background: var(--orange); color: #fff; border: none; border-radius: 10px; font-weight: 800; font-size: 0.9rem; cursor: pointer; font-family: 'Baloo 2', sans-serif; transition: background 0.2s; white-space: nowrap; }
+  .search-btn:hover { background: var(--blue); }
+  .demo-orders { margin-top: 0.8rem; font-size: 0.78rem; color: var(--gray); }
+  .demo-orders span { color: var(--blue); font-weight: 700; cursor: pointer; margin-right: 0.5rem; }
+  .demo-orders span:hover { color: var(--orange); }
+
+  /* MAIN */
+  .main { max-width: 860px; margin: 2rem auto; padding: 0 1.5rem 4rem; }
+
+  /* ORDER CARD */
+  .order-card { background: #fff; border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; margin-bottom: 1.5rem; box-shadow: 0 4px 20px rgba(26,95,180,0.07); }
+  .order-card-head { padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.8rem; }
+  .order-meta { display: flex; flex-direction: column; gap: 0.2rem; }
+  .order-id { font-size: 1.1rem; font-weight: 800; color: var(--text); }
+  .order-date { font-size: 0.78rem; color: var(--gray); }
+  .order-type-badge { display: flex; align-items: center; gap: 0.4rem; }
+  .badge { font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+  .badge-delivery { background: rgba(26,95,180,0.1); color: var(--blue); }
+  .badge-pickup { background: rgba(232,160,32,0.15); color: #7A5200; }
+  .badge-success { background: var(--success-bg); color: var(--success); }
+  .badge-pending { background: rgba(244,120,32,0.1); color: var(--orange); }
+  .badge-cancelled { background: #FEF2F2; color: #DC2626; }
+  .order-card-body { padding: 1.5rem; }
+
+  /* TRACKING STEPPER — VERTICAL */
+  .stepper { position: relative; padding-left: 2.2rem; }
+  .stepper-line { position: absolute; left: 14px; top: 16px; bottom: 16px; width: 2px; background: var(--border); }
+  .stepper-progress { position: absolute; left: 14px; top: 16px; width: 2px; background: linear-gradient(180deg, var(--success), var(--blue-light)); transition: height 0.8s ease; }
+  .step-item { position: relative; display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.8rem; }
+  .step-item:last-child { margin-bottom: 0; }
+  .step-dot { width: 28px; height: 28px; border-radius: 50%; border: 2.5px solid var(--border); background: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0; margin-left: -2.2rem; position: relative; z-index: 2; transition: all 0.4s; }
+  .step-dot.done { background: var(--success); border-color: var(--success); }
+  .step-dot.active { background: var(--orange); border-color: var(--orange); box-shadow: 0 0 0 4px rgba(244,120,32,0.2); animation: pulse 1.8s infinite; }
+  .step-dot.pending { background: #fff; border-color: var(--border); }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 4px rgba(244,120,32,0.2)} 50%{box-shadow:0 0 0 8px rgba(244,120,32,0.08)} }
+  .step-content { padding-top: 2px; flex: 1; }
+  .step-title { font-size: 0.95rem; font-weight: 800; color: var(--text); margin-bottom: 0.15rem; }
+  .step-title.pending { color: var(--gray); font-weight: 600; }
+  .step-desc { font-size: 0.8rem; color: var(--text-soft); line-height: 1.5; }
+  .step-time { font-size: 0.72rem; color: var(--gray); margin-top: 0.2rem; font-weight: 600; }
+  .step-marathi { font-size: 0.75rem; color: var(--gray); font-family: 'Noto Sans Devanagari', sans-serif; }
+
+  /* ORDER ITEMS */
+  .order-items-list { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+  .order-items-title { font-size: 0.85rem; font-weight: 800; color: var(--text); margin-bottom: 0.8rem; }
+  .order-item-row { display: flex; align-items: center; gap: 0.8rem; padding: 0.6rem 0; border-bottom: 1px solid var(--border); }
+  .order-item-row:last-child { border-bottom: none; }
+  .oi-emoji { width: 40px; height: 40px; background: var(--off-white); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
+  .oi-name { flex: 1; font-size: 0.88rem; font-weight: 700; color: var(--text); }
+  .oi-marathi { font-size: 0.72rem; color: var(--gray); font-family: 'Noto Sans Devanagari', sans-serif; }
+  .oi-qty { font-size: 0.78rem; color: var(--text-soft); }
+  .oi-price { font-size: 0.92rem; font-weight: 800; color: var(--text); }
+
+  /* TOTAL ROW */
+  .order-total-row { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding: 0.8rem 1rem; background: var(--off-white); border-radius: 10px; }
+  .order-total-label { font-size: 0.9rem; font-weight: 700; color: var(--text-soft); }
+  .order-total-val { font-size: 1.1rem; font-weight: 800; color: var(--orange); }
+
+  /* ACTION BUTTONS */
+  .order-actions { display: flex; gap: 0.7rem; margin-top: 1.2rem; flex-wrap: wrap; }
+  .action-btn { padding: 0.55rem 1.1rem; border-radius: 10px; font-weight: 700; font-size: 0.82rem; cursor: pointer; font-family: 'Baloo 2', sans-serif; transition: all 0.2s; border: 1.5px solid var(--border); background: #fff; color: var(--text-soft); }
+  .action-btn:hover { border-color: var(--blue); color: var(--blue); }
+  .action-btn.wa { background: #25D366; color: #fff; border-color: #25D366; }
+  .action-btn.wa:hover { background: #1DA050; border-color: #1DA050; }
+  .action-btn.danger { color: #DC2626; border-color: #FECACA; }
+  .action-btn.danger:hover { background: #FEF2F2; }
+
+  /* NOTIFY STRIP */
+  .notify-strip { background: rgba(26,95,180,0.05); border: 1px solid rgba(26,95,180,0.12); border-radius: 12px; padding: 1rem 1.2rem; display: flex; align-items: center; gap: 1rem; margin-top: 1.2rem; }
+  .notify-icon { font-size: 1.5rem; flex-shrink: 0; }
+  .notify-text { font-size: 0.82rem; color: var(--text-soft); line-height: 1.5; }
+  .notify-text strong { color: var(--blue); }
+
+  /* EMPTY / NOT FOUND */
+  .not-found { text-align: center; padding: 3rem 1rem; }
+  .not-found-icon { font-size: 4rem; margin-bottom: 1rem; }
+  .not-found h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+  .not-found p { color: var(--text-soft); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+  /* MY ORDERS LIST */
+  .my-orders-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; }
+  .my-orders-head h2 { font-size: 1.2rem; font-weight: 800; }
+  .filter-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .ftab { padding: 0.35rem 0.9rem; border-radius: 20px; border: 1.5px solid var(--border); background: #fff; color: var(--text-soft); font-size: 0.8rem; font-weight: 700; cursor: pointer; font-family: 'Baloo 2', sans-serif; transition: all 0.2s; }
+  .ftab.active, .ftab:hover { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 2rem; right: 2rem; background: var(--blue); color: #fff; padding: 0.8rem 1.4rem; border-radius: 12px; font-weight: 600; font-size: 0.88rem; z-index: 999; box-shadow: 0 8px 24px rgba(0,0,0,0.2); display: none; }
+
+  @media(max-width: 600px) {
+    .search-row { flex-direction: column; }
+    .order-card-head { flex-direction: column; align-items: flex-start; }
+    .order-actions { flex-direction: column; }
+    .action-btn { text-align: center; }
+    nav .nav-right { gap: 0.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <span>📍 Bhangaram, Talodhi, Dist. Chandrapur</span>
+  <span>🕐 9AM–9PM &nbsp;|&nbsp; <a href="tel:8390901925">📞 8390901925</a></span>
+</div>
+
+<!-- NAVBAR -->
+<nav>
+  <a class="logo-area" href="index.html">
+    <div class="logo-icon">UG</div>
+    <div class="logo-text">
+      <span class="ug">UG Bazaar</span>
+      <span class="sub">Your Local Superstore</span>
+    </div>
+  </a>
+  <div class="nav-right">
+    <a class="nav-link" href="index.html">🛒 Shop</a>
+    <a class="nav-link" href="search.html">🔍 Search</a>
+    <a class="nav-link" href="cart.html">🛒 Cart <span class="cart-count-badge"></span></a>
+    <a class="nav-link" href="profile.html">👤 Profile</a>
+    <a class="nav-link nav-login-link" href="auth.html">👤 Login</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero-strip">
+  <h1>📦 Order Tracking</h1>
+  <p>Apne order ka live status yahan check karein</p>
+</div>
+
+<!-- SEARCH -->
+<div class="search-wrap">
+  <div class="search-card">
+    <h3>🔍 Order ID se Track Karein</h3>
+    <div class="search-row">
+      <input class="search-input" id="track-input" placeholder="Order ID daalo (e.g. #UG12345)" onkeydown="if(event.key==='Enter')trackOrder()">
+      <button class="search-btn" onclick="trackOrder()">Track Karein</button>
+    </div>
+    <div class="demo-orders">
+      Demo orders try karein:
+      <span onclick="quickTrack('#UG10001')">🚀 #UG10001</span>
+      <span onclick="quickTrack('#UG10002')">🏪 #UG10002</span>
+      <span onclick="quickTrack('#UG10003')">✅ #UG10003</span>
+      <span onclick="quickTrack('#UG10004')">❌ #UG10004</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- MY ORDERS -->
+  <div id="my-orders-section">
+    <div class="my-orders-head">
+      <h2>📋 Mere Orders</h2>
+      <div class="filter-tabs">
+        <button class="ftab active" onclick="filterOrders('all',this)">Sab</button>
+        <button class="ftab" onclick="filterOrders('delivery',this)">Delivery</button>
+        <button class="ftab" onclick="filterOrders('pickup',this)">Pickup</button>
+        <button class="ftab" onclick="filterOrders('delivered',this)">Delivered</button>
+      </div>
+    </div>
+    <div id="orders-list"></div>
+  </div>
+
+  <!-- SINGLE ORDER TRACK RESULT -->
+  <div id="track-result" style="display:none">
+    <div style="margin-bottom:1rem">
+      <button onclick="backToOrders()" style="background:none;border:none;color:var(--blue);font-weight:700;font-size:0.88rem;cursor:pointer;font-family:'Baloo 2',sans-serif;display:flex;align-items:center;gap:0.3rem;">← Sare orders dekho</button>
+    </div>
+    <div id="track-card-container"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DEMO ORDERS DATA ──
+const allOrders = [
+  {
+    id: '#UG10001',
+    date: 'Apr 3, 2026 — 11:30 AM',
+    type: 'delivery',
+    status: 'out_for_delivery',
+    customer: 'Ramesh Borkar',
+    village: 'Bhangaram',
+    mobile: '9876543210',
+    payment: 'UPI',
+    items: [
+      { emoji:'🌾', name:'Basmati Rice 5kg', marathi:'बासमती तांदूळ', qty:2, price:320 },
+      { emoji:'🫘', name:'Toor Dal 1kg', marathi:'तूर डाळ', qty:1, price:145 },
+    ],
+    total: 785,
+    steps: [
+      { key:'placed', title:'Order Placed', marathi:'ऑर्डर दिला', desc:'Aapka order receive hua.', time:'Apr 3 — 11:30 AM', done:true, active:false },
+      { key:'confirmed', title:'Order Confirmed', marathi:'ऑर्डर कन्फर्म', desc:'UG Bazaar ne order confirm kiya.', time:'Apr 3 — 11:45 AM', done:true, active:false },
+      { key:'packed', title:'Order Packed', marathi:'पॅक झाला', desc:'Aapka order pack ho gaya.', time:'Apr 3 — 12:15 PM', done:true, active:false },
+      { key:'out', title:'Out for Delivery', marathi:'डिलिव्हरीसाठी निघाला', desc:'Delivery boy aapke taraf aa raha hai.', time:'Apr 3 — 1:00 PM', done:false, active:true },
+      { key:'delivered', title:'Delivered', marathi:'डिलिव्हर झाला', desc:'Order aapke ghar pahunch gaya.', time:'—', done:false, active:false },
+    ]
+  },
+  {
+    id: '#UG10002',
+    date: 'Apr 2, 2026 — 3:00 PM',
+    type: 'pickup',
+    status: 'ready_pickup',
+    customer: 'Suresh Meshram',
+    village: 'Talodhi',
+    mobile: '9823456780',
+    payment: 'Cash on Delivery',
+    items: [
+      { emoji:'💡', name:'LED Bulb 9W', marathi:'LED बल्ब', qty:3, price:65 },
+      { emoji:'🔌', name:'Electric Wire 10m', marathi:'इलेक्ट्रिक तार', qty:1, price:280 },
+    ],
+    total: 475,
+    steps: [
+      { key:'placed', title:'Order Placed', marathi:'ऑर्डर दिला', desc:'Pickup order receive hua.', time:'Apr 2 — 3:00 PM', done:true, active:false },
+      { key:'confirmed', title:'Order Confirmed', marathi:'ऑर्डर कन्फर्म', desc:'UG Bazaar ne confirm kiya.', time:'Apr 2 — 3:10 PM', done:true, active:false },
+      { key:'ready', title:'Ready for Pickup', marathi:'पिकअपसाठी तयार', desc:'Aapka order ready hai. Shop par aa jaiye!', time:'Apr 2 — 4:30 PM', done:false, active:true },
+      { key:'picked', title:'Picked Up', marathi:'उचलला', desc:'Aapne order pickup kar liya.', time:'—', done:false, active:false },
+    ]
+  },
+  {
+    id: '#UG10003',
+    date: 'Mar 30, 2026 — 10:00 AM',
+    type: 'delivery',
+    status: 'delivered',
+    customer: 'Priya Gaikwad',
+    village: 'Bhangaram',
+    mobile: '9765432100',
+    payment: 'Razorpay',
+    items: [
+      { emoji:'🔨', name:'Steel Hammer', marathi:'स्टील हातोडा', qty:1, price:220 },
+      { emoji:'🌱', name:'Hybrid Seeds 500g', marathi:'हायब्रीड बियाणे', qty:2, price:180 },
+    ],
+    total: 580,
+    steps: [
+      { key:'placed', title:'Order Placed', marathi:'ऑर्डर दिला', desc:'Order receive hua.', time:'Mar 30 — 10:00 AM', done:true, active:false },
+      { key:'confirmed', title:'Order Confirmed', marathi:'ऑर्डर कन्फर्म', desc:'Confirmed by UG Bazaar.', time:'Mar 30 — 10:15 AM', done:true, active:false },
+      { key:'packed', title:'Order Packed', marathi:'पॅक झाला', desc:'Pack ho gaya.', time:'Mar 30 — 11:00 AM', done:true, active:false },
+      { key:'out', title:'Out for Delivery', marathi:'डिलिव्हरीसाठी निघाला', desc:'Delivery boy gaya tha.', time:'Mar 30 — 12:00 PM', done:true, active:false },
+      { key:'delivered', title:'Delivered ✅', marathi:'डिलिव्हर झाला', desc:'Order successfully deliver hua!', time:'Mar 30 — 1:30 PM', done:true, active:false },
+    ]
+  },
+  {
+    id: '#UG10004',
+    date: 'Mar 28, 2026 — 5:00 PM',
+    type: 'delivery',
+    status: 'cancelled',
+    customer: 'Anil Thakre',
+    village: 'Talodhi',
+    mobile: '9812345670',
+    payment: 'UPI',
+    items: [
+      { emoji:'🛋', name:'Wooden Chair', marathi:'लाकडी खुर्ची', qty:1, price:1200 },
+    ],
+    total: 1200,
+    steps: [
+      { key:'placed', title:'Order Placed', marathi:'ऑर्डर दिला', desc:'Order receive hua tha.', time:'Mar 28 — 5:00 PM', done:true, active:false },
+      { key:'cancelled', title:'Order Cancelled', marathi:'रद्द झाला', desc:'Customer request par order cancel hua.', time:'Mar 28 — 5:30 PM', done:true, active:false },
+    ]
+  },
+];
+
+function getStatusInfo(status) {
+  const map = {
+    'out_for_delivery': { label:'Out for Delivery 🚀', cls:'badge-pending' },
+    'ready_pickup':     { label:'Ready for Pickup 🏪', cls:'badge-pending' },
+    'delivered':        { label:'Delivered ✅', cls:'badge-success' },
+    'cancelled':        { label:'Cancelled ❌', cls:'badge-cancelled' },
+    'confirmed':        { label:'Confirmed 👍', cls:'badge-delivery' },
+    'packed':           { label:'Packed 📦', cls:'badge-delivery' },
+  };
+  return map[status] || { label: status, cls: 'badge-delivery' };
+}
+
+function buildOrderCard(order, expanded) {
+  const si = getStatusInfo(order.status);
+  const typeBadge = order.type === 'delivery'
+    ? '<span class="badge badge-delivery">🚀 Home Delivery</span>'
+    : '<span class="badge badge-pickup">🏪 Shop Pickup</span>';
+
+  const stepsHTML = buildStepper(order);
+  const itemsHTML = order.items.map(i => `
+    <div class="order-item-row">
+      <div class="oi-emoji">${i.emoji}</div>
+      <div style="flex:1">
+        <div class="oi-name">${i.name}</div>
+        <div class="oi-marathi">${i.marathi}</div>
+      </div>
+      <div class="oi-qty">× ${i.qty}</div>
+      <div class="oi-price">₹${i.price * i.qty}</div>
+    </div>
+  `).join('');
+
+  const notifyHTML = order.status !== 'delivered' && order.status !== 'cancelled' ? `
+    <div class="notify-strip">
+      <div class="notify-icon">🔔</div>
+      <div class="notify-text">
+        <strong>WhatsApp + SMS</strong> par update milega jab status change hoga.<br>
+        Number: ${order.mobile}
+      </div>
+    </div>` : '';
+
+  const cancelBtn = (order.status === 'placed' || order.status === 'confirmed')
+    ? `<button class="action-btn danger" onclick="cancelOrder('${order.id}')">❌ Order Cancel</button>` : '';
+
+  return `
+    <div class="order-card">
+      <div class="order-card-head">
+        <div class="order-meta">
+          <div class="order-id">${order.id}</div>
+          <div class="order-date">📅 ${order.date} &nbsp;|&nbsp; 💳 ${order.payment}</div>
+        </div>
+        <div class="order-type-badge">
+          ${typeBadge}
+          <span class="badge ${si.cls}">${si.label}</span>
+        </div>
+      </div>
+      <div class="order-card-body">
+        <div class="stepper">
+          <div class="stepper-line"></div>
+          ${stepsHTML}
+        </div>
+        <div class="order-items-list">
+          <div class="order-items-title">🛍 Order Items</div>
+          ${itemsHTML}
+          <div class="order-total-row">
+            <span class="order-total-label">Total Amount</span>
+            <span class="order-total-val">₹${order.total}</span>
+          </div>
+        </div>
+        ${notifyHTML}
+        <div class="order-actions">
+          <a class="action-btn wa" href="https://wa.me/918390901925?text=Mera order ${order.id} ka status kya hai?" target="_blank">💬 WhatsApp pe Poochho</a>
+          <button class="action-btn" onclick="showToast('📞 Calling 8390901925...')">📞 Call Shop</button>
+          <button class="action-btn" onclick="showToast('🔄 Status refresh ho gaya!')">🔄 Refresh</button>
+          ${cancelBtn}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function buildStepper(order) {
+  let doneCount = order.steps.filter(s => s.done).length;
+  let total = order.steps.length;
+  return order.steps.map((s, i) => {
+    let dotClass = s.active ? 'active' : s.done ? 'done' : 'pending';
+    let dotIcon = s.done ? '✓' : s.active ? '●' : (i + 1);
+    let titleClass = (!s.done && !s.active) ? 'pending' : '';
+    return `
+      <div class="step-item">
+        <div class="step-dot ${dotClass}">${dotIcon}</div>
+        <div class="step-content">
+          <div class="step-title ${titleClass}">${s.title}</div>
+          <div class="step-marathi">${s.marathi}</div>
+          ${s.done || s.active ? `<div class="step-desc">${s.desc}</div>` : ''}
+          ${s.time !== '—' && (s.done || s.active) ? `<div class="step-time">🕐 ${s.time}</div>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ── RENDER MY ORDERS ──
+let currentFilter = 'all';
+function renderOrders(filter) {
+  currentFilter = filter;
+  const list = document.getElementById('orders-list');
+  let filtered = allOrders;
+  if(filter === 'delivery') filtered = allOrders.filter(o => o.type === 'delivery');
+  if(filter === 'pickup') filtered = allOrders.filter(o => o.type === 'pickup');
+  if(filter === 'delivered') filtered = allOrders.filter(o => o.status === 'delivered');
+  if(filtered.length === 0) {
+    list.innerHTML = `<div class="not-found"><div class="not-found-icon">📭</div><h3>Koi order nahi mila</h3><p>Is filter mein koi order nahi hai.</p></div>`;
+    return;
+  }
+  list.innerHTML = filtered.map(o => buildOrderCard(o, false)).join('');
+}
+
+function filterOrders(filter, btn) {
+  document.querySelectorAll('.ftab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderOrders(filter);
+}
+
+// ── TRACK BY ORDER ID ──
+function trackOrder() {
+  const id = document.getElementById('track-input').value.trim().toUpperCase();
+  if(!id) { showToast('❌ Order ID daalo!'); return; }
+  const order = allOrders.find(o => o.id === id || o.id === '#' + id);
+  if(!order) {
+    showToast('❌ Order nahi mila! ID check karo.');
+    return;
+  }
+  showTrackResult(order);
+}
+
+function quickTrack(id) {
+  document.getElementById('track-input').value = id;
+  const order = allOrders.find(o => o.id === id);
+  if(order) showTrackResult(order);
+}
+
+function showTrackResult(order) {
+  document.getElementById('my-orders-section').style.display = 'none';
+  document.getElementById('track-result').style.display = 'block';
+  document.getElementById('track-card-container').innerHTML = buildOrderCard(order, true);
+  document.getElementById('track-result').scrollIntoView({ behavior: 'smooth' });
+}
+
+function backToOrders() {
+  document.getElementById('track-result').style.display = 'none';
+  document.getElementById('my-orders-section').style.display = 'block';
+  document.getElementById('track-input').value = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function cancelOrder(id) {
+  if(confirm(`Order ${id} cancel karna chahte ho?`)) {
+    showToast(`✅ Order ${id} cancel request bhej di! Shop se confirm hoga.`);
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 3000);
+}
+
+// ── INIT ──
+renderOrders('all');
+</script>
+<script src="api.js">
+// ── API ORDER TRACKING ──
+async function trackOrderAPI() {
+  const id = document.getElementById('track-input').value.trim();
+  if (!id) { showToast('❌ Order ID daalo!'); return; }
+
+  const r = await OrderAPI.track(id);
+  if (!r.success) { showToast('❌ ' + r.error); return; }
+  const order = r.data.order;
+
+  const statusSteps = ['Pending','Confirmed','Packed','Out for Delivery','Delivered'];
+  const currentIdx  = statusSteps.indexOf(order.status);
+
+  document.getElementById('track-order-id').textContent   = order.orderId;
+  document.getElementById('track-order-date').textContent = new Date(order.createdAt).toLocaleDateString('en-IN');
+  document.getElementById('track-order-total').textContent= '₹' + order.total;
+  document.getElementById('track-order-type').textContent = order.type === 'delivery' ? '🚀 Home Delivery' : '🏪 Shop Pickup';
+
+  // Update stepper UI
+  document.querySelectorAll('.step-dot').forEach((dot, i) => {
+    dot.classList.toggle('done',   i <  currentIdx);
+    dot.classList.toggle('active', i === currentIdx);
+  });
+
+  document.getElementById('my-orders-section').style.display = 'none';
+  document.getElementById('track-result').style.display      = 'block';
+}
+
+async function loadMyOrdersAPI() {
+  if (!Auth.isLoggedIn()) return;
+  const r = await OrderAPI.getMyOrders();
+  if (!r.success) return;
+
+  const container = document.getElementById('my-orders-list');
+  if (!container) return;
+
+  container.innerHTML = r.data.orders.map(o => `
+    <div class="order-card" onclick="document.getElementById('track-input').value='${o.orderId}'; trackOrderAPI()">
+      <div class="order-card-head">
+        <div class="order-id">${o.orderId}</div>
+        <span class="status-pill">${o.status}</span>
+      </div>
+      <div style="font-size:0.82rem;color:var(--text-soft);margin-top:0.3rem">
+        ${o.items.length} items · ₹${o.total} · ${new Date(o.createdAt).toLocaleDateString('en-IN')}
+      </div>
+    </div>
+  `).join('');
+}
+
+document.addEventListener('DOMContentLoaded', loadMyOrdersAPI);
+</script>
+<script src="nav-fix.js"></script>
+</body>
+</html>

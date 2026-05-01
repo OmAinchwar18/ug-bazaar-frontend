@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Us & Contact — UG Bazaar</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange:#F47820; --blue:#1A5FB4; --blue-dark:#0D3A6E;
+    --blue-light:#3A82D4; --gold:#E8A020; --off-white:#F4F6FB;
+    --gray:#6B7280; --gray-light:#F3F4F6; --text:#1A1A2E;
+    --text-soft:#4B5563; --border:#E2E8F0;
+    --success:#16A34A; --success-bg:#F0FDF4; --radius:14px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { font-family:'Baloo 2',sans-serif; background:var(--off-white); color:var(--text); }
+
+  /* TOPBAR */
+  .topbar { background:var(--blue-dark); color:rgba(255,255,255,0.85); font-size:0.78rem; padding:0.4rem 2rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.3rem; }
+  .topbar a { color:#FFD580; text-decoration:none; font-weight:600; }
+
+  /* NAVBAR */
+  nav { background:#fff; display:flex; justify-content:space-between; align-items:center; padding:0.8rem 2rem; box-shadow:0 2px 12px rgba(26,95,180,0.08); position:sticky; top:0; z-index:200; }
+  .logo-area { display:flex; align-items:center; gap:0.7rem; text-decoration:none; }
+  .logo-icon { width:44px; height:44px; background:linear-gradient(135deg,var(--orange),var(--gold)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; font-weight:800; color:#fff; }
+  .logo-text .ug { font-size:1.2rem; font-weight:800; color:var(--blue); display:block; line-height:1; }
+  .logo-text .sub { font-size:0.7rem; font-weight:600; color:var(--orange); letter-spacing:1.5px; text-transform:uppercase; }
+  .nav-right { display:flex; align-items:center; gap:1rem; }
+  .nav-link { color:var(--text-soft); text-decoration:none; font-size:0.88rem; font-weight:600; transition:color 0.2s; }
+  .nav-link:hover { color:var(--orange); }
+
+  /* PAGE TABS */
+  .page-tabs { background:#fff; border-bottom:1px solid var(--border); display:flex; justify-content:center; gap:0; }
+  .ptab { padding:1rem 2.5rem; font-size:0.92rem; font-weight:700; cursor:pointer; color:var(--text-soft); border-bottom:3px solid transparent; transition:all 0.2s; }
+  .ptab.active { color:var(--orange); border-bottom-color:var(--orange); }
+  .ptab:hover:not(.active) { color:var(--blue); }
+
+  /* PAGE SECTIONS */
+  .page { display:none; } .page.active { display:block; }
+
+  /* ═══════════ ABOUT US ═══════════ */
+
+  /* HERO */
+  .about-hero { background:linear-gradient(135deg,var(--blue-dark),var(--blue)); padding:4rem 2rem; position:relative; overflow:hidden; }
+  .ah-bg { position:absolute; inset:0; opacity:0.05; background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%); background-size:20px 20px; }
+  .ah-blob1 { position:absolute; right:-60px; top:-60px; width:280px; height:280px; background:var(--orange); border-radius:50%; opacity:0.12; }
+  .ah-blob2 { position:absolute; left:-40px; bottom:-40px; width:200px; height:200px; background:var(--gold); border-radius:50%; opacity:0.1; }
+  .ah-inner { max-width:900px; margin:0 auto; position:relative; z-index:2; display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:center; color:#fff; }
+  .ah-left h1 { font-size:clamp(2rem,5vw,3rem); font-weight:800; line-height:1.15; margin-bottom:0.8rem; }
+  .ah-left h1 span { color:var(--gold); }
+  .ah-left p { opacity:0.85; font-size:0.95rem; line-height:1.8; margin-bottom:1.2rem; }
+  .ah-left .marathi { font-family:'Noto Sans Devanagari',sans-serif; font-size:0.88rem; opacity:0.7; }
+  .ah-right { display:flex; flex-direction:column; gap:1rem; }
+  .ah-stat { background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15); border-radius:14px; padding:1.2rem; text-align:center; backdrop-filter:blur(4px); }
+  .ah-stat-num { font-size:2rem; font-weight:800; color:var(--gold); line-height:1; }
+  .ah-stat-lbl { font-size:0.78rem; opacity:0.8; margin-top:0.2rem; }
+  .ah-stats-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+
+  /* STORY */
+  .story-section { max-width:900px; margin:0 auto; padding:4rem 1.5rem; }
+  .sec-label { font-size:0.75rem; font-weight:700; color:var(--orange); letter-spacing:2px; text-transform:uppercase; margin-bottom:0.4rem; }
+  .sec-title { font-size:clamp(1.4rem,3vw,1.9rem); font-weight:800; margin-bottom:1.5rem; }
+  .sec-title span { color:var(--blue); }
+  .story-grid { display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:center; margin-bottom:4rem; }
+  .story-img { background:linear-gradient(135deg,var(--blue-dark),var(--blue)); border-radius:20px; height:280px; display:flex; align-items:center; justify-content:center; font-size:6rem; box-shadow:0 12px 40px rgba(26,95,180,0.2); position:relative; overflow:hidden; }
+  .story-img-badge { position:absolute; bottom:16px; left:16px; background:rgba(255,255,255,0.9); color:var(--blue-dark); font-size:0.78rem; font-weight:800; padding:6px 12px; border-radius:10px; }
+  .story-text p { font-size:0.92rem; color:var(--text-soft); line-height:1.85; margin-bottom:1rem; }
+  .story-text p strong { color:var(--text); }
+  .story-quote { background:rgba(26,95,180,0.05); border-left:4px solid var(--orange); border-radius:0 12px 12px 0; padding:1rem 1.2rem; margin-top:1rem; font-size:0.9rem; color:var(--text-soft); line-height:1.7; font-style:italic; }
+  .story-quote strong { color:var(--orange); font-style:normal; }
+
+  /* OWNER CARD */
+  .owner-section { background:linear-gradient(135deg,var(--blue-dark),var(--blue)); border-radius:20px; padding:2.5rem; margin-bottom:4rem; color:#fff; display:grid; grid-template-columns:auto 1fr; gap:2rem; align-items:center; }
+  .owner-avatar { width:100px; height:100px; border-radius:50%; background:linear-gradient(135deg,var(--orange),var(--gold)); display:flex; align-items:center; justify-content:center; font-size:2.5rem; font-weight:800; border:4px solid rgba(255,255,255,0.3); flex-shrink:0; }
+  .owner-info h3 { font-size:1.5rem; font-weight:800; margin-bottom:0.2rem; }
+  .owner-info .role { color:#FFD580; font-size:0.88rem; font-weight:700; margin-bottom:0.8rem; }
+  .owner-info p { opacity:0.85; font-size:0.88rem; line-height:1.75; }
+  .owner-contacts { display:flex; gap:1rem; margin-top:1rem; flex-wrap:wrap; }
+  .owner-contact-btn { display:flex; align-items:center; gap:0.5rem; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.25); color:#fff; padding:0.5rem 1rem; border-radius:20px; font-size:0.82rem; font-weight:700; text-decoration:none; transition:background 0.2s; }
+  .owner-contact-btn:hover { background:rgba(255,255,255,0.25); }
+
+  /* VALUES */
+  .values-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1.2rem; margin-bottom:4rem; }
+  .value-card { background:#fff; border-radius:var(--radius); border:1px solid var(--border); padding:1.5rem 1.2rem; text-align:center; box-shadow:0 2px 12px rgba(26,95,180,0.05); transition:all 0.25s; }
+  .value-card:hover { transform:translateY(-4px); border-color:var(--orange); box-shadow:0 10px 28px rgba(26,95,180,0.1); }
+  .value-icon { width:56px; height:56px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:1.6rem; margin:0 auto 0.9rem; }
+  .vi-orange { background:rgba(244,120,32,0.12); }
+  .vi-blue { background:rgba(26,95,180,0.1); }
+  .vi-green { background:rgba(22,163,74,0.1); }
+  .vi-gold { background:rgba(232,160,32,0.12); }
+  .vi-purple { background:rgba(124,58,237,0.1); }
+  .vi-teal { background:rgba(20,184,166,0.1); }
+  .value-card h4 { font-size:0.95rem; font-weight:800; margin-bottom:0.4rem; }
+  .value-card p { font-size:0.8rem; color:var(--text-soft); line-height:1.6; }
+
+  /* TIMELINE */
+  .timeline { position:relative; padding-left:2rem; margin-bottom:4rem; }
+  .tl-line { position:absolute; left:12px; top:0; bottom:0; width:2px; background:linear-gradient(180deg,var(--orange),var(--blue)); }
+  .tl-item { position:relative; margin-bottom:2rem; }
+  .tl-dot { position:absolute; left:-2rem; top:4px; width:24px; height:24px; border-radius:50%; background:var(--orange); border:3px solid #fff; box-shadow:0 0 0 2px var(--orange); display:flex; align-items:center; justify-content:center; font-size:0.7rem; color:#fff; font-weight:800; }
+  .tl-year { font-size:0.75rem; font-weight:800; color:var(--orange); letter-spacing:1px; margin-bottom:0.2rem; }
+  .tl-title { font-size:0.95rem; font-weight:800; margin-bottom:0.3rem; }
+  .tl-desc { font-size:0.83rem; color:var(--text-soft); line-height:1.6; }
+
+  /* DEPARTMENTS SHOWCASE */
+  .dept-showcase { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:1rem; margin-bottom:4rem; }
+  .dept-tile { background:#fff; border-radius:12px; border:1px solid var(--border); padding:1.2rem 0.8rem; text-align:center; transition:all 0.2s; cursor:default; }
+  .dept-tile:hover { border-color:var(--orange); transform:translateY(-3px); }
+  .dept-tile-icon { font-size:2rem; margin-bottom:0.5rem; }
+  .dept-tile-name { font-size:0.78rem; font-weight:700; color:var(--text); }
+  .dept-tile-marathi { font-size:0.68rem; color:var(--gray); font-family:'Noto Sans Devanagari',sans-serif; }
+
+  /* ═══════════ CONTACT US ═══════════ */
+  .contact-section { max-width:900px; margin:0 auto; padding:3rem 1.5rem 4rem; }
+  .contact-layout { display:grid; grid-template-columns:1fr 1fr; gap:2rem; margin-bottom:2.5rem; }
+
+  /* CONTACT INFO */
+  .contact-info-card { background:#fff; border-radius:var(--radius); border:1px solid var(--border); overflow:hidden; box-shadow:0 2px 12px rgba(26,95,180,0.06); }
+  .cic-head { background:linear-gradient(135deg,var(--blue-dark),var(--blue)); padding:1.5rem; color:#fff; }
+  .cic-head h3 { font-size:1.1rem; font-weight:800; margin-bottom:0.2rem; }
+  .cic-head p { opacity:0.75; font-size:0.82rem; }
+  .cic-body { padding:1.2rem; }
+  .contact-item { display:flex; align-items:flex-start; gap:0.9rem; padding:0.9rem 0; border-bottom:1px solid var(--border); }
+  .contact-item:last-child { border-bottom:none; }
+  .ci-icon { width:42px; height:42px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; }
+  .ci-blue { background:rgba(26,95,180,0.1); }
+  .ci-orange { background:rgba(244,120,32,0.1); }
+  .ci-green { background:rgba(22,163,74,0.1); }
+  .ci-gold { background:rgba(232,160,32,0.12); }
+  .ci-detail { flex:1; }
+  .ci-label { font-size:0.7rem; font-weight:700; color:var(--gray); letter-spacing:0.5px; text-transform:uppercase; margin-bottom:0.2rem; }
+  .ci-value { font-size:0.9rem; font-weight:700; color:var(--text); line-height:1.6; }
+  .ci-value a { color:var(--blue); text-decoration:none; }
+  .ci-value a:hover { color:var(--orange); }
+
+  /* QUICK CONTACT BUTTONS */
+  .quick-btns { display:flex; flex-direction:column; gap:0.7rem; margin-top:1.2rem; }
+  .qbtn { display:flex; align-items:center; gap:0.7rem; padding:0.8rem 1.2rem; border-radius:12px; font-weight:700; font-size:0.88rem; text-decoration:none; transition:all 0.2s; border:none; cursor:pointer; font-family:'Baloo 2',sans-serif; }
+  .qbtn-wa { background:#25D366; color:#fff; }
+  .qbtn-wa:hover { background:#1DA050; }
+  .qbtn-call { background:var(--blue); color:#fff; }
+  .qbtn-call:hover { background:var(--blue-dark); }
+  .qbtn-email { background:var(--orange); color:#fff; }
+  .qbtn-email:hover { background:#D4620F; }
+
+  /* CONTACT FORM */
+  .contact-form-card { background:#fff; border-radius:var(--radius); border:1px solid var(--border); overflow:hidden; box-shadow:0 2px 12px rgba(26,95,180,0.06); }
+  .cfc-head { background:linear-gradient(135deg,var(--orange),#D4620F); padding:1.5rem; color:#fff; }
+  .cfc-head h3 { font-size:1.1rem; font-weight:800; margin-bottom:0.2rem; }
+  .cfc-head p { opacity:0.85; font-size:0.82rem; }
+  .cfc-body { padding:1.5rem; }
+  .form-group { margin-bottom:1rem; }
+  .form-label { display:block; font-size:0.8rem; font-weight:700; color:var(--text); margin-bottom:0.35rem; }
+  .form-input, .form-select, .form-textarea { width:100%; padding:0.7rem 0.9rem; border:1.5px solid var(--border); border-radius:10px; font-size:0.88rem; font-family:'Baloo 2',sans-serif; color:var(--text); background:var(--off-white); outline:none; transition:border-color 0.2s; }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color:var(--blue); background:#fff; }
+  .form-textarea { resize:vertical; min-height:100px; line-height:1.6; }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; }
+  .submit-btn { width:100%; padding:0.9rem; border-radius:12px; border:none; background:linear-gradient(135deg,var(--orange),#D4620F); color:#fff; font-size:0.95rem; font-weight:800; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:all 0.2s; box-shadow:0 4px 16px rgba(244,120,32,0.35); margin-top:0.5rem; }
+  .submit-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(244,120,32,0.45); }
+
+  /* MAP PLACEHOLDER */
+  .map-card { background:linear-gradient(135deg,var(--blue-dark),var(--blue)); border-radius:20px; padding:2.5rem; color:#fff; display:grid; grid-template-columns:1fr 1fr; gap:2rem; align-items:center; margin-bottom:2.5rem; }
+  .map-left h3 { font-size:1.3rem; font-weight:800; margin-bottom:0.5rem; }
+  .map-left p { opacity:0.8; font-size:0.88rem; line-height:1.7; margin-bottom:1rem; }
+  .map-details { display:flex; flex-direction:column; gap:0.6rem; }
+  .map-detail-row { display:flex; align-items:center; gap:0.7rem; font-size:0.85rem; }
+  .map-icon { font-size:1rem; }
+  .map-right { background:rgba(255,255,255,0.08); border-radius:16px; border:1px solid rgba(255,255,255,0.15); height:200px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.5rem; cursor:pointer; transition:background 0.2s; }
+  .map-right:hover { background:rgba(255,255,255,0.15); }
+  .map-right-icon { font-size:3rem; }
+  .map-right p { font-size:0.82rem; opacity:0.75; text-align:center; }
+  .map-right strong { font-size:0.88rem; opacity:0.9; }
+
+  /* TIMING CARD */
+  .timing-card { background:#fff; border-radius:var(--radius); border:1px solid var(--border); padding:1.5rem; }
+  .timing-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; }
+  .timing-item { text-align:center; padding:1rem; background:var(--off-white); border-radius:12px; }
+  .timing-day { font-size:0.78rem; font-weight:700; color:var(--gray); margin-bottom:0.3rem; }
+  .timing-time { font-size:1rem; font-weight:800; color:var(--blue); }
+  .timing-status { font-size:0.7rem; font-weight:700; color:var(--success); margin-top:0.2rem; }
+
+  /* SUCCESS */
+  .form-success { display:none; text-align:center; padding:2rem 1rem; }
+  .form-success.show { display:block; }
+  .success-anim { width:70px; height:70px; background:var(--success-bg); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2rem; margin:0 auto 1rem; animation:pop 0.4s ease; }
+  @keyframes pop { 0%{transform:scale(0)} 70%{transform:scale(1.1)} 100%{transform:scale(1)} }
+
+  /* TOAST */
+  .toast { position:fixed; bottom:2rem; right:2rem; background:var(--blue); color:#fff; padding:0.8rem 1.4rem; border-radius:12px; font-weight:600; font-size:0.88rem; z-index:999; box-shadow:0 8px 24px rgba(0,0,0,0.2); display:none; }
+
+  @media(max-width:768px) {
+    .ah-inner { grid-template-columns:1fr; }
+    .ah-right { display:none; }
+    .story-grid { grid-template-columns:1fr; }
+    .contact-layout { grid-template-columns:1fr; }
+    .map-card { grid-template-columns:1fr; }
+    .form-row { grid-template-columns:1fr; }
+    .owner-section { grid-template-columns:1fr; text-align:center; }
+    .owner-contacts { justify-content:center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <span>📍 Bhangaram, Talodhi, Dist. Chandrapur</span>
+  <span>🕐 9AM–9PM &nbsp;|&nbsp; <a href="tel:8390901925">📞 8390901925</a></span>
+</div>
+
+<!-- NAVBAR -->
+<nav>
+  <a class="logo-area" href="index.html">
+    <div class="logo-icon">UG</div>
+    <div class="logo-text">
+      <span class="ug">UG Bazaar</span>
+      <span class="sub">Your Local Superstore</span>
+    </div>
+  </a>
+  <div class="nav-right">
+    <a class="nav-link" href="index.html">🛒 Shop</a>
+    <a class="nav-link" href="search.html">🔍 Search</a>
+    <a class="nav-link" href="offers.html">🏷️ Offers</a>
+    <a class="nav-link" href="faq.html">❓ FAQ</a>
+    <a class="nav-link nav-login-link" href="auth.html">👤 Login</a>
+  </div>
+</nav>
+
+<!-- PAGE TABS -->
+<div class="page-tabs">
+  <div class="ptab active" onclick="showPage('about',this)">📄 About Us</div>
+  <div class="ptab" onclick="showPage('contact',this)">📞 Contact Us</div>
+</div>
+
+<!-- ════════════ ABOUT US PAGE ════════════ -->
+<div class="page active" id="page-about">
+
+  <!-- HERO -->
+  <div class="about-hero">
+    <div class="ah-bg"></div>
+    <div class="ah-blob1"></div>
+    <div class="ah-blob2"></div>
+    <div class="ah-inner">
+      <div class="ah-left">
+        <h1>Your Very Own<br><span>UG Bazaar</span></h1>
+        <p>The most trusted shop of Bhangaram, Talodhi — where everything from grocery to furniture is available under one roof.</p>
+        <div class="marathi">भंगाराम, तालोधी की सबसे भरोसेमंद दुकान — किराना से फर्नीचर तक, सब एक ही जगह!</div>
+      </div>
+      <div class="ah-right">
+        <div class="ah-stats-row">
+          <div class="ah-stat"><div class="ah-stat-num">8+</div><div class="ah-stat-lbl">Departments</div></div>
+          <div class="ah-stat"><div class="ah-stat-num">500+</div><div class="ah-stat-lbl">Products</div></div>
+        </div>
+        <div class="ah-stats-row">
+          <div class="ah-stat"><div class="ah-stat-num">1000+</div><div class="ah-stat-lbl">Happy Customers</div></div>
+          <div class="ah-stat"><div class="ah-stat-num">5+</div><div class="ah-stat-lbl">Years of Trust</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="story-section">
+
+    <!-- STORY -->
+    <div class="sec-label">Our Story</div>
+    <div class="sec-title">The Journey of <span>UG Bazaar</span></div>
+    <div class="story-grid">
+      <div class="story-img">
+        🏪
+        <div class="story-img-badge">📍 Bhangaram, Talodhi</div>
+      </div>
+      <div class="story-text">
+        <p>UG Bazaar started with a small dream — <strong>Uday Ainchwar ji</strong> along with his family laid the foundation of this shop. His one goal was to <strong>bring quality products to every home in Bhangaram and Talodhi</strong>, at honest and affordable prices.</p>
+        <p>What started as just a <strong>Kirana store</strong> has now expanded into 8+ departments. Hardware, Electrical, Electronics, Furniture, Krushi Kendra — everything is now available under one roof.</p>
+        <p>We believe that <strong>every customer is a member of our family</strong>. That's why we don't just sell products — we sell <strong>trust and relationships</strong>.</p>
+        <div class="story-quote">"At UG Bazaar, our mission is simple — bring the city to your doorstep, so you never have to leave your village for anything." <strong>— UG Bazaar</strong></div>
+      </div>
+    </div>
+
+    <!-- OWNER CARD -->
+    <div class="owner-section">
+      <div class="owner-avatar">UA</div>
+      <div class="owner-info">
+        <h3>Uday Ainchwar</h3>
+        <div class="role">👑 Founder & Owner — UG Bazaar</div>
+        <p>Uday ji is a well-known businessman of Bhangaram, Talodhi. Along with his family, he transformed UG Bazaar from a small shop into a full multi-department store. His vision is that every farmer and household in Chandrapur district gets everything in one place — with quality and at the right price.</p>
+        <div style="margin-top:0.8rem;background:rgba(255,255,255,0.12);border-left:3px solid #FFD580;border-radius:0 10px 10px 0;padding:0.8rem 1rem;">
+          <div style="font-size:0.7rem;font-weight:800;color:#FFD580;letter-spacing:1px;margin-bottom:0.3rem">🎯 UG BAZAAR VISION</div>
+          <div style="font-size:0.88rem;font-style:italic;opacity:0.95;line-height:1.6">"No one in our region should ever have to travel to the city just to meet their daily needs. Everything — quality products, fair prices, fast delivery — right here at home."</div>
+        </div>
+        <div class="owner-contacts">
+          <a class="owner-contact-btn" href="tel:9422137293">📞 9422137293</a>
+          <a class="owner-contact-btn" href="https://wa.me/919422137293" target="_blank">💬 WhatsApp</a>
+          <a class="owner-contact-btn" href="tel:8390901925">🏪 Shop: 8390901925</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- OUR VALUES -->
+    <div class="sec-label">Our Values</div>
+    <div class="sec-title">Why We Are <span>Special</span></div>
+    <div style="margin-bottom:1.5rem"></div>
+    <div class="values-grid">
+      <div class="value-card"><div class="value-icon vi-orange">✅</div><h4>Quality Guarantee</h4><p>हर प्रोडक्ट क्वालिटी चेक के बाद ही शेल्फ पर आता है। कोई समझौता नहीं।</p></div>
+      <div class="value-card"><div class="value-icon vi-blue">💰</div><h4>Fair Pricing</h4><p>पारदर्शी कीमतें। कोई छुपा हुआ चार्ज नहीं। जो दिखता है, वही मिलता है।</p></div>
+      <div class="value-card"><div class="value-icon vi-green">🚀</div><h4>Fast Delivery</h4><p>भंगाराम और आसपास के गाँवों में होम डिलीवरी। ऑर्डर करो, घर बैठो।</p></div>
+      <div class="value-card"><div class="value-icon vi-gold">🤝</div><h4>Trust First</h4><p>5+ साल का भरोसा। 1000+ खुश ग्राहक। यही हमारी सबसे बड़ी दौलत है।</p></div>
+      <div class="value-card"><div class="value-icon vi-purple">🌾</div><h4>Farmer First</h4><p>किसान भाइयों के लिए खास कृषि केंद्र — बीज, खाद, उपकरण सब एक जगह।</p></div>
+      <div class="value-card"><div class="value-icon vi-teal">🔄</div><h4>Easy Returns</h4><p>7 दिन में रिटर्न या एक्सचेंज। कोई सवाल नहीं, कोई झंझट नहीं।</p></div>
+    </div>
+
+    <!-- TIMELINE -->
+    <div class="sec-label">Our Journey</div>
+    <div class="sec-title">From Beginning <span>Till Today</span></div>
+    <div style="margin-bottom:1.5rem"></div>
+    <div class="timeline">
+      <div class="tl-line"></div>
+      <div class="tl-item"><div class="tl-dot">1</div><div class="tl-year">2019</div><div class="tl-title">The Beginning — Kirana Store</div><div class="tl-desc">उदय अनचवार जी ने भंगाराम में एक छोटी किराना दुकान से शुरुआत की। सिर्फ 50 प्रोडक्ट्स से यह सफर शुरू हुआ।</div></div>
+      <div class="tl-item"><div class="tl-dot">2</div><div class="tl-year">2020</div><div class="tl-title">Hardware & Electrical Added</div><div class="tl-desc">लोगों की ज़रूरत देखकर हार्डवेयर और इलेक्ट्रिकल डिपार्टमेंट शुरू किया। गाँव के लोगों को बहुत राहत मिली।</div></div>
+      <div class="tl-item"><div class="tl-dot">3</div><div class="tl-year">2021</div><div class="tl-title">New Double Floor Glass Building</div><div class="tl-desc">बिज़नेस बढ़ने के साथ नई दो-मंज़िला ग्लास शॉप बनाई। इलेक्ट्रॉनिक्स और जनरल स्टोर भी जोड़ा।</div></div>
+      <div class="tl-item"><div class="tl-dot">4</div><div class="tl-year">2022</div><div class="tl-title">Krushi Kendra Launched</div><div class="tl-desc">किसान भाइयों के लिए समर्पित कृषि केंद्र शुरू किया। बीज, खाद, कीटनाशक — सब एक जगह।</div></div>
+      <div class="tl-item"><div class="tl-dot">5</div><div class="tl-year">2023</div><div class="tl-title">Ready-made Furniture Added</div><div class="tl-desc">फर्नीचर डिपार्टमेंट जोड़ा। अब ग्राहक शहर गए बिना घर सजा सकते हैं।</div></div>
+      <div class="tl-item"><div class="tl-dot">6</div><div class="tl-year">2026</div><div class="tl-title">UG Bazaar Goes Online! 🎉</div><div class="tl-desc">अब UG Bazaar डिजिटल हो गया! वेबसाइट लॉन्च — घर बैठे ऑर्डर करो, होम डिलीवरी पाओ। नया दौर शुरू!</div></div>
+    </div>
+
+    <!-- DEPARTMENTS SHOWCASE -->
+    <div class="sec-label">Our Departments</div>
+    <div class="sec-title">8+ <span>Departments</span></div>
+    <div style="margin-bottom:1.5rem"></div>
+    <div class="dept-showcase">
+      <div class="dept-tile"><div class="dept-tile-icon">🛒</div><div class="dept-tile-name">Grocery</div><div class="dept-tile-marathi">किराना</div></div>
+      <div class="dept-tile"><div class="dept-tile-icon">🏪</div><div class="dept-tile-name">General Store</div><div class="dept-tile-marathi">जनरल स्टोर</div></div>
+      <div class="dept-tile"><div class="dept-tile-icon">🔧</div><div class="dept-tile-name">Hardware</div><div class="dept-tile-marathi">हार्डवेयर</div></div>
+      <div class="dept-tile"><div class="dept-tile-icon">💡</div><div class="dept-tile-name">Electrical</div><div class="dept-tile-marathi">इलेक्ट्रिकल</div></div>
+      <div class="dept-tile"><div class="dept-tile-icon">📱</div><div class="dept-tile-name">Electronics</div><div class="dept-tile-marathi">इलेक्ट्रॉनिक्स</div></div>
+      <div class="dept-tile"><div class="dept-tile-icon">🛋</div><div class="dept-tile-name">Furniture</div><div class="dept-tile-marathi">फर्नीचर</div></div>
+      <div class="dept-tile"><div class="dept-tile-icon">🌾</div><div class="dept-tile-name">Krushi Kendra</div><div class="dept-tile-marathi">कृषि केंद्र</div></div>
+      <div class="dept-tile"><div class="dept-tile-icon">➕</div><div class="dept-tile-name">And More...</div><div class="dept-tile-marathi">और भी बहुत</div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════ CONTACT US PAGE ════════════ -->
+<div class="page" id="page-contact">
+  <div class="contact-section">
+
+    <div class="sec-label">Get In Touch</div>
+    <div class="sec-title" style="margin-bottom:1.5rem">📞 Contact <span>Us</span></div>
+
+    <div class="contact-layout">
+
+      <!-- CONTACT INFO -->
+      <div>
+        <div class="contact-info-card">
+          <div class="cic-head">
+            <h3>🏪 UG Bazaar</h3>
+            <p>Bhangaram, Talodhi — हम यहाँ हैं आपके लिए!</p>
+          </div>
+          <div class="cic-body">
+            <div class="contact-item">
+              <div class="ci-icon ci-blue">📍</div>
+              <div class="ci-detail">
+                <div class="ci-label">Address</div>
+                <div class="ci-value">Bhangaram, Talodhi<br>Dist. Chandrapur, Maharashtra</div>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="ci-icon ci-orange">📞</div>
+              <div class="ci-detail">
+                <div class="ci-label">Shop Number</div>
+                <div class="ci-value"><a href="tel:8390901925">8390901925</a></div>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="ci-icon ci-green">👤</div>
+              <div class="ci-detail">
+                <div class="ci-label">Owner — Uday Ainchwar</div>
+                <div class="ci-value"><a href="tel:9422137293">9422137293</a></div>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="ci-icon ci-gold">🕐</div>
+              <div class="ci-detail">
+                <div class="ci-label">Shop Timing</div>
+                <div class="ci-value">9:00 AM – 9:00 PM<br><span style="font-size:0.75rem;color:var(--success);font-weight:700">● Open Daily — Mon to Sun</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="quick-btns" style="margin-top:1rem">
+          <a class="qbtn qbtn-wa" href="https://wa.me/918390901925?text=Hello UG Bazaar!" target="_blank">💬 WhatsApp par Message Karo</a>
+          <a class="qbtn qbtn-call" href="tel:8390901925">📞 Shop par Call Karo</a>
+          <a class="qbtn qbtn-email" href="tel:9422137293">👤 Uday ji se Baat Karo</a>
+        </div>
+      </div>
+
+      <!-- CONTACT FORM -->
+      <div class="contact-form-card">
+        <div class="cfc-head">
+          <h3>✉️ Send a Message</h3>
+          <p>हम 24 घंटे में जवाब देंगे!</p>
+        </div>
+        <div class="cfc-body">
+          <div id="contact-form-wrap">
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Your Name</label><input class="form-input" id="cf-name" placeholder="अपना पूरा नाम लिखें"></div>
+              <div class="form-group"><label class="form-label">Mobile Number</label><input class="form-input" id="cf-mobile" placeholder="10 अंक" type="tel" maxlength="10"></div>
+            </div>
+            <div class="form-group"><label class="form-label">Village / Area</label><input class="form-input" id="cf-village" placeholder="अपना गाँव या एरिया"></div>
+            <div class="form-group">
+              <label class="form-label">Query Type</label>
+              <select class="form-select" id="cf-type">
+                <option value="">Select</option>
+                <option>Order related</option>
+                <option>Product inquiry</option>
+                <option>Delivery query</option>
+                <option>Complaint</option>
+                <option>Bulk order</option>
+                <option>General inquiry</option>
+              </select>
+            </div>
+            <div class="form-group"><label class="form-label">Your Message</label><textarea class="form-textarea" id="cf-msg" placeholder="अपनी बात यहाँ लिखें... (Hindi, English — कुछ भी)"></textarea></div>
+            <button class="submit-btn" onclick="submitContact()">📨 Send Message</button>
+          </div>
+          <div class="form-success" id="contact-success">
+            <div class="success-anim">✅</div>
+            <h3 style="font-size:1.2rem;font-weight:800;margin-bottom:0.4rem">Message Sent!</h3>
+            <p style="font-size:0.85rem;color:var(--text-soft);margin-bottom:1rem">उदय जी जल्द ही आपको WhatsApp या Call पर reply करेंगे।</p>
+            <button onclick="resetContactForm()" style="padding:0.6rem 1.4rem;border-radius:10px;border:none;background:var(--orange);color:#fff;font-weight:700;cursor:pointer;font-family:'Baloo 2',sans-serif;">Send Another Message</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAP CARD -->
+    <div class="map-card">
+      <div class="map-left">
+        <h3>📍 How to Find Us?</h3>
+        <p>UG Bazaar is located on the main road in Bhangaram. Just a few kilometres from Talodhi.</p>
+        <div class="map-details">
+          <div class="map-detail-row"><span class="map-icon">🏘</span><span>Bhangaram Village, Main Road</span></div>
+          <div class="map-detail-row"><span class="map-icon">📮</span><span>Talodhi, Dist. Chandrapur</span></div>
+          <div class="map-detail-row"><span class="map-icon">🏛</span><span>Maharashtra — 441222</span></div>
+          <div class="map-detail-row"><span class="map-icon">📞</span><span>रास्ते के लिए Call करें: <a href="tel:8390901925" style="color:#FFD580;font-weight:700">8390901925</a></span></div>
+        </div>
+      </div>
+      <div class="map-right" onclick="showToast('Google Maps integration backend mein hogi!')">
+        <div class="map-right-icon">🗺</div>
+        <strong>Open on Google Maps</strong>
+        <p>Click करें — Map खुलेगा<br>Bhangaram, Talodhi</p>
+      </div>
+    </div>
+
+    <!-- TIMING -->
+    <div class="timing-card">
+      <div class="sec-label" style="margin-bottom:0.8rem">Shop Timing</div>
+      <div class="timing-grid">
+        <div class="timing-item"><div class="timing-day">Monday</div><div class="timing-time">9AM – 9PM</div><div class="timing-status">● Open</div></div>
+        <div class="timing-item"><div class="timing-day">Tuesday</div><div class="timing-time">9AM – 9PM</div><div class="timing-status">● Open</div></div>
+        <div class="timing-item"><div class="timing-day">Wednesday</div><div class="timing-time">9AM – 9PM</div><div class="timing-status">● Open</div></div>
+        <div class="timing-item"><div class="timing-day">Thursday</div><div class="timing-time">9AM – 9PM</div><div class="timing-status">● Open</div></div>
+        <div class="timing-item"><div class="timing-day">Friday</div><div class="timing-time">9AM – 9PM</div><div class="timing-status">● Open</div></div>
+        <div class="timing-item"><div class="timing-day">Saturday</div><div class="timing-time">9AM – 9PM</div><div class="timing-status">● Open</div></div>
+        <div class="timing-item"><div class="timing-day">Sunday</div><div class="timing-time">9AM – 9PM</div><div class="timing-status">● Open</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function showPage(name, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  el.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function submitContact() {
+  const name = document.getElementById('cf-name').value.trim();
+  const mobile = document.getElementById('cf-mobile').value.trim();
+  const msg = document.getElementById('cf-msg').value.trim();
+  if(!name) { showToast('❌ Naam daalo!'); return; }
+  if(mobile.length !== 10) { showToast('❌ Valid mobile number daalo!'); return; }
+  if(!msg) { showToast('❌ Message likho!'); return; }
+  document.getElementById('contact-form-wrap').style.display = 'none';
+  document.getElementById('contact-success').classList.add('show');
+}
+
+function resetContactForm() {
+  ['cf-name','cf-mobile','cf-village','cf-msg'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('cf-type').selectedIndex = 0;
+  document.getElementById('contact-form-wrap').style.display = 'block';
+  document.getElementById('contact-success').classList.remove('show');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 2800);
+}
+</script>
+<script src="nav-fix.js"></script>
+</body>
+</html>

@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notifications — UG Bazaar</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange:#F47820; --blue:#1A5FB4; --blue-dark:#0D3A6E;
+    --blue-light:#3A82D4; --gold:#E8A020; --off-white:#F4F6FB;
+    --gray:#6B7280; --gray-light:#F3F4F6; --text:#1A1A2E;
+    --text-soft:#4B5563; --border:#E2E8F0;
+    --success:#16A34A; --success-bg:#F0FDF4;
+    --error:#DC2626; --warn:#D97706; --warn-bg:#FFFBEB;
+    --radius:14px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Baloo 2',sans-serif; background:var(--off-white); color:var(--text); }
+
+  /* TOPBAR */
+  .topbar { background:var(--blue-dark); color:rgba(255,255,255,0.85); font-size:0.78rem; padding:0.4rem 2rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.3rem; }
+  .topbar a { color:#FFD580; text-decoration:none; font-weight:600; }
+
+  /* NAVBAR */
+  nav { background:#fff; display:flex; justify-content:space-between; align-items:center; padding:0.8rem 2rem; box-shadow:0 2px 12px rgba(26,95,180,0.08); position:sticky; top:0; z-index:200; }
+  .logo-area { display:flex; align-items:center; gap:0.7rem; text-decoration:none; }
+  .logo-icon { width:44px; height:44px; background:linear-gradient(135deg,var(--orange),var(--gold)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; font-weight:800; color:#fff; }
+  .logo-text .ug { font-size:1.2rem; font-weight:800; color:var(--blue); display:block; line-height:1; }
+  .logo-text .sub { font-size:0.7rem; font-weight:600; color:var(--orange); letter-spacing:1.5px; text-transform:uppercase; }
+  .nav-right { display:flex; align-items:center; gap:1rem; }
+  .nav-link { color:var(--text-soft); text-decoration:none; font-size:0.88rem; font-weight:600; transition:color 0.2s; }
+  .nav-link:hover { color:var(--orange); }
+  .notif-dot-nav { display:inline-block; width:8px; height:8px; background:var(--orange); border-radius:50%; margin-left:3px; vertical-align:middle; }
+
+  /* HERO */
+  .hero { background:linear-gradient(135deg,var(--blue-dark),var(--blue)); padding:2rem 2rem 1.5rem; color:#fff; position:relative; overflow:hidden; }
+  .hero-bg { position:absolute; inset:0; opacity:0.05; background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%); background-size:20px 20px; }
+  .hero-inner { max-width:760px; margin:0 auto; position:relative; z-index:2; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; }
+  .hero-left h1 { font-size:clamp(1.5rem,4vw,2rem); font-weight:800; }
+  .hero-left p { opacity:0.75; font-size:0.88rem; margin-top:0.2rem; }
+  .hero-right { display:flex; gap:0.7rem; }
+  .hero-btn { padding:0.5rem 1.1rem; border-radius:20px; border:1.5px solid rgba(255,255,255,0.3); background:rgba(255,255,255,0.1); color:#fff; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:all 0.2s; }
+  .hero-btn:hover { background:rgba(255,255,255,0.2); border-color:rgba(255,255,255,0.5); }
+  .hero-btn.danger { border-color:rgba(255,100,100,0.4); background:rgba(255,100,100,0.15); }
+  .hero-btn.danger:hover { background:rgba(255,100,100,0.25); }
+
+  /* UNREAD BANNER */
+  .unread-banner { background:rgba(244,120,32,0.08); border-bottom:1px solid rgba(244,120,32,0.2); padding:0.6rem 2rem; text-align:center; font-size:0.82rem; font-weight:700; color:var(--orange); display:flex; align-items:center; justify-content:center; gap:0.5rem; }
+  .unread-banner span { background:var(--orange); color:#fff; padding:1px 8px; border-radius:10px; font-size:0.72rem; }
+
+  /* MAIN */
+  .main { max-width:760px; margin:1.5rem auto; padding:0 1.5rem 4rem; }
+
+  /* FILTER TABS */
+  .filter-row { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.5rem; }
+  .ftab { padding:0.4rem 1rem; border-radius:20px; border:1.5px solid var(--border); background:#fff; color:var(--text-soft); font-size:0.82rem; font-weight:700; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:all 0.2s; display:flex; align-items:center; gap:0.4rem; }
+  .ftab.active, .ftab:hover { background:var(--blue); color:#fff; border-color:var(--blue); }
+  .ftab-count { background:var(--orange); color:#fff; font-size:0.62rem; font-weight:800; padding:1px 6px; border-radius:10px; }
+  .ftab.active .ftab-count { background:rgba(255,255,255,0.3); }
+
+  /* DATE GROUP */
+  .date-group { margin-bottom:1.5rem; }
+  .date-label { font-size:0.75rem; font-weight:800; color:var(--gray); letter-spacing:1px; text-transform:uppercase; margin-bottom:0.6rem; padding:0 0.2rem; }
+
+  /* NOTIFICATION CARD */
+  .notif-card { background:#fff; border-radius:var(--radius); border:1px solid var(--border); padding:1rem 1.2rem; margin-bottom:0.6rem; display:flex; align-items:flex-start; gap:1rem; cursor:pointer; transition:all 0.2s; position:relative; overflow:hidden; }
+  .notif-card.unread { border-left:3px solid var(--orange); background:#FFFDF9; }
+  .notif-card.unread::before { content:''; position:absolute; top:12px; right:12px; width:8px; height:8px; background:var(--orange); border-radius:50%; }
+  .notif-card:hover { border-color:var(--blue-light); box-shadow:0 4px 16px rgba(26,95,180,0.08); transform:translateY(-1px); }
+  .notif-icon-wrap { width:46px; height:46px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex-shrink:0; }
+  .ni-order { background:rgba(26,95,180,0.1); }
+  .ni-offer { background:rgba(244,120,32,0.12); }
+  .ni-delivery { background:rgba(22,163,74,0.1); }
+  .ni-payment { background:rgba(232,160,32,0.12); }
+  .ni-system { background:rgba(107,114,128,0.1); }
+  .ni-warn { background:rgba(217,119,6,0.12); }
+  .notif-content { flex:1; }
+  .notif-title { font-size:0.92rem; font-weight:800; color:var(--text); margin-bottom:0.2rem; }
+  .notif-card.unread .notif-title { color:var(--blue-dark); }
+  .notif-body { font-size:0.82rem; color:var(--text-soft); line-height:1.6; margin-bottom:0.4rem; }
+  .notif-marathi { font-size:0.75rem; color:var(--gray); font-family:'Noto Sans Devanagari',sans-serif; margin-bottom:0.4rem; }
+  .notif-meta { display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; }
+  .notif-time { font-size:0.7rem; color:var(--gray); font-weight:600; }
+  .notif-tag { font-size:0.68rem; font-weight:700; padding:2px 8px; border-radius:8px; }
+  .nt-order { background:rgba(26,95,180,0.08); color:var(--blue); }
+  .nt-offer { background:rgba(244,120,32,0.1); color:var(--orange); }
+  .nt-delivery { background:var(--success-bg); color:var(--success); }
+  .nt-payment { background:rgba(232,160,32,0.12); color:#7A5200; }
+  .nt-system { background:var(--gray-light); color:var(--gray); }
+  .nt-warn { background:var(--warn-bg); color:var(--warn); }
+  .notif-actions { display:flex; gap:0.5rem; margin-top:0.5rem; }
+  .notif-action-btn { padding:0.3rem 0.8rem; border-radius:8px; font-size:0.75rem; font-weight:700; cursor:pointer; border:1.5px solid var(--border); background:#fff; color:var(--text-soft); font-family:'Baloo 2',sans-serif; transition:all 0.2s; }
+  .notif-action-btn.primary { background:var(--orange); color:#fff; border-color:var(--orange); }
+  .notif-action-btn:hover { border-color:var(--blue); color:var(--blue); }
+  .notif-action-btn.primary:hover { background:#D4620F; border-color:#D4620F; color:#fff; }
+
+  /* WHATSAPP + SMS STRIP */
+  .channel-strip { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem; }
+  .channel-card { background:#fff; border-radius:var(--radius); border:1px solid var(--border); padding:1rem 1.2rem; display:flex; align-items:center; gap:0.8rem; }
+  .channel-icon { font-size:1.5rem; }
+  .channel-info { flex:1; }
+  .channel-name { font-size:0.88rem; font-weight:800; }
+  .channel-sub { font-size:0.72rem; color:var(--gray); }
+  .toggle { width:42px; height:23px; background:var(--border); border-radius:12px; position:relative; cursor:pointer; transition:background 0.3s; flex-shrink:0; }
+  .toggle.on { background:var(--success); }
+  .toggle-knob { position:absolute; top:2.5px; left:2.5px; width:18px; height:18px; background:#fff; border-radius:50%; transition:transform 0.3s; box-shadow:0 1px 4px rgba(0,0,0,0.2); }
+  .toggle.on .toggle-knob { transform:translateX(19px); }
+
+  /* EMPTY STATE */
+  .empty-state { text-align:center; padding:3.5rem 1rem; }
+  .empty-icon { font-size:4rem; margin-bottom:1rem; opacity:0.5; }
+  .empty-state h3 { font-size:1.1rem; font-weight:800; margin-bottom:0.4rem; }
+  .empty-state p { font-size:0.88rem; color:var(--text-soft); }
+
+  /* TOAST */
+  .toast { position:fixed; bottom:2rem; right:2rem; background:var(--blue); color:#fff; padding:0.8rem 1.4rem; border-radius:12px; font-weight:600; font-size:0.88rem; z-index:999; box-shadow:0 8px 24px rgba(0,0,0,0.2); display:none; }
+
+  @media(max-width:600px) {
+    .channel-strip { grid-template-columns:1fr; }
+    .hero-inner { flex-direction:column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <span>📍 Bhangaram, Talodhi, Dist. Chandrapur</span>
+  <span>🕐 9AM–9PM &nbsp;|&nbsp; <a href="tel:8390901925">📞 8390901925</a></span>
+</div>
+
+<!-- NAVBAR -->
+<nav>
+  <a class="logo-area" href="index.html">
+    <div class="logo-icon">UG</div>
+    <div class="logo-text">
+      <span class="ug">UG Bazaar</span>
+      <span class="sub">Your Local Superstore</span>
+    </div>
+  </a>
+  <div class="nav-right">
+    <a class="nav-link" href="index.html">🛒 Shop</a>
+    <a class="nav-link" href="tracking.html">📦 Orders</a>
+    <a class="nav-link" href="cart.html">🛒 Cart <span class="cart-count-badge"></span></a>
+    <a class="nav-link" href="profile.html">👤 Profile</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-inner">
+    <div class="hero-left">
+      <h1>🔔 Notifications</h1>
+      <p>Aapke orders, offers aur updates — sab ek jagah</p>
+    </div>
+    <div class="hero-right">
+      <button class="hero-btn" onclick="markAllRead()">✅ Sab Read Karo</button>
+      <button class="hero-btn danger" onclick="clearAll()">🗑 Sab Clear Karo</button>
+    </div>
+  </div>
+</div>
+
+<!-- UNREAD BANNER -->
+<div class="unread-banner" id="unread-banner">
+  🔔 Aapke <span id="unread-count">5</span> unread notifications hain
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- CHANNEL TOGGLES -->
+  <div class="channel-strip">
+    <div class="channel-card">
+      <div class="channel-icon">💬</div>
+      <div class="channel-info">
+        <div class="channel-name">WhatsApp Alerts</div>
+        <div class="channel-sub">8390901925 par milega</div>
+      </div>
+      <div class="toggle on" id="wa-toggle" onclick="toggleChannel('wa')">
+        <div class="toggle-knob"></div>
+      </div>
+    </div>
+    <div class="channel-card">
+      <div class="channel-icon">📱</div>
+      <div class="channel-info">
+        <div class="channel-name">SMS Alerts</div>
+        <div class="channel-sub">Mobile number par milega</div>
+      </div>
+      <div class="toggle on" id="sms-toggle" onclick="toggleChannel('sms')">
+        <div class="toggle-knob"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILTER TABS -->
+  <div class="filter-row" id="filter-row"></div>
+
+  <!-- NOTIFICATIONS LIST -->
+  <div id="notif-container"></div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── ALL NOTIFICATIONS DATA ──
+let notifications = [
+  // TODAY
+  {
+    id:1, group:'Aaj', type:'delivery', unread:true,
+    icon:'🚀', iconClass:'ni-delivery', tagClass:'nt-delivery', tagLabel:'Delivery',
+    title:'Order Out for Delivery! 🚀',
+    body:'Aapka order #UG10001 delivery ke liye nikal gaya. Ramesh ji, thodi der mein aa jayega!',
+    marathi:'तुमचा ऑर्डर डिलिव्हरीसाठी निघाला आहे.',
+    time:'10 minute pehle',
+    actions:[
+      { label:'📦 Track Karo', primary:true, link:'tracking.html' },
+      { label:'💬 WhatsApp', primary:false, link:'https://wa.me/918390901925' }
+    ]
+  },
+  {
+    id:2, group:'Aaj', type:'offer', unread:true,
+    icon:'🎁', iconClass:'ni-offer', tagClass:'nt-offer', tagLabel:'Offer',
+    title:'Naya Coupon Aaya! UDAY20 🎁',
+    body:'Aaj ka special offer — UDAY20 code use karo aur ₹20 straight off pao. Min order ₹300.',
+    marathi:'आजचा खास कूपन — UDAY20 वापरा आणि ₹20 सूट मिळवा!',
+    time:'1 ghanta pehle',
+    actions:[
+      { label:'🛒 Shop Karo', primary:true, link:'index.html' },
+    ]
+  },
+  {
+    id:3, group:'Aaj', type:'order', unread:true,
+    icon:'✅', iconClass:'ni-order', tagClass:'nt-order', tagLabel:'Order',
+    title:'Order Confirm Ho Gaya! ✅',
+    body:'Aapka order #UG10001 (Basmati Rice 5kg + Toor Dal 1kg) UG Bazaar ne confirm kar liya. Pack ho raha hai.',
+    marathi:'तुमचा ऑर्डर #UG10001 कन्फर्म झाला!',
+    time:'2 ghante pehle',
+    actions:[
+      { label:'📦 Track Karo', primary:true, link:'tracking.html' },
+    ]
+  },
+  // KAL
+  {
+    id:4, group:'Kal', type:'payment', unread:true,
+    icon:'💰', iconClass:'ni-payment', tagClass:'nt-payment', tagLabel:'Payment',
+    title:'Payment Successful! ₹785 💰',
+    body:'Aapki payment ₹785 UPI se successfully process hui. Order #UG10001 ke liye. Transaction ID: TXN8374829.',
+    marathi:'तुमची ₹785 ची पेमेंट यशस्वी झाली.',
+    time:'Kal — 11:35 AM',
+    actions:[]
+  },
+  {
+    id:5, group:'Kal', type:'offer', unread:true,
+    icon:'🌾', iconClass:'ni-offer', tagClass:'nt-offer', tagLabel:'Offer',
+    title:'Krushi Kendra Special Sale! 🌾',
+    body:'Farmers ke liye special — Seeds + Fertilizer combo par 25% off. Sirf aaj aur kal ke liye!',
+    marathi:'कृषी केंद्र विशेष सेल — बियाणे + खत 25% स्वस्त!',
+    time:'Kal — 9:00 AM',
+    actions:[
+      { label:'🌾 Dekho', primary:true, link:'index.html' },
+    ]
+  },
+  // IS HAFTE
+  {
+    id:6, group:'Is Hafte', type:'delivery', unread:false,
+    icon:'🎉', iconClass:'ni-delivery', tagClass:'nt-delivery', tagLabel:'Delivered',
+    title:'Order Deliver Ho Gaya! 🎉',
+    body:'Aapka order #UG10003 (Steel Hammer + Hybrid Seeds) successfully deliver ho gaya. Kaisi rahi shopping?',
+    marathi:'तुमचा ऑर्डर यशस्वीरित्या डिलिव्हर झाला!',
+    time:'3 din pehle — 1:30 PM',
+    actions:[
+      { label:'⭐ Review Do', primary:true, link:'reviews.html' },
+      { label:'🔄 Phir Order', primary:false, link:'index.html' }
+    ]
+  },
+  {
+    id:7, group:'Is Hafte', type:'system', unread:false,
+    icon:'🔔', iconClass:'ni-system', tagClass:'nt-system', tagLabel:'System',
+    title:'Welcome to UG Bazaar! 🎉',
+    body:'Ramesh ji, UG Bazaar family mein aapka swagat hai! Pehle order par FIRST50 coupon use karo — ₹50 off milega.',
+    marathi:'UG Bazaar मध्ये आपले स्वागत आहे! FIRST50 कूपन वापरा.',
+    time:'5 din pehle',
+    actions:[
+      { label:'🛒 Shopping Shuru Karo', primary:true, link:'index.html' },
+    ]
+  },
+  {
+    id:8, group:'Is Hafte', type:'warn', unread:false,
+    icon:'⚠️', iconClass:'ni-warn', tagClass:'nt-warn', tagLabel:'Stock Alert',
+    title:'Cart item low stock mein hai! ⚠️',
+    body:'Aapki wishlist mein rakha "Electric Wire 10m" sirf 2 pieces bacha hai. Jaldi order karo!',
+    marathi:'तुमच्या विशलिस्टमधील Electric Wire फक्त 2 शिल्लक!',
+    time:'6 din pehle',
+    actions:[
+      { label:'🛒 Add to Cart', primary:true, link:'index.html' },
+    ]
+  },
+];
+
+let currentFilter = 'all';
+
+// ── FILTER CONFIG ──
+const filters = [
+  { key:'all', label:'Sab', icon:'🔔' },
+  { key:'order', label:'Orders', icon:'📦' },
+  { key:'delivery', label:'Delivery', icon:'🚀' },
+  { key:'offer', label:'Offers', icon:'🎁' },
+  { key:'payment', label:'Payment', icon:'💰' },
+  { key:'system', label:'System', icon:'⚙️' },
+];
+
+// ── RENDER FILTERS ──
+function renderFilters() {
+  document.getElementById('filter-row').innerHTML = filters.map(f => {
+    const count = f.key === 'all'
+      ? notifications.filter(n=>n.unread).length
+      : notifications.filter(n=>n.type===f.key && n.unread).length;
+    return `<button class="ftab ${currentFilter===f.key?'active':''}" onclick="setFilter('${f.key}',this)">
+      ${f.icon} ${f.label}
+      ${count > 0 ? `<span class="ftab-count">${count}</span>` : ''}
+    </button>`;
+  }).join('');
+}
+
+// ── RENDER NOTIFICATIONS ──
+function renderNotifications() {
+  const filtered = currentFilter === 'all'
+    ? notifications
+    : notifications.filter(n => n.type === currentFilter);
+
+  if(filtered.length === 0) {
+    document.getElementById('notif-container').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🔔</div>
+        <h3>Koi notification nahi!</h3>
+        <p>Is category mein abhi koi notification nahi hai.</p>
+      </div>`;
+    return;
+  }
+
+  // group by date
+  const groups = {};
+  filtered.forEach(n => {
+    if(!groups[n.group]) groups[n.group] = [];
+    groups[n.group].push(n);
+  });
+
+  document.getElementById('notif-container').innerHTML = Object.entries(groups).map(([grp, items]) => `
+    <div class="date-group">
+      <div class="date-label">📅 ${grp}</div>
+      ${items.map(n => `
+        <div class="notif-card ${n.unread?'unread':''}" id="nc-${n.id}" onclick="markRead(${n.id})">
+          <div class="notif-icon-wrap ${n.iconClass}">${n.icon}</div>
+          <div class="notif-content">
+            <div class="notif-title">${n.title}</div>
+            <div class="notif-body">${n.body}</div>
+            <div class="notif-marathi">${n.marathi}</div>
+            <div class="notif-meta">
+              <span class="notif-time">🕐 ${n.time}</span>
+              <span class="notif-tag ${n.tagClass}">${n.tagLabel}</span>
+              ${n.unread ? '<span class="notif-tag" style="background:rgba(244,120,32,0.1);color:var(--orange)">● Unread</span>' : ''}
+            </div>
+            ${n.actions.length > 0 ? `<div class="notif-actions">${n.actions.map(a =>
+              `<button class="notif-action-btn ${a.primary?'primary':''}" onclick="event.stopPropagation();window.location='${a.link}'">${a.label}</button>`
+            ).join('')}</div>` : ''}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+
+  updateUnreadBanner();
+}
+
+// ── MARK READ ──
+function markRead(id) {
+  const n = notifications.find(x=>x.id===id);
+  if(n && n.unread) {
+    n.unread = false;
+    renderFilters();
+    renderNotifications();
+  }
+}
+
+// ── MARK ALL READ ──
+function markAllRead() {
+  notifications.forEach(n => n.unread = false);
+  renderFilters();
+  renderNotifications();
+  showToast('✅ Sab notifications read ho gayi!');
+}
+
+// ── CLEAR ALL ──
+function clearAll() {
+  if(confirm('Sab notifications clear karna chahte ho?')) {
+    notifications = [];
+    renderFilters();
+    renderNotifications();
+    showToast('🗑 Sab notifications clear ho gayi!');
+  }
+}
+
+// ── UNREAD BANNER ──
+function updateUnreadBanner() {
+  const count = notifications.filter(n=>n.unread).length;
+  const banner = document.getElementById('unread-banner');
+  document.getElementById('unread-count').textContent = count;
+  banner.style.display = count > 0 ? 'flex' : 'none';
+}
+
+// ── FILTER ──
+function setFilter(key, btn) {
+  currentFilter = key;
+  document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderNotifications();
+}
+
+// ── CHANNEL TOGGLE ──
+function toggleChannel(type) {
+  const el = document.getElementById(type+'-toggle');
+  el.classList.toggle('on');
+  const isOn = el.classList.contains('on');
+  showToast(isOn
+    ? `✅ ${type==='wa'?'WhatsApp':'SMS'} alerts ON!`
+    : `🔕 ${type==='wa'?'WhatsApp':'SMS'} alerts OFF!`
+  );
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent=msg; t.style.display='block';
+  setTimeout(()=>t.style.display='none', 2800);
+}
+
+// ── INIT ──
+renderFilters();
+renderNotifications();
+</script>
+<script src="nav-fix.js"></script>
+</body>
+</html>

@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Detail — UG Bazaar Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange:#F47820; --blue:#1A5FB4; --blue-dark:#0D3A6E;
+    --blue-light:#3A82D4; --gold:#E8A020; --off-white:#F4F6FB;
+    --gray:#6B7280; --gray-light:#F3F4F6; --text:#1A1A2E;
+    --text-soft:#4B5563; --border:#E2E8F0;
+    --success:#16A34A; --success-bg:#F0FDF4;
+    --error:#DC2626; --error-bg:#FEF2F2;
+    --warn:#D97706; --warn-bg:#FFFBEB;
+    --sidebar-w:240px; --radius:14px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Baloo 2',sans-serif; background:var(--off-white); color:var(--text); display:flex; min-height:100vh; }
+
+  /* SIDEBAR */
+  .sidebar { width:var(--sidebar-w); background:var(--blue-dark); color:#fff; display:flex; flex-direction:column; position:fixed; top:0; left:0; height:100vh; z-index:100; overflow-y:auto; }
+  .sidebar-logo { padding:1.4rem 1.2rem 1rem; border-bottom:1px solid rgba(255,255,255,0.1); }
+  .s-logo-box { display:flex; align-items:center; gap:0.7rem; }
+  .s-logo-icon { width:40px; height:40px; background:linear-gradient(135deg,var(--orange),var(--gold)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1rem; }
+  .s-logo-text { font-size:1rem; font-weight:800; }
+  .s-logo-sub { font-size:0.68rem; opacity:0.6; letter-spacing:1px; }
+  .sidebar-admin { padding:1rem 1.2rem; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; gap:0.7rem; }
+  .admin-avatar { width:36px; height:36px; border-radius:50%; background:rgba(244,120,32,0.3); border:2px solid var(--orange); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.85rem; }
+  .admin-name { font-size:0.85rem; font-weight:700; }
+  .admin-role { font-size:0.68rem; opacity:0.6; }
+  .sidebar-nav { flex:1; padding:0.8rem 0; }
+  .nav-section { font-size:0.65rem; font-weight:700; letter-spacing:1.5px; opacity:0.45; padding:0.8rem 1.2rem 0.3rem; text-transform:uppercase; }
+  .nav-item { display:flex; align-items:center; gap:0.7rem; padding:0.65rem 1.2rem; cursor:pointer; transition:all 0.2s; border-left:3px solid transparent; font-size:0.88rem; font-weight:600; opacity:0.75; text-decoration:none; color:#fff; }
+  .nav-item:hover { background:rgba(255,255,255,0.08); opacity:1; }
+  .nav-item.active { background:rgba(244,120,32,0.15); border-left-color:var(--orange); opacity:1; color:#FFD580; }
+  .nav-icon { font-size:1rem; width:20px; text-align:center; }
+  .nav-badge { margin-left:auto; background:var(--orange); color:#fff; font-size:0.65rem; font-weight:800; padding:1px 6px; border-radius:10px; }
+
+  /* MAIN */
+  .main-wrap { margin-left:var(--sidebar-w); flex:1; display:flex; flex-direction:column; }
+  .topbar { background:#fff; border-bottom:1px solid var(--border); padding:0.9rem 1.8rem; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50; gap:1rem; flex-wrap:wrap; }
+  .topbar-left { display:flex; align-items:center; gap:0.8rem; }
+  .back-btn { display:flex; align-items:center; gap:0.4rem; color:var(--text-soft); font-size:0.85rem; font-weight:700; text-decoration:none; padding:0.4rem 0.9rem; border:1.5px solid var(--border); border-radius:9px; transition:all 0.2s; cursor:pointer; background:#fff; font-family:'Baloo 2',sans-serif; }
+  .back-btn:hover { border-color:var(--blue); color:var(--blue); }
+  .topbar-title { font-size:1rem; font-weight:800; }
+  .topbar-right { display:flex; align-items:center; gap:0.7rem; flex-wrap:wrap; }
+  .tbtn { padding:0.45rem 1rem; border-radius:9px; border:1.5px solid var(--border); background:#fff; font-size:0.8rem; font-weight:700; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:all 0.2s; color:var(--text-soft); }
+  .tbtn:hover { border-color:var(--blue); color:var(--blue); }
+  .tbtn-orange { background:var(--orange); color:#fff; border-color:var(--orange); }
+  .tbtn-orange:hover { background:#D4620F; border-color:#D4620F; color:#fff; }
+  .tbtn-green { background:var(--success); color:#fff; border-color:var(--success); }
+  .tbtn-green:hover { background:#0D8A3A; }
+  .content { padding:1.5rem 1.8rem 3rem; }
+
+  /* ORDER HERO */
+  .order-hero { background:linear-gradient(135deg,var(--blue-dark),var(--blue)); border-radius:16px; padding:1.5rem 2rem; color:#fff; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem; position:relative; overflow:hidden; }
+  .oh-bg { position:absolute; inset:0; opacity:0.05; background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%); background-size:16px 16px; }
+  .oh-left { position:relative; z-index:2; }
+  .oh-order-id { font-size:1.6rem; font-weight:800; margin-bottom:0.2rem; }
+  .oh-date { font-size:0.82rem; opacity:0.75; }
+  .oh-right { display:flex; gap:0.7rem; flex-wrap:wrap; position:relative; z-index:2; }
+  .status-select-wrap { display:flex; flex-direction:column; gap:0.3rem; }
+  .status-select-label { font-size:0.68rem; font-weight:700; opacity:0.7; letter-spacing:1px; text-transform:uppercase; }
+  .status-select { padding:0.5rem 1rem; border-radius:10px; border:2px solid rgba(255,255,255,0.3); background:rgba(255,255,255,0.15); color:#fff; font-size:0.88rem; font-weight:700; font-family:'Baloo 2',sans-serif; outline:none; cursor:pointer; }
+  .status-select option { background:var(--blue-dark); color:#fff; }
+  .update-btn { padding:0.6rem 1.4rem; border-radius:10px; border:none; background:var(--orange); color:#fff; font-weight:800; font-size:0.88rem; cursor:pointer; font-family:'Baloo 2',sans-serif; align-self:flex-end; transition:all 0.2s; }
+  .update-btn:hover { background:#D4620F; transform:translateY(-1px); }
+
+  /* STATUS TIMELINE */
+  .status-timeline { display:flex; align-items:center; gap:0; margin-bottom:1.5rem; background:#fff; border-radius:var(--radius); border:1px solid var(--border); padding:1.2rem 1.5rem; overflow-x:auto; box-shadow:0 2px 8px rgba(26,95,180,0.05); }
+  .tl-step { display:flex; flex-direction:column; align-items:center; gap:0.4rem; min-width:80px; }
+  .tl-dot { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1rem; border:2.5px solid var(--border); background:#fff; transition:all 0.3s; flex-shrink:0; }
+  .tl-dot.done { background:var(--success); border-color:var(--success); }
+  .tl-dot.active { background:var(--orange); border-color:var(--orange); box-shadow:0 0 0 4px rgba(244,120,32,0.2); animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 4px rgba(244,120,32,0.2)} 50%{box-shadow:0 0 0 8px rgba(244,120,32,0.08)} }
+  .tl-label { font-size:0.65rem; font-weight:700; color:var(--gray); text-align:center; white-space:nowrap; }
+  .tl-label.done { color:var(--success); }
+  .tl-label.active { color:var(--orange); }
+  .tl-time { font-size:0.6rem; color:var(--gray); text-align:center; }
+  .tl-connector { flex:1; height:2.5px; background:var(--border); margin-top:-18px; min-width:30px; transition:background 0.3s; }
+  .tl-connector.done { background:var(--success); }
+
+  /* LAYOUT */
+  .layout { display:grid; grid-template-columns:1fr 340px; gap:1.5rem; align-items:start; }
+
+  /* CARDS */
+  .card { background:#fff; border-radius:var(--radius); border:1px solid var(--border); overflow:hidden; margin-bottom:1.2rem; box-shadow:0 2px 8px rgba(26,95,180,0.05); }
+  .card-head { padding:1rem 1.2rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+  .card-head h3 { font-size:0.92rem; font-weight:800; }
+  .card-body { padding:1.2rem; }
+
+  /* ORDER ITEMS TABLE */
+  table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+  th { padding:0.6rem 0.8rem; text-align:left; font-size:0.7rem; font-weight:700; color:var(--gray); letter-spacing:0.5px; text-transform:uppercase; background:var(--off-white); border-bottom:1px solid var(--border); }
+  td { padding:0.85rem 0.8rem; border-bottom:1px solid var(--border); vertical-align:middle; }
+  tr:last-child td { border-bottom:none; }
+  .item-cell { display:flex; align-items:center; gap:0.7rem; }
+  .item-emoji-box { width:40px; height:40px; background:var(--off-white); border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex-shrink:0; }
+  .item-name { font-weight:700; font-size:0.88rem; }
+  .item-dept { font-size:0.7rem; color:var(--blue); font-weight:700; }
+  .td-bold { font-weight:800; color:var(--text); }
+  .td-muted { color:var(--text-soft); }
+
+  /* TOTALS */
+  .totals-section { border-top:1px solid var(--border); padding:1rem 1.2rem; }
+  .total-row { display:flex; justify-content:space-between; padding:0.35rem 0; font-size:0.88rem; }
+  .total-row.grand { font-size:1.05rem; font-weight:800; border-top:2px solid var(--border); padding-top:0.7rem; margin-top:0.3rem; }
+  .total-label { color:var(--text-soft); }
+  .total-val { font-weight:700; }
+  .total-val.green { color:var(--success); }
+  .total-val.orange { font-size:1.1rem; color:var(--orange); }
+
+  /* INFO ROWS */
+  .info-row { display:flex; align-items:flex-start; gap:0.8rem; padding:0.7rem 0; border-bottom:1px solid var(--border); }
+  .info-row:last-child { border-bottom:none; }
+  .info-icon { width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:0.95rem; flex-shrink:0; }
+  .ii-blue { background:rgba(26,95,180,0.1); }
+  .ii-orange { background:rgba(244,120,32,0.1); }
+  .ii-green { background:rgba(22,163,74,0.1); }
+  .ii-gold { background:rgba(232,160,32,0.12); }
+  .ii-purple { background:rgba(124,58,237,0.1); }
+  .info-label { font-size:0.7rem; font-weight:700; color:var(--gray); letter-spacing:0.3px; text-transform:uppercase; margin-bottom:0.15rem; }
+  .info-val { font-size:0.88rem; font-weight:700; color:var(--text); line-height:1.5; }
+  .info-val a { color:var(--blue); text-decoration:none; }
+  .info-val a:hover { color:var(--orange); }
+
+  /* PAYMENT STATUS */
+  .pay-status { display:inline-flex; align-items:center; gap:0.4rem; padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:700; }
+  .ps-paid { background:var(--success-bg); color:var(--success); }
+  .ps-cod { background:var(--warn-bg); color:var(--warn); }
+  .ps-pending { background:var(--error-bg); color:var(--error); }
+
+  /* ADMIN NOTES */
+  .notes-textarea { width:100%; padding:0.7rem 0.9rem; border:1.5px solid var(--border); border-radius:10px; font-size:0.85rem; font-family:'Baloo 2',sans-serif; color:var(--text); background:var(--off-white); outline:none; resize:vertical; min-height:80px; line-height:1.6; transition:border-color 0.2s; }
+  .notes-textarea:focus { border-color:var(--blue); background:#fff; }
+  .save-note-btn { margin-top:0.7rem; padding:0.5rem 1.2rem; border-radius:9px; border:none; background:var(--blue); color:#fff; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:background 0.2s; }
+  .save-note-btn:hover { background:var(--blue-dark); }
+
+  /* NOTIFY SECTION */
+  .notify-section { display:flex; flex-direction:column; gap:0.6rem; }
+  .notify-item { display:flex; align-items:center; justify-content:space-between; padding:0.7rem 0.9rem; background:var(--off-white); border-radius:10px; border:1px solid var(--border); }
+  .notify-left { display:flex; align-items:center; gap:0.6rem; font-size:0.85rem; font-weight:600; }
+  .notify-send-btn { padding:0.35rem 0.9rem; border-radius:8px; border:none; font-size:0.75rem; font-weight:700; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:all 0.2s; }
+  .nsb-wa { background:#25D366; color:#fff; }
+  .nsb-wa:hover { background:#1DA050; }
+  .nsb-sms { background:var(--blue); color:#fff; }
+  .nsb-sms:hover { background:var(--blue-dark); }
+
+  /* ACTIVITY LOG */
+  .activity-log { display:flex; flex-direction:column; gap:0; }
+  .log-item { display:flex; gap:0.8rem; padding:0.7rem 0; border-bottom:1px solid var(--border); }
+  .log-item:last-child { border-bottom:none; }
+  .log-dot { width:8px; height:8px; border-radius:50%; background:var(--orange); margin-top:6px; flex-shrink:0; }
+  .log-dot.blue { background:var(--blue); }
+  .log-dot.green { background:var(--success); }
+  .log-dot.gray { background:var(--gray); }
+  .log-text { font-size:0.82rem; color:var(--text-soft); line-height:1.5; flex:1; }
+  .log-text strong { color:var(--text); }
+  .log-time { font-size:0.7rem; color:var(--gray); white-space:nowrap; }
+
+  /* QUICK ACTIONS */
+  .quick-actions { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; }
+  .qa-btn { padding:0.65rem; border-radius:10px; border:1.5px solid var(--border); background:#fff; font-size:0.78rem; font-weight:700; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:all 0.2s; color:var(--text-soft); text-align:center; }
+  .qa-btn:hover { border-color:var(--blue); color:var(--blue); background:rgba(26,95,180,0.03); }
+  .qa-btn.danger:hover { border-color:var(--error); color:var(--error); background:var(--error-bg); }
+  .qa-btn.success:hover { border-color:var(--success); color:var(--success); background:var(--success-bg); }
+
+  /* BADGE */
+  .badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:0.7rem; font-weight:700; }
+  .b-delivery { background:rgba(26,95,180,0.1); color:var(--blue); }
+  .b-pickup { background:rgba(232,160,32,0.12); color:#7A5200; }
+  .b-out { background:rgba(244,120,32,0.1); color:var(--orange); }
+  .b-delivered { background:var(--success-bg); color:var(--success); }
+  .b-cancelled { background:var(--error-bg); color:var(--error); }
+
+  /* TOAST */
+  .toast { position:fixed; bottom:2rem; right:2rem; background:var(--blue); color:#fff; padding:0.8rem 1.4rem; border-radius:12px; font-weight:600; font-size:0.88rem; z-index:9999; box-shadow:0 8px 24px rgba(0,0,0,0.2); display:none; }
+
+  /* PRINT */
+  @media print {
+    .sidebar, .topbar, .quick-actions, .notify-section, .qa-btn, .update-btn, .tbtn, .back-btn { display:none !important; }
+    .main-wrap { margin-left:0; }
+    body { background:#fff; }
+    .card { box-shadow:none; border:1px solid #ddd; }
+  }
+
+  @media(max-width:900px) {
+    .sidebar { width:60px; }
+    .s-logo-text,.s-logo-sub,.admin-name,.admin-role,.nav-item span,.nav-section { display:none; }
+    .main-wrap { margin-left:60px; }
+    .nav-item { justify-content:center; padding:0.8rem; }
+    .layout { grid-template-columns:1fr; }
+    .content { padding:1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="s-logo-box">
+      <div class="s-logo-icon">UG</div>
+      <div>
+        <div class="s-logo-text">UG Bazaar</div>
+        <div class="s-logo-sub">Admin Panel</div>
+      </div>
+    </div>
+  </div>
+  <div class="sidebar-admin">
+    <div class="admin-avatar">UA</div>
+    <div>
+      <div class="admin-name">Uday Ainchwar</div>
+      <div class="admin-role">Super Admin</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Main</div>
+    <a class="nav-item" href="admin.html"><span class="nav-icon">📊</span><span>Dashboard</span></a>
+    <a class="nav-item active" href="admin.html"><span class="nav-icon">📦</span><span>Orders</span><span class="nav-badge">4</span></a>
+    <div class="nav-section">Manage</div>
+    <a class="nav-item" href="admin.html"><span class="nav-icon">🛍</span><span>Products</span></a>
+    <a class="nav-item" href="admin.html"><span class="nav-icon">👥</span><span>Customers</span></a>
+    <a class="nav-item" href="admin.html"><span class="nav-icon">🎁</span><span>Coupons</span></a>
+    <div class="nav-section">Reports</div>
+    <a class="nav-item" href="admin.html"><span class="nav-icon">📈</span><span>Sales Report</span></a>
+    <div class="nav-section">Settings</div>
+    <a class="nav-item" href="#"><span class="nav-icon">⚙️</span><span>Settings</span></a>
+    <a class="nav-item" href="#" onclick="showToast('Logged out!')"><span class="nav-icon">🚪</span><span>Logout</span></a>
+  </nav>
+</aside>
+
+<!-- MAIN -->
+<div class="main-wrap">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="back-btn" onclick="history.back() || window.location='admin.html'">← Back to Orders</button>
+      <div class="topbar-title">📦 Order Detail — <span id="topbar-order-id" style="color:var(--orange)">#UG10001</span></div>
+    </div>
+    <div class="topbar-right">
+      <button class="tbtn" onclick="window.print()">🖨️ Print Invoice</button>
+      <button class="tbtn" onclick="showToast('Invoice PDF download ho raha hai!')">📄 Download PDF</button>
+      <button class="tbtn tbtn-green" onclick="markDelivered()">✅ Mark Delivered</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ORDER SELECTOR -->
+    <div style="display:flex;align-items:center;gap:0.7rem;margin-bottom:1.2rem;flex-wrap:wrap">
+      <span style="font-size:0.82rem;font-weight:700;color:var(--gray)">View Order:</span>
+      <select id="order-selector" onchange="loadOrder(this.value)" style="padding:0.45rem 0.9rem;border:1.5px solid var(--border);border-radius:9px;font-size:0.85rem;font-family:'Baloo 2',sans-serif;color:var(--text);outline:none;background:#fff;">
+        <option value="UG10001">#UG10001 — Ramesh Borkar</option>
+        <option value="UG10002">#UG10002 — Suresh Meshram</option>
+        <option value="UG10003">#UG10003 — Priya Gaikwad</option>
+        <option value="UG10004">#UG10004 — Anil Thakre</option>
+        <option value="UG10005">#UG10005 — Sanjay Yadav</option>
+        <option value="UG10006">#UG10006 — Meena Raut</option>
+      </select>
+    </div>
+
+    <!-- ORDER HERO -->
+    <div class="order-hero">
+      <div class="oh-bg"></div>
+      <div class="oh-left">
+        <div class="oh-order-id" id="hero-order-id">#UG10001</div>
+        <div class="oh-date" id="hero-date">📅 Apr 3, 2026 — 11:30 AM &nbsp;|&nbsp; 🚀 Home Delivery &nbsp;|&nbsp; 💳 UPI Payment</div>
+      </div>
+      <div class="oh-right">
+        <div class="status-select-wrap">
+          <div class="status-select-label">Update Status</div>
+          <select class="status-select" id="status-select">
+            <option>Pending</option>
+            <option>Confirmed</option>
+            <option>Packed</option>
+            <option selected>Out for Delivery</option>
+            <option>Ready for Pickup</option>
+            <option>Delivered</option>
+            <option>Picked Up</option>
+            <option>Cancelled</option>
+          </select>
+        </div>
+        <button class="update-btn" onclick="updateStatus()">🔄 Update & Notify</button>
+      </div>
+    </div>
+
+    <!-- STATUS TIMELINE -->
+    <div class="status-timeline" id="status-timeline"></div>
+
+    <div class="layout">
+
+      <!-- LEFT COLUMN -->
+      <div>
+
+        <!-- ORDER ITEMS -->
+        <div class="card">
+          <div class="card-head">
+            <h3>🛍 Order Items</h3>
+            <span id="items-count" style="font-size:0.78rem;color:var(--gray);font-weight:600">2 items</span>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Qty</th>
+                <th>Unit Price</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody id="items-table"></tbody>
+          </table>
+          <div class="totals-section" id="totals-section"></div>
+        </div>
+
+        <!-- CUSTOMER INFO -->
+        <div class="card">
+          <div class="card-head">
+            <h3>👤 Customer Information</h3>
+            <span id="customer-verified" class="badge b-delivery">✅ Verified</span>
+          </div>
+          <div class="card-body" id="customer-info"></div>
+        </div>
+
+        <!-- DELIVERY / PICKUP INFO -->
+        <div class="card">
+          <div class="card-head">
+            <h3 id="delivery-card-title">📍 Delivery Address</h3>
+          </div>
+          <div class="card-body" id="delivery-info"></div>
+        </div>
+
+        <!-- ACTIVITY LOG -->
+        <div class="card">
+          <div class="card-head"><h3>📋 Activity Log</h3></div>
+          <div class="card-body">
+            <div class="activity-log" id="activity-log"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div>
+
+        <!-- PAYMENT INFO -->
+        <div class="card">
+          <div class="card-head"><h3>💳 Payment Details</h3></div>
+          <div class="card-body" id="payment-info"></div>
+        </div>
+
+        <!-- QUICK ACTIONS -->
+        <div class="card">
+          <div class="card-head"><h3>⚡ Quick Actions</h3></div>
+          <div class="card-body">
+            <div class="quick-actions">
+              <button class="qa-btn success" onclick="markDelivered()">✅ Mark Delivered</button>
+              <button class="qa-btn" onclick="printInvoice()">🖨️ Print Invoice</button>
+              <button class="qa-btn" onclick="showToast('Customer profile kholenge!')">👤 View Profile</button>
+              <button class="qa-btn" onclick="showToast('Order duplicate ho gaya!')">📋 Duplicate Order</button>
+              <button class="qa-btn danger" onclick="cancelOrder()">❌ Cancel Order</button>
+              <button class="qa-btn" onclick="showToast('Refund process shuru!')">💰 Issue Refund</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- NOTIFY CUSTOMER -->
+        <div class="card">
+          <div class="card-head"><h3>🔔 Notify Customer</h3></div>
+          <div class="card-body">
+            <div class="notify-section">
+              <div class="notify-item">
+                <div class="notify-left">💬 WhatsApp Update</div>
+                <button class="notify-send-btn nsb-wa" onclick="sendNotif('WhatsApp')">Send</button>
+              </div>
+              <div class="notify-item">
+                <div class="notify-left">📱 SMS Update</div>
+                <button class="notify-send-btn nsb-sms" onclick="sendNotif('SMS')">Send</button>
+              </div>
+              <div class="notify-item">
+                <div class="notify-left">💬 + 📱 Both</div>
+                <button class="notify-send-btn nsb-wa" onclick="sendNotif('WhatsApp + SMS')">Send Both</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ADMIN NOTES -->
+        <div class="card">
+          <div class="card-head"><h3>📝 Admin Notes</h3></div>
+          <div class="card-body">
+            <textarea class="notes-textarea" id="admin-notes" placeholder="Internal notes for this order... (customer preference, special instructions, etc.)">Customer requested delivery before 6 PM. Call before arriving.</textarea>
+            <button class="save-note-btn" onclick="saveNote()">💾 Save Note</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── ORDER DATA ──
+const orders = {
+  UG10001: {
+    id:'#UG10001', date:'Apr 3, 2026', time:'11:30 AM',
+    type:'delivery', payment:'UPI', payStatus:'paid', txnId:'TXN8374829',
+    status:'Out for Delivery',
+    customer:{ name:'Ramesh Borkar', mobile:'9876543210', email:'ramesh@gmail.com', village:'Bhangaram', orders:5, since:'Jan 2026' },
+    address:{ line:'Main Road, Near Temple', village:'Bhangaram', taluka:'Talodhi', dist:'Chandrapur', pin:'441222', landmark:'Near Ganesh Mandir' },
+    items:[
+      { emoji:'🌾', name:'Basmati Rice 5kg', dept:'Grocery', qty:2, price:280, old:380 },
+      { emoji:'🫘', name:'Toor Dal 1kg', dept:'Grocery', qty:1, price:145, old:170 },
+    ],
+    coupon:'UG10', couponSave:57, delivery:0,
+    timeline:[
+      { label:'Placed', time:'11:30 AM', done:true },
+      { label:'Confirmed', time:'11:45 AM', done:true },
+      { label:'Packed', time:'12:15 PM', done:true },
+      { label:'Out for Delivery', time:'1:00 PM', done:false, active:true },
+      { label:'Delivered', time:'—', done:false },
+    ],
+    log:[
+      { dot:'orange', text:'Order placed by <strong>Ramesh Borkar</strong> via website', time:'11:30 AM' },
+      { dot:'blue', text:'Payment of <strong>₹728</strong> received via UPI (TXN8374829)', time:'11:31 AM' },
+      { dot:'green', text:'Order <strong>confirmed</strong> by admin', time:'11:45 AM' },
+      { dot:'green', text:'Order <strong>packed</strong> and ready', time:'12:15 PM' },
+      { dot:'orange', text:'Order marked <strong>Out for Delivery</strong>', time:'1:00 PM' },
+      { dot:'gray', text:'WhatsApp notification sent to customer', time:'1:01 PM' },
+    ]
+  },
+  UG10002: {
+    id:'#UG10002', date:'Apr 2, 2026', time:'3:00 PM',
+    type:'pickup', payment:'Cash on Delivery', payStatus:'cod', txnId:'—',
+    status:'Ready for Pickup',
+    customer:{ name:'Suresh Meshram', mobile:'9823456780', email:'suresh@gmail.com', village:'Talodhi', orders:3, since:'Feb 2026' },
+    address:null,
+    items:[
+      { emoji:'💡', name:'LED Bulb 9W', dept:'Electrical', qty:3, price:65, old:90 },
+      { emoji:'🔌', name:'Electric Wire 10m', dept:'Electrical', qty:1, price:280, old:340 },
+    ],
+    coupon:null, couponSave:0, delivery:0,
+    timeline:[
+      { label:'Placed', time:'3:00 PM', done:true },
+      { label:'Confirmed', time:'3:10 PM', done:true },
+      { label:'Ready for Pickup', time:'4:30 PM', done:false, active:true },
+      { label:'Picked Up', time:'—', done:false },
+    ],
+    log:[
+      { dot:'orange', text:'Pickup order placed by <strong>Suresh Meshram</strong>', time:'3:00 PM' },
+      { dot:'green', text:'Order <strong>confirmed</strong> by admin', time:'3:10 PM' },
+      { dot:'green', text:'Order packed — <strong>Ready for Pickup</strong>', time:'4:30 PM' },
+      { dot:'gray', text:'WhatsApp + SMS sent — "Order ready, please pickup"', time:'4:31 PM' },
+    ]
+  },
+  UG10003: {
+    id:'#UG10003', date:'Mar 30, 2026', time:'10:00 AM',
+    type:'delivery', payment:'Razorpay', payStatus:'paid', txnId:'PAY9283847',
+    status:'Delivered',
+    customer:{ name:'Priya Gaikwad', mobile:'9765432100', email:'priya@gmail.com', village:'Bhangaram', orders:8, since:'Dec 2025' },
+    address:{ line:'Near School Road', village:'Bhangaram', taluka:'Talodhi', dist:'Chandrapur', pin:'441222', landmark:'Near Primary School' },
+    items:[
+      { emoji:'🔨', name:'Steel Hammer', dept:'Hardware', qty:1, price:220, old:280 },
+      { emoji:'🌱', name:'Hybrid Seeds 500g', dept:'Krushi Kendra', qty:2, price:180, old:240 },
+    ],
+    coupon:'FIRST50', couponSave:50, delivery:0,
+    timeline:[
+      { label:'Placed', time:'10:00 AM', done:true },
+      { label:'Confirmed', time:'10:15 AM', done:true },
+      { label:'Packed', time:'11:00 AM', done:true },
+      { label:'Out for Delivery', time:'12:00 PM', done:true },
+      { label:'Delivered', time:'1:30 PM', done:true },
+    ],
+    log:[
+      { dot:'orange', text:'Order placed by <strong>Priya Gaikwad</strong>', time:'10:00 AM' },
+      { dot:'blue', text:'Payment <strong>₹530</strong> received via Razorpay', time:'10:00 AM' },
+      { dot:'green', text:'Order confirmed and packed', time:'11:00 AM' },
+      { dot:'green', text:'Order <strong>delivered successfully</strong> ✅', time:'1:30 PM' },
+    ]
+  },
+  UG10004: {
+    id:'#UG10004', date:'Mar 28, 2026', time:'5:00 PM',
+    type:'delivery', payment:'UPI', payStatus:'refunded', txnId:'TXN7263819',
+    status:'Cancelled',
+    customer:{ name:'Anil Thakre', mobile:'9812345670', email:'anil@gmail.com', village:'Talodhi', orders:2, since:'Mar 2026' },
+    address:{ line:'Talodhi Bus Stand Road', village:'Talodhi', taluka:'Talodhi', dist:'Chandrapur', pin:'441222', landmark:'Near Bus Stand' },
+    items:[
+      { emoji:'🛋', name:'Wooden Chair', dept:'Furniture', qty:1, price:1200, old:1600 },
+    ],
+    coupon:null, couponSave:0, delivery:30,
+    timeline:[
+      { label:'Placed', time:'5:00 PM', done:true },
+      { label:'Cancelled', time:'5:30 PM', done:true, active:false },
+    ],
+    log:[
+      { dot:'orange', text:'Order placed by <strong>Anil Thakre</strong>', time:'5:00 PM' },
+      { dot:'red', text:'Order <strong>cancelled</strong> by customer request', time:'5:30 PM' },
+      { dot:'blue', text:'Refund of <strong>₹1230</strong> initiated to UPI', time:'5:35 PM' },
+    ]
+  },
+  UG10005: {
+    id:'#UG10005', date:'Apr 4, 2026', time:'9:15 AM',
+    type:'delivery', payment:'UPI', payStatus:'paid', txnId:'TXN9283746',
+    status:'Confirmed',
+    customer:{ name:'Sanjay Yadav', mobile:'9890123456', email:'sanjay@gmail.com', village:'Bhangaram', orders:6, since:'Nov 2025' },
+    address:{ line:'Ward No. 3, Main Market', village:'Bhangaram', taluka:'Talodhi', dist:'Chandrapur', pin:'441222', landmark:'Near Market' },
+    items:[
+      { emoji:'🌿', name:'DAP Fertilizer 5kg', dept:'Krushi Kendra', qty:2, price:650, old:780 },
+      { emoji:'🌱', name:'Hybrid Seeds 500g', dept:'Krushi Kendra', qty:1, price:180, old:240 },
+    ],
+    coupon:'KISAN30', couponSave:444, delivery:0,
+    timeline:[
+      { label:'Placed', time:'9:15 AM', done:true },
+      { label:'Confirmed', time:'9:30 AM', done:false, active:true },
+      { label:'Packed', time:'—', done:false },
+      { label:'Out for Delivery', time:'—', done:false },
+      { label:'Delivered', time:'—', done:false },
+    ],
+    log:[
+      { dot:'orange', text:'Order placed by <strong>Sanjay Yadav</strong> — Krushi items', time:'9:15 AM' },
+      { dot:'blue', text:'Payment <strong>₹1036</strong> received via UPI', time:'9:15 AM' },
+      { dot:'green', text:'Order <strong>confirmed</strong> — awaiting packing', time:'9:30 AM' },
+    ]
+  },
+  UG10006: {
+    id:'#UG10006', date:'Apr 4, 2026', time:'2:30 PM',
+    type:'pickup', payment:'Cash on Delivery', payStatus:'cod', txnId:'—',
+    status:'Pending',
+    customer:{ name:'Meena Raut', mobile:'9745678901', email:'meena@gmail.com', village:'Nandori', orders:1, since:'Apr 2026' },
+    address:null,
+    items:[
+      { emoji:'🌱', name:'Hybrid Seeds 500g', dept:'Krushi Kendra', qty:1, price:180, old:240 },
+    ],
+    coupon:null, couponSave:0, delivery:0,
+    timeline:[
+      { label:'Placed', time:'2:30 PM', done:true },
+      { label:'Confirmed', time:'—', done:false, active:true },
+      { label:'Ready for Pickup', time:'—', done:false },
+      { label:'Picked Up', time:'—', done:false },
+    ],
+    log:[
+      { dot:'orange', text:'Pickup order placed by <strong>Meena Raut</strong> — new customer', time:'2:30 PM' },
+      { dot:'gray', text:'Awaiting admin confirmation', time:'2:30 PM' },
+    ]
+  },
+};
+
+let currentOrder = orders['UG10001'];
+
+// ── LOAD ORDER ──
+function loadOrder(id) {
+  currentOrder = orders[id];
+  renderAll();
+  document.getElementById('topbar-order-id').textContent = currentOrder.id;
+  document.getElementById('hero-order-id').textContent = currentOrder.id;
+}
+
+function renderAll() {
+  const o = currentOrder;
+  // hero date line
+  document.getElementById('hero-date').innerHTML =
+    `📅 ${o.date} — ${o.time} &nbsp;|&nbsp; ${o.type==='delivery'?'🚀 Home Delivery':'🏪 Shop Pickup'} &nbsp;|&nbsp; 💳 ${o.payment}`;
+
+  // status select
+  const sel = document.getElementById('status-select');
+  [...sel.options].forEach(opt => opt.selected = opt.value === o.status);
+
+  renderTimeline(o);
+  renderItems(o);
+  renderCustomer(o);
+  renderDelivery(o);
+  renderPayment(o);
+  renderLog(o);
+}
+
+// ── TIMELINE ──
+function renderTimeline(o) {
+  const tl = document.getElementById('status-timeline');
+  tl.innerHTML = o.timeline.map((s, i) => {
+    const dotClass = s.done ? 'done' : (s.active ? 'active' : '');
+    const lblClass = s.done ? 'done' : (s.active ? 'active' : '');
+    const connector = i < o.timeline.length - 1
+      ? `<div class="tl-connector ${s.done ? 'done' : ''}"></div>` : '';
+    return `
+      <div class="tl-step">
+        <div class="tl-dot ${dotClass}">${s.done ? '✓' : (s.active ? '●' : (i+1))}</div>
+        <div class="tl-label ${lblClass}">${s.label}</div>
+        <div class="tl-time">${s.time}</div>
+      </div>
+      ${connector}`;
+  }).join('');
+}
+
+// ── ITEMS ──
+function renderItems(o) {
+  const subtotal = o.items.reduce((s,i) => s + i.price * i.qty, 0);
+  const origTotal = o.items.reduce((s,i) => s + i.old * i.qty, 0);
+  const prodDisc = origTotal - subtotal;
+  const grand = subtotal - o.couponSave + o.delivery;
+
+  document.getElementById('items-count').textContent = `${o.items.length} item${o.items.length>1?'s':''}`;
+  document.getElementById('items-table').innerHTML = o.items.map(item => `
+    <tr>
+      <td>
+        <div class="item-cell">
+          <div class="item-emoji-box">${item.emoji}</div>
+          <div>
+            <div class="item-name">${item.name}</div>
+            <div class="item-dept">${item.dept}</div>
+          </div>
+        </div>
+      </td>
+      <td class="td-bold">× ${item.qty}</td>
+      <td class="td-muted">₹${item.price} <span style="text-decoration:line-through;font-size:0.75rem">₹${item.old}</span></td>
+      <td class="td-bold">₹${item.price * item.qty}</td>
+    </tr>
+  `).join('');
+
+  document.getElementById('totals-section').innerHTML = `
+    <div class="total-row"><span class="total-label">Subtotal (MRP)</span><span class="total-val">₹${origTotal}</span></div>
+    <div class="total-row"><span class="total-label">Product Discount</span><span class="total-val green">-₹${prodDisc}</span></div>
+    ${o.couponSave > 0 ? `<div class="total-row"><span class="total-label">Coupon (${o.coupon})</span><span class="total-val green">-₹${o.couponSave}</span></div>` : ''}
+    <div class="total-row"><span class="total-label">Delivery Charge</span><span class="total-val">${o.delivery > 0 ? '₹'+o.delivery : '🎉 FREE'}</span></div>
+    <div class="total-row grand"><span>Grand Total</span><span class="total-val orange">₹${grand}</span></div>
+  `;
+}
+
+// ── CUSTOMER ──
+function renderCustomer(o) {
+  const c = o.customer;
+  document.getElementById('customer-info').innerHTML = `
+    <div class="info-row"><div class="info-icon ii-blue">👤</div><div><div class="info-label">Customer Name</div><div class="info-val">${c.name}</div></div></div>
+    <div class="info-row"><div class="info-icon ii-orange">📞</div><div><div class="info-label">Mobile</div><div class="info-val"><a href="tel:${c.mobile}">${c.mobile}</a> &nbsp;<a href="https://wa.me/91${c.mobile}" target="_blank" style="color:#25D366;font-size:0.78rem">💬 WhatsApp</a></div></div></div>
+    <div class="info-row"><div class="info-icon ii-purple">📧</div><div><div class="info-label">Email</div><div class="info-val">${c.email}</div></div></div>
+    <div class="info-row"><div class="info-icon ii-gold">📍</div><div><div class="info-label">Village</div><div class="info-val">${c.village}</div></div></div>
+    <div class="info-row"><div class="info-icon ii-green">📦</div><div><div class="info-label">Total Orders / Member Since</div><div class="info-val">${c.orders} orders &nbsp;|&nbsp; Since ${c.since}</div></div></div>
+  `;
+}
+
+// ── DELIVERY / PICKUP ──
+function renderDelivery(o) {
+  const title = document.getElementById('delivery-card-title');
+  const body = document.getElementById('delivery-info');
+  if(o.type === 'pickup') {
+    title.textContent = '🏪 Pickup Details';
+    body.innerHTML = `
+      <div class="info-row"><div class="info-icon ii-blue">📍</div><div><div class="info-label">Pickup Location</div><div class="info-val">UG Bazaar, Bhangaram, Talodhi<br>Dist. Chandrapur — 441222</div></div></div>
+      <div class="info-row"><div class="info-icon ii-orange">🕐</div><div><div class="info-label">Pickup Timing</div><div class="info-val">9:00 AM – 9:00 PM (Daily)</div></div></div>
+      <div class="info-row"><div class="info-icon ii-green">📞</div><div><div class="info-label">Contact on Arrival</div><div class="info-val"><a href="tel:8390901925">8390901925</a></div></div></div>
+    `;
+  } else {
+    const a = o.address;
+    title.textContent = '📍 Delivery Address';
+    body.innerHTML = `
+      <div class="info-row"><div class="info-icon ii-blue">🏠</div><div><div class="info-label">Street / Area</div><div class="info-val">${a.line}</div></div></div>
+      <div class="info-row"><div class="info-icon ii-orange">🏘</div><div><div class="info-label">Village</div><div class="info-val">${a.village}, ${a.taluka}</div></div></div>
+      <div class="info-row"><div class="info-icon ii-gold">📮</div><div><div class="info-label">District / PIN</div><div class="info-val">${a.dist}, Maharashtra — ${a.pin}</div></div></div>
+      <div class="info-row"><div class="info-icon ii-green">📌</div><div><div class="info-label">Landmark</div><div class="info-val">${a.landmark}</div></div></div>
+    `;
+  }
+}
+
+// ── PAYMENT ──
+function renderPayment(o) {
+  const statusMap = { paid:'✅ Paid', cod:'💵 Pay on Delivery', refunded:'🔄 Refunded' };
+  const classMap = { paid:'ps-paid', cod:'ps-cod', refunded:'ps-pending' };
+  document.getElementById('payment-info').innerHTML = `
+    <div class="info-row"><div class="info-icon ii-gold">💳</div><div><div class="info-label">Payment Method</div><div class="info-val">${o.payment}</div></div></div>
+    <div class="info-row"><div class="info-icon ii-green">✅</div><div><div class="info-label">Payment Status</div><div class="info-val"><span class="pay-status ${classMap[o.payStatus]}">${statusMap[o.payStatus]}</span></div></div></div>
+    <div class="info-row"><div class="info-icon ii-blue">🔢</div><div><div class="info-label">Transaction ID</div><div class="info-val" style="font-family:monospace;font-size:0.82rem">${o.txnId}</div></div></div>
+    <div class="info-row"><div class="info-icon ii-orange">📅</div><div><div class="info-label">Payment Date</div><div class="info-val">${o.date} — ${o.time}</div></div></div>
+  `;
+}
+
+// ── LOG ──
+function renderLog(o) {
+  const colorMap = { orange:'orange', blue:'blue', green:'green', gray:'gray', red:'orange' };
+  document.getElementById('activity-log').innerHTML = o.log.map(l => `
+    <div class="log-item">
+      <div class="log-dot ${colorMap[l.dot]||''}"></div>
+      <div class="log-text">${l.text}</div>
+      <div class="log-time">${l.time}</div>
+    </div>
+  `).join('');
+}
+
+// ── ACTIONS ──
+function updateStatus() {
+  const newStatus = document.getElementById('status-select').value;
+  currentOrder.status = newStatus;
+  currentOrder.log.unshift({ dot:'orange', text:`Status updated to <strong>${newStatus}</strong> by admin`, time:'Just now' });
+  renderLog(currentOrder);
+  showToast(`✅ Status: "${newStatus}" | WhatsApp + SMS bheja!`);
+}
+
+function markDelivered() {
+  currentOrder.status = 'Delivered';
+  currentOrder.timeline.forEach(s => { s.done = true; s.active = false; });
+  currentOrder.log.unshift({ dot:'green', text:'Order marked as <strong>Delivered</strong> ✅', time:'Just now' });
+  renderTimeline(currentOrder);
+  renderLog(currentOrder);
+  showToast('✅ Order Delivered! Customer ko notify kiya!');
+}
+
+function cancelOrder() {
+  if(confirm('Are you sure you want to cancel this order?')) {
+    currentOrder.status = 'Cancelled';
+    currentOrder.log.unshift({ dot:'orange', text:'Order <strong>Cancelled</strong> by admin', time:'Just now' });
+    renderLog(currentOrder);
+    showToast('❌ Order cancelled. Refund process shuru!');
+  }
+}
+
+function sendNotif(type) { showToast(`📨 ${type} notification sent to ${currentOrder.customer.mobile}!`); }
+function saveNote() { showToast('💾 Note saved successfully!'); }
+function printInvoice() { window.print(); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 3000);
+}
+
+// ── INIT ──
+renderAll();
+</script>
+<script src="nav-fix.js"></script>
+</body>
+</html>

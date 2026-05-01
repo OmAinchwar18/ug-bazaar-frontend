@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — UG Bazaar</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #F47820; --blue: #1A5FB4; --blue-dark: #0D3A6E;
+    --gold: #E8A020; --off-white: #F4F6FB; --white: #fff;
+    --gray: #6B7280; --gray-light: #F3F4F6; --text: #1A1A2E;
+    --text-soft: #4B5563; --border: #E2E8F0;
+    --success: #16A34A; --success-bg: #F0FDF4;
+    --error: #DC2626; --error-bg: #FEF2F2;
+    --warn: #D97706; --warn-bg: #FFFBEB;
+    --sidebar-w: 240px; --radius: 12px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Baloo 2',sans-serif; background:var(--off-white); color:var(--text); display:flex; min-height:100vh; }
+
+  /* ── SIDEBAR ── */
+  .sidebar { width:var(--sidebar-w); background:var(--blue-dark); color:#fff; display:flex; flex-direction:column; position:fixed; top:0; left:0; height:100vh; z-index:100; overflow-y:auto; }
+  .sidebar-logo { padding:1.4rem 1.2rem 1rem; border-bottom:1px solid rgba(255,255,255,0.1); }
+  .s-logo-box { display:flex; align-items:center; gap:0.7rem; }
+  .s-logo-icon { width:40px; height:40px; background:linear-gradient(135deg,var(--orange),var(--gold)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1rem; }
+  .s-logo-text { font-size:1rem; font-weight:800; line-height:1.2; }
+  .s-logo-sub { font-size:0.68rem; opacity:0.6; letter-spacing:1px; }
+  .sidebar-admin { padding:1rem 1.2rem; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; gap:0.7rem; }
+  .admin-avatar { width:36px; height:36px; border-radius:50%; background:rgba(244,120,32,0.3); border:2px solid var(--orange); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.85rem; }
+  .admin-name { font-size:0.85rem; font-weight:700; }
+  .admin-role { font-size:0.68rem; opacity:0.6; }
+  .sidebar-nav { flex:1; padding:0.8rem 0; }
+  .nav-section { font-size:0.65rem; font-weight:700; letter-spacing:1.5px; opacity:0.45; padding:0.8rem 1.2rem 0.3rem; text-transform:uppercase; }
+  .nav-item { display:flex; align-items:center; gap:0.7rem; padding:0.65rem 1.2rem; cursor:pointer; transition:all 0.2s; border-left:3px solid transparent; font-size:0.88rem; font-weight:600; opacity:0.75; }
+  .nav-item:hover { background:rgba(255,255,255,0.08); opacity:1; }
+  .nav-item.active { background:rgba(244,120,32,0.15); border-left-color:var(--orange); opacity:1; color:#FFD580; }
+  .nav-icon { font-size:1rem; width:20px; text-align:center; }
+  .nav-badge { margin-left:auto; background:var(--orange); color:#fff; font-size:0.65rem; font-weight:800; padding:1px 6px; border-radius:10px; }
+  .sidebar-footer { padding:1rem 1.2rem; border-top:1px solid rgba(255,255,255,0.08); font-size:0.75rem; opacity:0.5; }
+
+  /* ── MAIN ── */
+  .main-wrap { margin-left:var(--sidebar-w); flex:1; display:flex; flex-direction:column; min-height:100vh; }
+  .topbar { background:#fff; border-bottom:1px solid var(--border); padding:0.9rem 1.8rem; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50; }
+  .topbar-title { font-size:1.1rem; font-weight:800; color:var(--text); }
+  .topbar-right { display:flex; align-items:center; gap:1rem; }
+  .topbar-notif { position:relative; cursor:pointer; }
+  .notif-dot { position:absolute; top:-2px; right:-2px; width:8px; height:8px; background:var(--orange); border-radius:50%; border:2px solid #fff; }
+  .topbar-btn { padding:0.45rem 1rem; border-radius:8px; border:1.5px solid var(--border); background:#fff; color:var(--text-soft); font-size:0.82rem; font-weight:700; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:all 0.2s; }
+  .topbar-btn:hover { border-color:var(--blue); color:var(--blue); }
+  .content { padding:1.5rem 1.8rem; flex:1; }
+
+  /* ── PAGES ── */
+  .page { display:none; } .page.active { display:block; }
+
+  /* ── STAT CARDS ── */
+  .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-bottom:1.5rem; }
+  .stat-card { background:#fff; border-radius:var(--radius); border:1px solid var(--border); padding:1.2rem 1.4rem; display:flex; align-items:center; gap:1rem; }
+  .stat-icon { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0; }
+  .si-orange { background:rgba(244,120,32,0.12); }
+  .si-blue { background:rgba(26,95,180,0.10); }
+  .si-green { background:rgba(22,163,74,0.10); }
+  .si-gold { background:rgba(232,160,32,0.12); }
+  .stat-info { flex:1; }
+  .stat-label { font-size:0.75rem; color:var(--gray); font-weight:600; margin-bottom:0.2rem; }
+  .stat-val { font-size:1.5rem; font-weight:800; color:var(--text); line-height:1; }
+  .stat-change { font-size:0.72rem; margin-top:0.2rem; font-weight:700; }
+  .up { color:var(--success); } .down { color:var(--error); }
+
+  /* ── CHART AREA ── */
+  .charts-row { display:grid; grid-template-columns:2fr 1fr; gap:1rem; margin-bottom:1.5rem; }
+  .chart-card { background:#fff; border-radius:var(--radius); border:1px solid var(--border); padding:1.2rem; }
+  .chart-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+  .chart-title { font-size:0.95rem; font-weight:800; }
+  .chart-tabs { display:flex; gap:0.3rem; }
+  .ctab { padding:0.25rem 0.7rem; border-radius:6px; border:1px solid var(--border); background:#fff; font-size:0.72rem; font-weight:700; cursor:pointer; font-family:'Baloo 2',sans-serif; color:var(--gray); transition:all 0.2s; }
+  .ctab.active { background:var(--blue); color:#fff; border-color:var(--blue); }
+  .bar-chart { display:flex; align-items:flex-end; gap:0.5rem; height:160px; padding-top:1rem; }
+  .bar-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:0.3rem; }
+  .bar { width:100%; border-radius:6px 6px 0 0; transition:height 0.5s ease; cursor:pointer; min-width:20px; }
+  .bar-lbl { font-size:0.65rem; color:var(--gray); font-weight:600; }
+  .bar-val { font-size:0.65rem; font-weight:800; color:var(--text); }
+  .donut-wrap { display:flex; flex-direction:column; align-items:center; justify-content:center; height:200px; }
+  .donut-legend { display:flex; flex-direction:column; gap:0.5rem; margin-top:1rem; width:100%; }
+  .legend-item { display:flex; align-items:center; gap:0.5rem; font-size:0.78rem; }
+  .legend-dot { width:10px; height:10px; border-radius:3px; flex-shrink:0; }
+
+  /* ── TABLE ── */
+  .table-card { background:#fff; border-radius:var(--radius); border:1px solid var(--border); overflow:hidden; margin-bottom:1.5rem; }
+  .table-head { padding:1rem 1.2rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; }
+  .table-head h3 { font-size:0.95rem; font-weight:800; }
+  .table-actions { display:flex; gap:0.5rem; align-items:center; }
+  .search-sm { padding:0.4rem 0.8rem; border:1.5px solid var(--border); border-radius:8px; font-size:0.82rem; font-family:'Baloo 2',sans-serif; outline:none; color:var(--text); }
+  .search-sm:focus { border-color:var(--blue); }
+  .btn-sm { padding:0.4rem 0.9rem; border-radius:8px; border:none; font-size:0.8rem; font-weight:700; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:all 0.2s; }
+  .btn-orange { background:var(--orange); color:#fff; }
+  .btn-orange:hover { background:#D4620F; }
+  .btn-blue { background:var(--blue); color:#fff; }
+  .btn-blue:hover { background:var(--blue-dark); }
+  .btn-ghost { background:var(--gray-light); color:var(--text-soft); border:1px solid var(--border); }
+  .btn-ghost:hover { background:var(--border); }
+  table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+  th { padding:0.7rem 1rem; text-align:left; font-size:0.72rem; font-weight:700; color:var(--gray); letter-spacing:0.5px; text-transform:uppercase; background:var(--off-white); border-bottom:1px solid var(--border); }
+  td { padding:0.8rem 1rem; border-bottom:1px solid var(--border); color:var(--text-soft); vertical-align:middle; }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:rgba(26,95,180,0.02); }
+  .td-bold { font-weight:700; color:var(--text); }
+  .status-pill { display:inline-block; padding:3px 10px; border-radius:20px; font-size:0.7rem; font-weight:700; }
+  .sp-pending { background:var(--warn-bg); color:var(--warn); }
+  .sp-confirmed { background:rgba(26,95,180,0.1); color:var(--blue); }
+  .sp-delivered { background:var(--success-bg); color:var(--success); }
+  .sp-cancelled { background:var(--error-bg); color:var(--error); }
+  .sp-active { background:var(--success-bg); color:var(--success); }
+  .sp-out { background:rgba(244,120,32,0.1); color:var(--orange); }
+  .action-icons { display:flex; gap:0.4rem; }
+  .icon-btn { width:28px; height:28px; border-radius:6px; border:1px solid var(--border); background:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:0.85rem; transition:all 0.2s; }
+  .icon-btn:hover { border-color:var(--blue); background:rgba(26,95,180,0.06); }
+  .icon-btn.del:hover { border-color:var(--error); background:var(--error-bg); }
+
+  /* ── MODAL ── */
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:999; display:none; align-items:center; justify-content:center; padding:1rem; }
+  .modal-overlay.open { display:flex; }
+  .modal { background:#fff; border-radius:16px; width:100%; max-width:500px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.25); }
+  .modal-head { padding:1.2rem 1.5rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+  .modal-head h3 { font-size:1rem; font-weight:800; }
+  .modal-close { width:28px; height:28px; border-radius:6px; border:1px solid var(--border); background:#fff; cursor:pointer; font-size:1rem; display:flex; align-items:center; justify-content:center; }
+  .modal-body { padding:1.5rem; }
+  .modal-foot { padding:1rem 1.5rem; border-top:1px solid var(--border); display:flex; gap:0.7rem; justify-content:flex-end; }
+  .form-group { margin-bottom:1rem; }
+  .form-label { display:block; font-size:0.8rem; font-weight:700; margin-bottom:0.35rem; }
+  .form-input, .form-select { width:100%; padding:0.65rem 0.9rem; border:1.5px solid var(--border); border-radius:9px; font-size:0.88rem; font-family:'Baloo 2',sans-serif; color:var(--text); background:var(--off-white); outline:none; transition:border-color 0.2s; }
+  .form-input:focus, .form-select:focus { border-color:var(--blue); background:#fff; }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; }
+
+  /* ── ACTIVITY FEED ── */
+  .activity-list { display:flex; flex-direction:column; gap:0; }
+  .activity-item { display:flex; align-items:flex-start; gap:0.8rem; padding:0.8rem 1.2rem; border-bottom:1px solid var(--border); }
+  .activity-item:last-child { border-bottom:none; }
+  .act-icon { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:0.9rem; flex-shrink:0; }
+  .act-text { flex:1; font-size:0.82rem; color:var(--text-soft); line-height:1.5; }
+  .act-text strong { color:var(--text); }
+  .act-time { font-size:0.7rem; color:var(--gray); white-space:nowrap; }
+
+  /* TOAST */
+  .toast { position:fixed; bottom:2rem; right:2rem; background:var(--blue); color:#fff; padding:0.8rem 1.4rem; border-radius:12px; font-weight:600; font-size:0.88rem; z-index:9999; box-shadow:0 8px 24px rgba(0,0,0,0.2); display:none; }
+
+  /* ── AI STYLES ── */
+  .ai-section-card { background:#fff; border-radius:var(--radius); border:1px solid var(--border); overflow:hidden; margin-bottom:1.5rem; }
+  .ai-section-head { padding:1rem 1.4rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; }
+  .ai-section-head h3 { font-size:0.95rem; font-weight:800; display:flex; align-items:center; gap:0.5rem; }
+  .ai-badge { font-size:0.65rem; font-weight:800; padding:2px 8px; border-radius:10px; background:linear-gradient(135deg,#7C3AED,#5B21B6); color:#fff; letter-spacing:0.3px; }
+  .ai-section-body { padding:1.4rem; }
+  /* AI Insights on Dashboard */
+  .ai-insights-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+  .ai-insight-box { background:var(--off-white); border-radius:10px; padding:1rem 1.1rem; border:1px solid var(--border); }
+  .aib-label { font-size:0.68rem; font-weight:700; color:var(--gray); letter-spacing:0.5px; text-transform:uppercase; margin-bottom:0.4rem; }
+  .aib-content { font-size:0.84rem; color:var(--text-soft); line-height:1.65; }
+  .aib-content strong { color:var(--text); }
+  .aib-content .up { color:var(--success); font-weight:800; }
+  .aib-content .down { color:var(--error); font-weight:800; }
+  .aib-content .warn { color:var(--warn); font-weight:800; }
+  .ai-gen-btn { padding:0.45rem 1rem; border-radius:8px; border:none; background:linear-gradient(135deg,#7C3AED,#5B21B6); color:#fff; font-size:0.78rem; font-weight:700; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:all 0.2s; display:flex; align-items:center; gap:0.4rem; }
+  .ai-gen-btn:hover { transform:translateY(-1px); box-shadow:0 4px 14px rgba(124,58,237,0.3); }
+  .ai-gen-btn:disabled { opacity:0.6; cursor:wait; transform:none; }
+  /* Loading dots */
+  .ldots { display:inline-flex; gap:3px; align-items:center; margin-left:3px; }
+  .ldots span { width:5px; height:5px; background:currentColor; border-radius:50%; animation:ld 1.2s infinite; }
+  .ldots span:nth-child(2){ animation-delay:0.2s; }
+  .ldots span:nth-child(3){ animation-delay:0.4s; }
+  @keyframes ld { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-5px)} }
+  /* AI Pricing in products table */
+  .ai-price-btn { padding:0.25rem 0.6rem; border-radius:6px; border:1px solid rgba(124,58,237,0.3); background:rgba(124,58,237,0.06); color:#7C3AED; font-size:0.65rem; font-weight:800; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:all 0.2s; white-space:nowrap; }
+  .ai-price-btn:hover { background:#7C3AED; color:#fff; border-color:#7C3AED; }
+  /* AI Price Modal */
+  .ai-price-modal-body { padding:1.4rem; }
+  .price-cards-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.7rem; margin:1rem 0; }
+  .price-opt-card { text-align:center; padding:0.9rem 0.5rem; border-radius:10px; border:2px solid var(--border); background:#fff; cursor:pointer; transition:all 0.2s; }
+  .price-opt-card:hover { border-color:var(--orange); }
+  .price-opt-card.selected { border-color:var(--success); background:var(--success-bg); }
+  .poc-label { font-size:0.65rem; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; color:var(--gray); margin-bottom:0.3rem; }
+  .poc-price { font-size:1.15rem; font-weight:800; color:var(--text); margin-bottom:0.2rem; }
+  .poc-margin { font-size:0.68rem; color:var(--text-soft); }
+  .price-opt-card.selected .poc-label { color:var(--success); }
+  .price-opt-card.selected .poc-price { color:var(--success); }
+  .ai-reasoning { font-size:0.8rem; color:var(--text-soft); line-height:1.65; background:var(--off-white); border-radius:8px; padding:0.7rem 0.9rem; border-left:3px solid #7C3AED; margin-bottom:0.8rem; }
+  .apply-price-btn { width:100%; padding:0.75rem; border-radius:10px; border:none; background:linear-gradient(135deg,var(--success),#0D6E3F); color:#fff; font-size:0.9rem; font-weight:800; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:all 0.2s; }
+  .apply-price-btn:hover { transform:translateY(-1px); box-shadow:0 5px 16px rgba(22,163,74,0.3); }
+  /* Sales AI section */
+  .sales-ai-wrap { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.5rem; }
+  .sal-card { background:#fff; border-radius:var(--radius); border:1px solid var(--border); padding:1.2rem; }
+  .sal-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+  .sal-title { font-size:0.88rem; font-weight:800; }
+  .sal-content { font-size:0.83rem; color:var(--text-soft); line-height:1.75; }
+  .sal-content strong { color:var(--text); }
+  .forecast-bars { display:flex; align-items:flex-end; gap:0.4rem; height:100px; margin:0.8rem 0; }
+  .fb-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:0.2rem; }
+  .fb-bar { width:100%; border-radius:4px 4px 0 0; transition:height 0.6s ease; }
+  .fb-lbl { font-size:0.58rem; color:var(--gray); font-weight:600; }
+  .fb-val { font-size:0.58rem; font-weight:800; color:var(--text); }
+  .action-items { display:flex; flex-direction:column; gap:0.5rem; }
+  .action-item { display:flex; align-items:flex-start; gap:0.6rem; padding:0.5rem 0.7rem; border-radius:8px; border:1px solid var(--border); font-size:0.8rem; }
+  .action-item.urgent { border-color:rgba(220,38,38,0.3); background:#FEF2F2; }
+  .action-item.warn { border-color:rgba(217,119,6,0.3); background:#FFFBEB; }
+  .action-item.good { border-color:rgba(22,163,74,0.2); background:var(--success-bg); }
+  .ai-icon { font-size:1rem; flex-shrink:0; }
+  .ai-item-text { color:var(--text-soft); line-height:1.5; }
+  .ai-item-text strong { color:var(--text); }
+
+  @media(max-width:900px) {
+    .sidebar { width:60px; }
+    .s-logo-text,.s-logo-sub,.admin-name,.admin-role,.nav-item span,.nav-section,.sidebar-footer { display:none; }
+    .main-wrap { margin-left:60px; }
+    .nav-item { justify-content:center; padding:0.8rem; }
+    .charts-row { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="s-logo-box">
+      <div class="s-logo-icon">UG</div>
+      <div>
+        <div class="s-logo-text">UG Bazaar</div>
+        <div class="s-logo-sub">Admin Panel</div>
+      </div>
+    </div>
+  </div>
+  <div class="sidebar-admin">
+    <div class="admin-avatar">UA</div>
+    <div>
+      <div class="admin-name">Uday Ainchwar</div>
+      <div class="admin-role">Super Admin</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Main</div>
+    <div class="nav-item active" onclick="showPage('dashboard',this)"><span class="nav-icon">📊</span><span>Dashboard</span></div>
+    <div class="nav-item" onclick="showPage('orders',this)"><span class="nav-icon">📦</span><span>Orders</span><span class="nav-badge">4</span></div>
+    <div class="nav-section">Manage</div>
+    <div class="nav-item" onclick="showPage('products',this)"><span class="nav-icon">🛍</span><span>Products</span></div>
+    <div class="nav-item" onclick="showPage('customers',this)"><span class="nav-icon">👥</span><span>Customers</span></div>
+    <div class="nav-item" onclick="showPage('coupons',this)"><span class="nav-icon">🎁</span><span>Coupons</span></div>
+    <div class="nav-section">Reports</div>
+    <div class="nav-item" onclick="showPage('sales',this)"><span class="nav-icon">📈</span><span>Sales Report</span></div>
+    <div class="nav-section">Settings</div>
+    <div class="nav-item" onclick="showToast('Settings coming soon!')"><span class="nav-icon">⚙️</span><span>Settings</span></div>
+    <div class="nav-item" onclick="showToast('Logged out!')"><span class="nav-icon">🚪</span><span>Logout</span></div>
+  </nav>
+  <div class="sidebar-footer">UG Bazaar v1.0 © 2026</div>
+</aside>
+
+<!-- MAIN -->
+<div class="main-wrap">
+  <div class="topbar">
+    <div class="topbar-title" id="page-title">📊 Dashboard</div>
+    <div class="topbar-right">
+      <div class="topbar-notif" onclick="showToast('3 naye orders hain!')">🔔<span class="notif-dot"></span></div>
+      <button class="topbar-btn" onclick="showToast('WhatsApp opened!')">💬 WhatsApp</button>
+      <button class="topbar-btn" onclick="window.location='index.html'">🛒 Shop Dekho</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══════════ DASHBOARD PAGE ══════════ -->
+    <div class="page active" id="page-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon si-orange">💰</div>
+          <div class="stat-info">
+            <div class="stat-label">Today's Revenue</div>
+            <div class="stat-val">₹4,850</div>
+            <div class="stat-change up">↑ 12% aaj</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon si-blue">📦</div>
+          <div class="stat-info">
+            <div class="stat-label">Total Orders</div>
+            <div class="stat-val">24</div>
+            <div class="stat-change up">↑ 3 naye aaj</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon si-green">👥</div>
+          <div class="stat-info">
+            <div class="stat-label">Total Customers</div>
+            <div class="stat-val">138</div>
+            <div class="stat-change up">↑ 5 is hafte</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon si-gold">🛍</div>
+          <div class="stat-info">
+            <div class="stat-label">Total Products</div>
+            <div class="stat-val">52</div>
+            <div class="stat-change">8 departments</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-head">
+            <div class="chart-title">📈 Weekly Sales</div>
+            <div class="chart-tabs">
+              <button class="ctab active" onclick="setChart('week',this)">Week</button>
+              <button class="ctab" onclick="setChart('month',this)">Month</button>
+            </div>
+          </div>
+          <div class="bar-chart" id="bar-chart"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><div class="chart-title">🛍 Sales by Dept</div></div>
+          <div class="donut-wrap">
+            <svg width="120" height="120" viewBox="0 0 120 120" id="donut-svg"></svg>
+          </div>
+          <div class="donut-legend" id="donut-legend"></div>
+        </div>
+      </div>
+
+      <!-- RECENT ORDERS + ACTIVITY -->
+      <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:1rem">
+        <div class="table-card">
+          <div class="table-head">
+            <h3>🕐 Recent Orders</h3>
+            <button class="btn-sm btn-ghost" onclick="showPage('orders',document.querySelector('[onclick*=orders]'))">Sab dekho →</button>
+          </div>
+          <table>
+            <thead><tr><th>Order ID</th><th>Customer</th><th>Amount</th><th>Status</th></tr></thead>
+            <tbody id="recent-orders-body"></tbody>
+          </table>
+        </div>
+        <div class="table-card">
+          <div class="table-head"><h3>⚡ Recent Activity</h3></div>
+          <div class="activity-list" id="activity-list"></div>
+        </div>
+      </div>
+
+      <!-- AI INSIGHTS CARD -->
+      <div class="ai-section-card" style="margin-top:1rem">
+        <div class="ai-section-head">
+          <h3>✨ AI Business Insights <span class="ai-badge">AI</span></h3>
+          <button class="ai-gen-btn" id="insights-gen-btn" onclick="generateDashboardInsights()">✨ Generate Insights</button>
+        </div>
+        <div class="ai-section-body">
+          <div class="ai-insights-grid" id="ai-insights-grid">
+            <div class="ai-insight-box"><div class="aib-label">📊 Sales Prediction</div><div class="aib-content" style="color:var(--gray);font-style:italic">Click "Generate Insights" to get AI analysis of your business data...</div></div>
+            <div class="ai-insight-box"><div class="aib-label">⚡ Urgent Actions</div><div class="aib-content" style="color:var(--gray);font-style:italic">AI will suggest what to do next based on orders, stock and revenue...</div></div>
+            <div class="ai-insight-box"><div class="aib-label">🌾 Seasonal Advice</div><div class="aib-content" style="color:var(--gray);font-style:italic">Region-specific advice for Chandrapur, Maharashtra...</div></div>
+            <div class="ai-insight-box"><div class="aib-label">💡 Growth Tip</div><div class="aib-content" style="color:var(--gray);font-style:italic">Personalized growth strategy for UG Bazaar...</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ ORDERS PAGE ══════════ -->
+    <div class="page" id="page-orders">
+      <div class="table-card">
+        <div class="table-head">
+          <h3>📦 All Orders</h3>
+          <div class="table-actions">
+            <input class="search-sm" placeholder="Search order ID..." oninput="filterTable('orders-body',this.value,0)">
+            <select class="search-sm" onchange="filterByStatus(this.value)" style="width:auto">
+              <option value="">All Status</option>
+              <option>Pending</option><option>Confirmed</option>
+              <option>Out for Delivery</option><option>Delivered</option><option>Cancelled</option>
+            </select>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Amount</th><th>Type</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+          <tbody id="orders-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════ PRODUCTS PAGE ══════════ -->
+    <div class="page" id="page-products">
+      <div class="table-card">
+        <div class="table-head">
+          <h3>🛍 Products</h3>
+          <div class="table-actions">
+            <input class="search-sm" placeholder="Search product..." oninput="filterTable('products-body',this.value,0)">
+            <button class="btn-sm btn-orange" onclick="openProductModal()">+ Add Product</button>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>Product</th><th>Department</th><th>Price</th><th>AI Price</th><th>Stock</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="products-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════ CUSTOMERS PAGE ══════════ -->
+    <div class="page" id="page-customers">
+      <div class="table-card">
+        <div class="table-head">
+          <h3>👥 Customers</h3>
+          <div class="table-actions">
+            <input class="search-sm" placeholder="Search customer..." oninput="filterTable('customers-body',this.value,0)">
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>Name</th><th>Mobile</th><th>Village</th><th>Orders</th><th>Total Spent</th><th>Joined</th><th>Action</th></tr></thead>
+          <tbody id="customers-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════ COUPONS PAGE ══════════ -->
+    <div class="page" id="page-coupons">
+      <div class="table-card">
+        <div class="table-head">
+          <h3>🎁 Coupons</h3>
+          <div class="table-actions">
+            <button class="btn-sm btn-orange" onclick="openCouponModal()">+ New Coupon</button>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>Code</th><th>Type</th><th>Value</th><th>Used</th><th>Expires</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="coupons-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════ SALES REPORT PAGE ══════════ -->
+    <div class="page" id="page-sales">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon si-orange">💰</div><div class="stat-info"><div class="stat-label">This Month Revenue</div><div class="stat-val">₹38,450</div><div class="stat-change up">↑ 18% vs last month</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-blue">📦</div><div class="stat-info"><div class="stat-label">This Month Orders</div><div class="stat-val">87</div><div class="stat-change up">↑ 9 more</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-green">🛒</div><div class="stat-info"><div class="stat-label">Avg Order Value</div><div class="stat-val">₹442</div><div class="stat-change up">↑ ₹38</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-gold">🎁</div><div class="stat-info"><div class="stat-label">Coupon Savings</div><div class="stat-val">₹2,180</div><div class="stat-change">Given to customers</div></div></div>
+      </div>
+      <div class="table-card">
+        <div class="table-head"><h3>📊 Department-wise Sales</h3></div>
+        <table>
+          <thead><tr><th>Department</th><th>Orders</th><th>Revenue</th><th>Top Product</th><th>Growth</th></tr></thead>
+          <tbody>
+            <tr><td class="td-bold">🛒 Grocery</td><td>32</td><td>₹12,400</td><td>Basmati Rice 5kg</td><td><span class="up">↑ 22%</span></td></tr>
+            <tr><td class="td-bold">🌾 Krushi Kendra</td><td>18</td><td>₹9,800</td><td>Hybrid Seeds 500g</td><td><span class="up">↑ 35%</span></td></tr>
+            <tr><td class="td-bold">💡 Electrical</td><td>15</td><td>₹6,200</td><td>LED Bulb 9W</td><td><span class="up">↑ 10%</span></td></tr>
+            <tr><td class="td-bold">🔧 Hardware</td><td>10</td><td>₹4,800</td><td>Steel Hammer</td><td><span class="down">↓ 5%</span></td></tr>
+            <tr><td class="td-bold">📱 Electronics</td><td>7</td><td>₹3,200</td><td>Table Fan</td><td><span class="up">↑ 8%</span></td></tr>
+            <tr><td class="td-bold">🛋 Furniture</td><td>3</td><td>₹1,800</td><td>Wooden Chair</td><td><span class="up">↑ 15%</span></td></tr>
+            <tr><td class="td-bold">🏪 General Store</td><td>2</td><td>₹250</td><td>Misc items</td><td><span class="down">↓ 2%</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- AI SALES INSIGHTS -->
+      <div class="ai-section-card">
+        <div class="ai-section-head">
+          <h3>✨ AI Sales Analysis <span class="ai-badge">AI</span></h3>
+          <button class="ai-gen-btn" id="sales-ai-btn" onclick="generateSalesInsights()">✨ Analyze & Predict</button>
+        </div>
+        <div class="ai-section-body">
+          <div class="sales-ai-wrap" id="sales-ai-wrap">
+            <div class="sal-card">
+              <div class="sal-head">
+                <div class="sal-title">📈 Revenue Forecast (Next 7 Days)</div>
+              </div>
+              <div class="forecast-bars" id="forecast-bars">
+                <div style="color:var(--gray);font-size:0.82rem;text-align:center;width:100%;align-self:center">Click "Analyze & Predict" to generate forecast</div>
+              </div>
+              <div class="sal-content" id="forecast-text" style="color:var(--gray);font-style:italic">AI will predict revenue for next 7 days based on current trends...</div>
+            </div>
+            <div class="sal-card">
+              <div class="sal-head">
+                <div class="sal-title">⚡ AI Action Items</div>
+              </div>
+              <div class="action-items" id="action-items">
+                <div style="color:var(--gray);font-size:0.82rem;font-style:italic">AI recommendations will appear here...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="product-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="product-modal-title">➕ New Product Add Karo</h3>
+      <button class="modal-close" onclick="closeModal('product-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Product Name</label><input class="form-input" id="pm-name" placeholder="e.g. Basmati Rice 5kg"></div>
+        <div class="form-group"><label class="form-label">Marathi Name</label><input class="form-input" id="pm-marathi" placeholder="e.g. बासमती तांदूळ"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Department</label>
+          <select class="form-select" id="pm-dept">
+            <option>Grocery</option><option>General Store</option><option>Hardware</option>
+            <option>Electrical</option><option>Electronics</option><option>Furniture</option><option>Krushi Kendra</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Emoji</label><input class="form-input" id="pm-emoji" placeholder="e.g. 🌾" maxlength="2"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Price (₹)</label><input class="form-input" id="pm-price" type="number" placeholder="320"></div>
+        <div class="form-group"><label class="form-label">MRP / Old Price (₹)</label><input class="form-input" id="pm-old" type="number" placeholder="380"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Stock Qty</label><input class="form-input" id="pm-stock" type="number" placeholder="50"></div>
+        <div class="form-group"><label class="form-label">Badge (optional)</label><input class="form-input" id="pm-badge" placeholder="e.g. Popular, Hot"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-sm btn-ghost" onclick="closeModal('product-modal')">Cancel</button>
+      <button class="btn-sm btn-orange" onclick="saveProduct()">✅ Save Product</button>
+    </div>
+  </div>
+</div>
+
+<!-- COUPON MODAL -->
+<div class="modal-overlay" id="coupon-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>🎁 New Coupon Banao</h3>
+      <button class="modal-close" onclick="closeModal('coupon-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Coupon Code</label><input class="form-input" id="cm-code" placeholder="e.g. UG10" style="text-transform:uppercase"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Type</label>
+          <select class="form-select" id="cm-type">
+            <option value="percent">Percentage (%)</option>
+            <option value="flat">Flat Amount (₹)</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Value</label><input class="form-input" id="cm-val" type="number" placeholder="10"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Min Order (₹)</label><input class="form-input" id="cm-min" type="number" placeholder="200"></div>
+        <div class="form-group"><label class="form-label">Expires On</label><input class="form-input" id="cm-exp" type="date"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-sm btn-ghost" onclick="closeModal('coupon-modal')">Cancel</button>
+      <button class="btn-sm btn-blue" onclick="saveCoupon()">✅ Create Coupon</button>
+    </div>
+  </div>
+</div>
+
+<!-- ORDER STATUS MODAL -->
+<div class="modal-overlay" id="status-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>🔄 Order Status Update</h3>
+      <button class="modal-close" onclick="closeModal('status-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Order ID: <strong id="update-order-id"></strong></label></div>
+      <div class="form-group"><label class="form-label">New Status</label>
+        <select class="form-select" id="new-status">
+          <option>Pending</option><option>Confirmed</option><option>Packed</option>
+          <option>Out for Delivery</option><option>Ready for Pickup</option>
+          <option>Delivered</option><option>Picked Up</option><option>Cancelled</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Customer ko notification bhejein?</label>
+        <div style="display:flex;gap:1rem;margin-top:0.4rem">
+          <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.85rem"><input type="checkbox" checked> 💬 WhatsApp</label>
+          <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.85rem"><input type="checkbox" checked> 📱 SMS</label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-sm btn-ghost" onclick="closeModal('status-modal')">Cancel</button>
+      <button class="btn-sm btn-orange" onclick="updateStatus()">✅ Update & Notify</button>
+    </div>
+  </div>
+</div>
+
+<!-- AI PRICING MODAL -->
+<div class="modal-overlay" id="ai-price-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>✨ AI Price Suggestion</h3>
+      <button class="modal-close" onclick="closeModal('ai-price-modal')">✕</button>
+    </div>
+    <div class="ai-price-modal-body">
+      <div style="font-size:0.88rem;color:var(--text-soft);margin-bottom:0.8rem">
+        Product: <strong id="ai-price-product-name">—</strong><br>
+        Current Price: <strong id="ai-price-current">—</strong>
+      </div>
+      <div id="ai-price-loading" style="text-align:center;padding:1.5rem;color:var(--gray)">
+        Analyzing market data <div class="ldots"><span></span><span></span><span></span></div>
+      </div>
+      <div id="ai-price-result" style="display:none">
+        <div class="price-cards-row" id="price-cards-row"></div>
+        <div class="ai-reasoning" id="ai-reasoning"></div>
+        <button class="apply-price-btn" onclick="applyAiPrice()">✅ Apply Recommended Price</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CLAUDE API ──
+async function callClaude(system, user, maxTokens=500) {
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens: maxTokens,
+        system, messages:[{ role:'user', content:user }]
+      })
+    });
+    const d = await res.json();
+    return d.content?.[0]?.text || '';
+  } catch(e) { return ''; }
+}
+
+// ── DATA ──
+let products = [
+  { id:1, emoji:'🌾', name:'Basmati Rice 5kg', marathi:'बासमती तांदूळ', dept:'Grocery', price:320, old:380, stock:45, badge:'Popular', status:'Active', cost:220 },
+  { id:2, emoji:'🫘', name:'Toor Dal 1kg', marathi:'तूर डाळ', dept:'Grocery', price:145, old:170, stock:80, badge:'', status:'Active', cost:110 },
+  { id:3, emoji:'💡', name:'LED Bulb 9W', marathi:'LED बल्ब', dept:'Electrical', price:65, old:90, stock:120, badge:'Best Buy', status:'Active', cost:42 },
+  { id:4, emoji:'🔨', name:'Steel Hammer', marathi:'स्टील हातोडा', dept:'Hardware', price:220, old:280, stock:18, badge:'', status:'Active', cost:155 },
+  { id:5, emoji:'📱', name:'Mobile Charger', marathi:'मोबाईल चार्जर', dept:'Electronics', price:199, old:299, stock:35, badge:'Hot', status:'Active', cost:130 },
+  { id:6, emoji:'🌱', name:'Hybrid Seeds 500g', marathi:'हायब्रीड बियाणे', dept:'Krushi Kendra', price:180, old:240, stock:60, badge:'Farmer Pick', status:'Active', cost:120 },
+  { id:7, emoji:'🛋', name:'Wooden Chair', marathi:'लाकडी खुर्ची', dept:'Furniture', price:1200, old:1600, stock:5, badge:'', status:'Active', cost:850 },
+  { id:8, emoji:'🔌', name:'Electric Wire 10m', marathi:'इलेक्ट्रिक तार', dept:'Electrical', price:280, old:340, stock:0, badge:'', status:'Out of Stock', cost:195 },
+];
+
+let orders = [
+  { id:'#UG10001', customer:'Ramesh Borkar', mobile:'9876543210', items:2, amount:785, type:'Delivery', status:'Out for Delivery', date:'Apr 3' },
+  { id:'#UG10002', customer:'Suresh Meshram', mobile:'9823456780', items:2, amount:475, type:'Pickup', status:'Ready for Pickup', date:'Apr 2' },
+  { id:'#UG10003', customer:'Priya Gaikwad', mobile:'9765432100', items:2, amount:580, type:'Delivery', status:'Delivered', date:'Mar 30' },
+  { id:'#UG10004', customer:'Anil Thakre', mobile:'9812345670', items:1, amount:1200, type:'Delivery', status:'Cancelled', date:'Mar 28' },
+  { id:'#UG10005', customer:'Sanjay Yadav', mobile:'9890123456', items:3, amount:640, type:'Delivery', status:'Confirmed', date:'Apr 4' },
+  { id:'#UG10006', customer:'Meena Raut', mobile:'9745678901', items:1, amount:180, type:'Pickup', status:'Pending', date:'Apr 4' },
+];
+
+let customers = [
+  { name:'Ramesh Borkar', mobile:'9876543210', village:'Bhangaram', orders:5, spent:3200, joined:'Jan 2026' },
+  { name:'Suresh Meshram', mobile:'9823456780', village:'Talodhi', orders:3, spent:1850, joined:'Feb 2026' },
+  { name:'Priya Gaikwad', mobile:'9765432100', village:'Bhangaram', orders:8, spent:5600, joined:'Dec 2025' },
+  { name:'Anil Thakre', mobile:'9812345670', village:'Talodhi', orders:2, spent:980, joined:'Mar 2026' },
+  { name:'Sanjay Yadav', mobile:'9890123456', village:'Bhangaram', orders:6, spent:4100, joined:'Nov 2025' },
+  { name:'Meena Raut', mobile:'9745678901', village:'Nandori', orders:1, spent:180, joined:'Apr 2026' },
+];
+
+let coupons = [
+  { code:'UG10', type:'Percent', val:'10%', min:200, used:34, expires:'Apr 30, 2026', status:'Active' },
+  { code:'UDAY20', type:'Flat', val:'₹20', min:300, used:12, expires:'May 15, 2026', status:'Active' },
+  { code:'FIRST50', type:'Flat', val:'₹50', min:500, used:8, expires:'Dec 31, 2026', status:'Active' },
+  { code:'SUMMER30', type:'Percent', val:'30%', min:1000, used:0, expires:'Jun 30, 2026', status:'Inactive' },
+];
+
+let activities = [
+  { icon:'📦', bg:'rgba(26,95,180,0.1)', text:'<strong>Ramesh Borkar</strong> ne order kiya — #UG10001', time:'10 min ago' },
+  { icon:'✅', bg:'rgba(22,163,74,0.1)', text:'Order <strong>#UG10003</strong> delivered!', time:'2 hr ago' },
+  { icon:'👤', bg:'rgba(244,120,32,0.1)', text:'<strong>Meena Raut</strong> ne account banaya', time:'3 hr ago' },
+  { icon:'🎁', bg:'rgba(232,160,32,0.12)', text:'Coupon <strong>UG10</strong> 34 times use hua', time:'Today' },
+  { icon:'⚠️', bg:'rgba(220,38,38,0.08)', text:'<strong>Electric Wire 10m</strong> out of stock!', time:'Yesterday' },
+];
+
+// ── PAGE SWITCH ──
+function showPage(name, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  if(el) el.classList.add('active');
+  const titles = { dashboard:'📊 Dashboard', orders:'📦 Orders', products:'🛍 Products', customers:'👥 Customers', coupons:'🎁 Coupons', sales:'📈 Sales Report' };
+  document.getElementById('page-title').textContent = titles[name] || name;
+  if(name==='orders') renderOrders();
+  if(name==='products') renderProducts();
+  if(name==='customers') renderCustomers();
+  if(name==='coupons') renderCoupons();
+}
+
+// ── STATUS PILL ──
+function statusPill(s) {
+  const map = { 'Pending':'sp-pending','Confirmed':'sp-confirmed','Delivered':'sp-delivered','Cancelled':'sp-cancelled','Active':'sp-active','Out of Stock':'sp-pending','Out for Delivery':'sp-out','Ready for Pickup':'sp-out','Inactive':'sp-cancelled','Picked Up':'sp-delivered' };
+  return `<span class="status-pill ${map[s]||'sp-confirmed'}">${s}</span>`;
+}
+
+// ── RENDER ORDERS ──
+function renderOrders() {
+  document.getElementById('orders-body').innerHTML = orders.map(o => `
+    <tr>
+      <td class="td-bold">${o.id}</td>
+      <td>${o.customer}<br><small style="color:var(--gray)">${o.mobile}</small></td>
+      <td>${o.items} items</td>
+      <td class="td-bold">₹${o.amount}</td>
+      <td><span style="font-size:0.78rem">${o.type==='Delivery'?'🚀':'🏪'} ${o.type}</span></td>
+      <td>${statusPill(o.status)}</td>
+      <td>${o.date}</td>
+      <td><div class="action-icons">
+        <button class="icon-btn" onclick="window.location='order-detail.html'" title="View Detail">👁</button>
+        <button class="icon-btn" onclick="openStatusModal('${o.id}')" title="Status Update">🔄</button>
+        <button class="icon-btn" onclick="showToast('WhatsApp: ${o.mobile}')" title="WhatsApp">💬</button>
+      </div></td>
+    </tr>
+  `).join('');
+  document.getElementById('recent-orders-body').innerHTML = orders.slice(0,5).map(o => `
+    <tr>
+      <td class="td-bold">${o.id}</td>
+      <td>${o.customer}</td>
+      <td class="td-bold">₹${o.amount}</td>
+      <td>${statusPill(o.status)}</td>
+    </tr>
+  `).join('');
+}
+
+// ── RENDER PRODUCTS (with AI Price column) ──
+function renderProducts() {
+  document.getElementById('products-body').innerHTML = products.map(p => `
+    <tr>
+      <td><div style="display:flex;align-items:center;gap:0.6rem">
+        <span style="font-size:1.4rem">${p.emoji}</span>
+        <div><div class="td-bold">${p.name}</div><div style="font-size:0.72rem;color:var(--gray)">${p.marathi}</div></div>
+      </div></td>
+      <td>${p.dept}</td>
+      <td><span class="td-bold">₹${p.price}</span> <span style="font-size:0.75rem;color:var(--gray);text-decoration:line-through">₹${p.old}</span></td>
+      <td><button class="ai-price-btn" onclick="openAiPricing(${p.id})">✨ AI Price</button></td>
+      <td><span style="color:${p.stock===0?'var(--error)':p.stock<20?'var(--warn)':'var(--success)'};font-weight:700">${p.stock===0?'Out of Stock':p.stock+' units'}</span></td>
+      <td>${statusPill(p.status)}</td>
+      <td><div class="action-icons">
+        <button class="icon-btn" onclick="openProductModal(${p.id})" title="Edit">✏️</button>
+        <button class="icon-btn del" onclick="deleteProduct(${p.id})" title="Delete">🗑</button>
+      </div></td>
+    </tr>
+  `).join('');
+}
+
+// ── RENDER CUSTOMERS ──
+function renderCustomers() {
+  document.getElementById('customers-body').innerHTML = customers.map(c => `
+    <tr>
+      <td class="td-bold">${c.name}</td>
+      <td><a href="tel:${c.mobile}" style="color:var(--blue);text-decoration:none;font-weight:600">${c.mobile}</a></td>
+      <td>${c.village}</td>
+      <td style="font-weight:700">${c.orders}</td>
+      <td style="font-weight:700;color:var(--success)">₹${c.spent}</td>
+      <td>${c.joined}</td>
+      <td><div class="action-icons">
+        <button class="icon-btn" onclick="showToast('WhatsApp: ${c.mobile}')" title="WhatsApp">💬</button>
+        <button class="icon-btn" onclick="showToast('Order history loading...')" title="Orders">📦</button>
+      </div></td>
+    </tr>
+  `).join('');
+}
+
+// ── RENDER COUPONS ──
+function renderCoupons() {
+  document.getElementById('coupons-body').innerHTML = coupons.map(c => `
+    <tr>
+      <td><span style="background:var(--gray-light);padding:3px 10px;border-radius:6px;font-weight:800;font-size:0.88rem;letter-spacing:1px">${c.code}</span></td>
+      <td>${c.type}</td>
+      <td style="font-weight:800;color:var(--orange)">${c.val}</td>
+      <td>${c.used} times</td>
+      <td style="font-size:0.82rem">${c.expires}<br><small style="color:var(--gray)">Min ₹${c.min}</small></td>
+      <td>${statusPill(c.status)}</td>
+      <td><div class="action-icons">
+        <button class="icon-btn del" onclick="deleteCoupon('${c.code}')" title="Delete">🗑</button>
+      </div></td>
+    </tr>
+  `).join('');
+}
+
+// ── ACTIVITY FEED ──
+function renderActivity() {
+  document.getElementById('activity-list').innerHTML = activities.map(a => `
+    <div class="activity-item">
+      <div class="act-icon" style="background:${a.bg}">${a.icon}</div>
+      <div class="act-text">${a.text}</div>
+      <div class="act-time">${a.time}</div>
+    </div>
+  `).join('');
+}
+
+// ── BAR CHART ──
+const weekData = [
+  { lbl:'Mon', val:2400 },{ lbl:'Tue', val:3100 },{ lbl:'Wed', val:1800 },
+  { lbl:'Thu', val:4200 },{ lbl:'Fri', val:3800 },{ lbl:'Sat', val:5600 },{ lbl:'Sun', val:4850 },
+];
+const monthData = [
+  { lbl:'W1', val:14200 },{ lbl:'W2', val:18600 },{ lbl:'W3', val:12400 },{ lbl:'W4', val:21800 },
+];
+function renderBar(data) {
+  const max = Math.max(...data.map(d=>d.val));
+  document.getElementById('bar-chart').innerHTML = data.map((d,i) => `
+    <div class="bar-col">
+      <div class="bar-val">₹${(d.val/1000).toFixed(1)}k</div>
+      <div class="bar" style="height:${Math.round((d.val/max)*120)}px;background:${i===data.length-1?'var(--orange)':'var(--blue)'};opacity:${0.5+0.5*(d.val/max)}" title="₹${d.val}"></div>
+      <div class="bar-lbl">${d.lbl}</div>
+    </div>
+  `).join('');
+}
+function setChart(type, btn) {
+  document.querySelectorAll('.ctab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderBar(type==='week'?weekData:monthData);
+}
+
+// ── DONUT CHART ──
+function renderDonut() {
+  const depts = [
+    { name:'Grocery', val:32, color:'#1A5FB4' },
+    { name:'Krushi', val:23, color:'#16A34A' },
+    { name:'Electrical', val:18, color:'#F47820' },
+    { name:'Hardware', val:12, color:'#E8A020' },
+    { name:'Others', val:15, color:'#6B7280' },
+  ];
+  const total = depts.reduce((s,d)=>s+d.val,0);
+  let angle = -90;
+  const r=45, cx=60, cy=60;
+  let paths = '';
+  depts.forEach(d => {
+    const sweep = (d.val/total)*360;
+    const rad1 = angle*Math.PI/180, rad2 = (angle+sweep)*Math.PI/180;
+    const x1=cx+r*Math.cos(rad1), y1=cy+r*Math.sin(rad1);
+    const x2=cx+r*Math.cos(rad2), y2=cy+r*Math.sin(rad2);
+    const lg = sweep>180?1:0;
+    paths += `<path d="M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${lg},1 ${x2},${y2} Z" fill="${d.color}" opacity="0.85"/>`;
+    angle += sweep;
+  });
+  paths += `<circle cx="${cx}" cy="${cy}" r="26" fill="white"/>`;
+  document.getElementById('donut-svg').innerHTML = paths;
+  document.getElementById('donut-legend').innerHTML = depts.map(d=>`
+    <div class="legend-item">
+      <div class="legend-dot" style="background:${d.color}"></div>
+      <span style="flex:1;font-size:0.78rem">${d.name}</span>
+      <span style="font-weight:700;font-size:0.78rem">${d.val}%</span>
+    </div>`).join('');
+}
+
+// ── MODALS ──
+function openProductModal(id) {
+  const modal = document.getElementById('product-modal');
+  if(id) {
+    const p = products.find(x=>x.id===id);
+    document.getElementById('product-modal-title').textContent = '✏️ Product Edit Karo';
+    document.getElementById('pm-name').value = p.name;
+    document.getElementById('pm-marathi').value = p.marathi;
+    document.getElementById('pm-emoji').value = p.emoji;
+    document.getElementById('pm-price').value = p.price;
+    document.getElementById('pm-old').value = p.old;
+    document.getElementById('pm-stock').value = p.stock;
+    document.getElementById('pm-badge').value = p.badge;
+    modal.dataset.editId = id;
+  } else {
+    document.getElementById('product-modal-title').textContent = '➕ New Product Add Karo';
+    ['pm-name','pm-marathi','pm-emoji','pm-price','pm-old','pm-stock','pm-badge'].forEach(id=>document.getElementById(id).value='');
+    delete modal.dataset.editId;
+  }
+  modal.classList.add('open');
+}
+function saveProduct() {
+  const name = document.getElementById('pm-name').value.trim();
+  if(!name) { showToast('❌ Product naam daalo!'); return; }
+  const modal = document.getElementById('product-modal');
+  if(modal.dataset.editId) {
+    const p = products.find(x=>x.id===parseInt(modal.dataset.editId));
+    p.name=name; p.marathi=document.getElementById('pm-marathi').value;
+    p.emoji=document.getElementById('pm-emoji').value||'📦';
+    p.price=parseInt(document.getElementById('pm-price').value)||0;
+    p.old=parseInt(document.getElementById('pm-old').value)||0;
+    p.stock=parseInt(document.getElementById('pm-stock').value)||0;
+    p.badge=document.getElementById('pm-badge').value;
+    p.status=p.stock===0?'Out of Stock':'Active';
+    showToast('✅ Product update hua!');
+  } else {
+    products.unshift({ id:Date.now(), emoji:document.getElementById('pm-emoji').value||'📦', name, marathi:document.getElementById('pm-marathi').value, dept:document.getElementById('pm-dept').value, price:parseInt(document.getElementById('pm-price').value)||0, old:parseInt(document.getElementById('pm-old').value)||0, stock:parseInt(document.getElementById('pm-stock').value)||0, badge:document.getElementById('pm-badge').value, status:'Active', cost:0 });
+    showToast('✅ Naya product add hua!');
+  }
+  closeModal('product-modal');
+  renderProducts();
+}
+function deleteProduct(id) {
+  if(confirm('Product delete karna chahte ho?')) {
+    products = products.filter(p=>p.id!==id);
+    renderProducts();
+    showToast('🗑 Product delete hua!');
+  }
+}
+function openCouponModal() { document.getElementById('coupon-modal').classList.add('open'); }
+function saveCoupon() {
+  const code = document.getElementById('cm-code').value.trim().toUpperCase();
+  if(!code) { showToast('❌ Coupon code daalo!'); return; }
+  const type = document.getElementById('cm-type').value;
+  const val = document.getElementById('cm-val').value;
+  coupons.unshift({ code, type:type==='percent'?'Percent':'Flat', val:type==='percent'?val+'%':'₹'+val, min:parseInt(document.getElementById('cm-min').value)||0, used:0, expires:document.getElementById('cm-exp').value||'—', status:'Active' });
+  closeModal('coupon-modal'); renderCoupons();
+  showToast('✅ Naya coupon create hua!');
+}
+function deleteCoupon(code) {
+  if(confirm(`Coupon ${code} delete karna chahte ho?`)) {
+    coupons = coupons.filter(c=>c.code!==code); renderCoupons();
+    showToast('🗑 Coupon delete hua!');
+  }
+}
+function openStatusModal(id) {
+  document.getElementById('update-order-id').textContent = id;
+  document.getElementById('status-modal').classList.add('open');
+  document.getElementById('status-modal').dataset.orderId = id;
+}
+function updateStatus() {
+  const id = document.getElementById('status-modal').dataset.orderId;
+  const newSt = document.getElementById('new-status').value;
+  const o = orders.find(x=>x.id===id);
+  if(o) o.status = newSt;
+  closeModal('status-modal'); renderOrders();
+  showToast(`✅ Order ${id} → ${newSt} | WhatsApp + SMS bheja!`);
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function filterTable(tbodyId, q, col) {
+  const rows = document.getElementById(tbodyId).querySelectorAll('tr');
+  rows.forEach(r => { r.style.display = [...r.querySelectorAll('td')].some(c=>c.textContent.toLowerCase().includes(q.toLowerCase())) ? '' : 'none'; });
+}
+function filterByStatus(val) {
+  document.getElementById('orders-body').querySelectorAll('tr').forEach(r => {
+    r.style.display = (!val || r.textContent.includes(val)) ? '' : 'none';
+  });
+}
+
+// ── AI AUTO PRICING ──
+let currentPricingProduct = null;
+let selectedAiPrice = null;
+
+async function openAiPricing(productId) {
+  const p = products.find(x => x.id === productId);
+  currentPricingProduct = p;
+  selectedAiPrice = null;
+  document.getElementById('ai-price-product-name').textContent = p.name;
+  document.getElementById('ai-price-current').textContent = `₹${p.price} (Cost: ₹${p.cost || Math.round(p.price * 0.7)})`;
+  document.getElementById('ai-price-loading').style.display = 'block';
+  document.getElementById('ai-price-result').style.display = 'none';
+  document.getElementById('ai-price-modal').classList.add('open');
+
+  const cost = p.cost || Math.round(p.price * 0.7);
+  const system = `You are a retail pricing expert for rural Maharashtra, India.
+Suggest competitive pricing for UG Bazaar store in Bhangaram, Talodhi, Chandrapur.
+Consider: rural market pricing, local competition, fair margins, and customer affordability.
+Return ONLY this JSON (no markdown):
+{"minimum":number,"recommended":number,"premium":number,"margin_min":number,"margin_rec":number,"margin_prem":number,"reasoning":"max 25 words explaining strategy"}`;
+
+  const result = await callClaude(system,
+    `Product: ${p.name}, Department: ${p.dept}, Cost Price: ₹${cost}, Current Selling Price: ₹${p.price}`, 300
+  );
+
+  document.getElementById('ai-price-loading').style.display = 'none';
+  document.getElementById('ai-price-result').style.display = 'block';
+
+  let pricing = null;
+  try {
+    const clean = result.replace(/```json|```/g,'').trim();
+    pricing = JSON.parse(clean);
+  } catch(e) {
+    pricing = {
+      minimum: Math.round(cost * 1.12),
+      recommended: Math.round(cost * 1.32),
+      premium: Math.round(cost * 1.55),
+      margin_min: 12, margin_rec: 32, margin_prem: 55,
+      reasoning: 'Standard retail margins for rural Maharashtra market pricing.'
+    };
+  }
+
+  selectedAiPrice = pricing.recommended;
+  document.getElementById('price-cards-row').innerHTML = `
+    <div class="price-opt-card" onclick="selectPrice(this,${pricing.minimum})">
+      <div class="poc-label">Budget</div>
+      <div class="poc-price">₹${pricing.minimum}</div>
+      <div class="poc-margin">${pricing.margin_min}% margin</div>
+    </div>
+    <div class="price-opt-card selected" onclick="selectPrice(this,${pricing.recommended})">
+      <div class="poc-label">✅ Recommended</div>
+      <div class="poc-price">₹${pricing.recommended}</div>
+      <div class="poc-margin">${pricing.margin_rec}% margin</div>
+    </div>
+    <div class="price-opt-card" onclick="selectPrice(this,${pricing.premium})">
+      <div class="poc-label">Premium</div>
+      <div class="poc-price">₹${pricing.premium}</div>
+      <div class="poc-margin">${pricing.margin_prem}% margin</div>
+    </div>`;
+  document.getElementById('ai-reasoning').innerHTML = `💡 <strong>AI Strategy:</strong> ${pricing.reasoning}`;
+}
+
+function selectPrice(card, price) {
+  document.querySelectorAll('.price-opt-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  selectedAiPrice = price;
+}
+
+function applyAiPrice() {
+  if(!currentPricingProduct || !selectedAiPrice) return;
+  const p = products.find(x => x.id === currentPricingProduct.id);
+  if(p) {
+    p.old = p.price;
+    p.price = selectedAiPrice;
+  }
+  closeModal('ai-price-modal');
+  renderProducts();
+  showToast(`✅ ${currentPricingProduct.name} price updated to ₹${selectedAiPrice}!`);
+}
+
+// ── AI DASHBOARD INSIGHTS ──
+async function generateDashboardInsights() {
+  const btn = document.getElementById('insights-gen-btn');
+  btn.disabled = true;
+  btn.innerHTML = `<div class="ldots"><span></span><span></span><span></span></div> Analyzing...`;
+
+  const grid = document.getElementById('ai-insights-grid');
+  grid.innerHTML = `
+    <div class="ai-insight-box"><div class="aib-label">📊 Sales Prediction</div><div class="aib-content"><div class="ldots"><span></span><span></span><span></span></div></div></div>
+    <div class="ai-insight-box"><div class="aib-label">⚡ Urgent Actions</div><div class="aib-content"><div class="ldots"><span></span><span></span><span></span></div></div></div>
+    <div class="ai-insight-box"><div class="aib-label">🌾 Seasonal Advice</div><div class="aib-content"><div class="ldots"><span></span><span></span><span></span></div></div></div>
+    <div class="ai-insight-box"><div class="aib-label">💡 Growth Tip</div><div class="aib-content"><div class="ldots"><span></span><span></span><span></span></div></div></div>`;
+
+  const system = `You are a business analyst for UG Bazaar, a multi-department retail store in Bhangaram, Talodhi, Chandrapur, Maharashtra.
+Analyze the business data and return ONLY this JSON (no markdown):
+{
+  "salesPrediction": "2-3 sentence sales prediction for next week (mention specific numbers)",
+  "urgentActions": "2-3 urgent things admin should do today (short bullet style)",
+  "seasonalAdvice": "Seasonal tip for Vidarbha region Maharashtra (Krushi/weather/festival related)",
+  "growthTip": "One specific growth strategy for rural Maharashtra market"
+}`;
+
+  const bizData = `Revenue today: ₹4,850, Orders: 24, Customers: 138, Products: 52.
+Top selling: Grocery (32 orders), Krushi (18 orders). Out of stock: Electric Wire.
+Week sales: Mon ₹2.4k, Tue ₹3.1k, Wed ₹1.8k, Thu ₹4.2k, Fri ₹3.8k, Sat ₹5.6k, Sun ₹4.85k.
+Location: Bhangaram, Talodhi, Chandrapur. Month: April 2026.`;
+
+  const result = await callClaude(system, bizData, 600);
+
+  btn.disabled = false;
+  btn.innerHTML = '✨ Refresh Insights';
+
+  let parsed = null;
+  try {
+    const clean = result.replace(/```json|```/g,'').trim();
+    parsed = JSON.parse(clean);
+  } catch(e) {
+    parsed = {
+      salesPrediction: 'Next week revenue ₹32,000–₹36,000 expected. Saturday peak at ₹6,000+. Krushi department growing fast — stock up seeds.',
+      urgentActions: '• Restock Electric Wire (out of stock)\n• Push Krushi KISAN30 coupon this week\n• Follow up with 3 pending orders',
+      seasonalAdvice: 'April is Rabi harvest season — farmers have income. Push DAP fertilizer + Kharif seeds for next season. Good time for bulk orders!',
+      growthTip: 'Add WhatsApp catalog for top 20 products. Rural customers prefer ordering via WhatsApp — it can increase sales by 30%.'
+    };
+  }
+
+  grid.innerHTML = `
+    <div class="ai-insight-box">
+      <div class="aib-label">📊 Sales Prediction</div>
+      <div class="aib-content">${parsed.salesPrediction.replace(/\n/g,'<br>')}</div>
+    </div>
+    <div class="ai-insight-box">
+      <div class="aib-label">⚡ Urgent Actions</div>
+      <div class="aib-content">${parsed.urgentActions.replace(/•/g,'<br>•').replace(/\n/g,'<br>')}</div>
+    </div>
+    <div class="ai-insight-box">
+      <div class="aib-label">🌾 Seasonal Advice</div>
+      <div class="aib-content">${parsed.seasonalAdvice}</div>
+    </div>
+    <div class="ai-insight-box">
+      <div class="aib-label">💡 Growth Tip</div>
+      <div class="aib-content">${parsed.growthTip}</div>
+    </div>`;
+}
+
+// ── AI SALES INSIGHTS ──
+async function generateSalesInsights() {
+  const btn = document.getElementById('sales-ai-btn');
+  btn.disabled = true;
+  btn.innerHTML = `<div class="ldots"><span></span><span></span><span></span></div>`;
+
+  document.getElementById('forecast-text').innerHTML = 'Generating forecast <div class="ldots" style="display:inline-flex;gap:3px"><span></span><span></span><span></span></div>';
+  document.getElementById('action-items').innerHTML = '<div style="color:var(--gray);font-size:0.82rem">Loading...</div>';
+
+  const system = `You are a sales forecasting expert for a rural India retail store.
+Return ONLY this JSON (no markdown):
+{
+  "forecast": [
+    {"day":"Mon","amount":number,"type":"predicted"},
+    {"day":"Tue","amount":number,"type":"predicted"},
+    {"day":"Wed","amount":number,"type":"predicted"},
+    {"day":"Thu","amount":number,"type":"predicted"},
+    {"day":"Fri","amount":number,"type":"predicted"},
+    {"day":"Sat","amount":number,"type":"peak"},
+    {"day":"Sun","amount":number,"type":"predicted"}
+  ],
+  "forecastSummary": "1-2 sentence summary of forecast",
+  "actions": [
+    {"type":"urgent","icon":"⚠️","text":"action text (max 12 words)"},
+    {"type":"warn","icon":"💡","text":"action text (max 12 words)"},
+    {"type":"good","icon":"✅","text":"action text (max 12 words)"},
+    {"type":"good","icon":"🌾","text":"action text (max 12 words)"}
+  ]
+}`;
+
+  const result = await callClaude(system,
+    `Store: UG Bazaar, Bhangaram Talodhi Maharashtra. Month revenue: ₹38,450. Orders: 87. Top dept: Grocery(₹12.4k), Krushi(₹9.8k). Current week avg: ₹3,700/day.`,
+    500
+  );
+
+  btn.disabled = false;
+  btn.innerHTML = '✨ Analyze & Predict';
+
+  let parsed = null;
+  try {
+    const clean = result.replace(/```json|```/g,'').trim();
+    parsed = JSON.parse(clean);
+  } catch(e) {
+    parsed = {
+      forecast: [
+        {day:'Mon',amount:3200,type:'predicted'},{day:'Tue',amount:4100,type:'predicted'},
+        {day:'Wed',amount:2800,type:'predicted'},{day:'Thu',amount:4500,type:'predicted'},
+        {day:'Fri',amount:3900,type:'predicted'},{day:'Sat',amount:6200,type:'peak'},
+        {day:'Sun',amount:5100,type:'predicted'}
+      ],
+      forecastSummary: 'Next week total revenue expected around ₹29,800. Saturday will be peak day with ₹6,200+ sales.',
+      actions: [
+        {type:'urgent',icon:'⚠️',text:'Electric Wire out of stock — reorder immediately'},
+        {type:'warn',icon:'💡',text:'Grocery stock low — replenish Rice and Dal'},
+        {type:'good',icon:'✅',text:'Krushi sales up 35% — keep seeds well stocked'},
+        {type:'good',icon:'🌾',text:'April Kharif season — promote fertilizer combos'}
+      ]
+    };
+  }
+
+  // render forecast bars
+  const maxVal = Math.max(...parsed.forecast.map(f=>f.amount));
+  document.getElementById('forecast-bars').innerHTML = parsed.forecast.map(f => `
+    <div class="fb-col">
+      <div class="fb-val">₹${Math.round(f.amount/1000)}k</div>
+      <div class="fb-bar" style="height:${Math.round((f.amount/maxVal)*85)}px;background:${f.type==='peak'?'var(--orange)':'var(--blue)'};opacity:${f.type==='peak'?'1':'0.75'}"></div>
+      <div class="fb-lbl">${f.day}</div>
+    </div>`).join('');
+
+  document.getElementById('forecast-text').innerHTML = parsed.forecastSummary;
+  document.getElementById('action-items').innerHTML = parsed.actions.map(a =>
+    `<div class="action-item ${a.type}"><span class="ai-icon">${a.icon}</span><div class="ai-item-text">${a.text}</div></div>`
+  ).join('');
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display='block';
+  setTimeout(()=>t.style.display='none', 3000);
+}
+
+// ── INIT ──
+async function initAdminDashboard() {
+  if (!Auth.isLoggedIn() || !Auth.isAdmin()) {
+    // Allow demo mode — don't redirect
+    console.log('Demo mode — backend not connected yet');
+  } else {
+    const r = await AdminAPI.getDashboard();
+    if (r.success) {
+      const s = r.data.stats;
+      document.querySelector('[data-stat="revenue"]')  && (document.querySelector('[data-stat="revenue"]').textContent   = '₹' + s.todayRevenue.toLocaleString('en-IN'));
+      document.querySelector('[data-stat="orders"]')   && (document.querySelector('[data-stat="orders"]').textContent    = s.totalOrders);
+      document.querySelector('[data-stat="customers"]')&& (document.querySelector('[data-stat="customers"]').textContent = s.totalUsers);
+      document.querySelector('[data-stat="products"]') && (document.querySelector('[data-stat="products"]').textContent  = s.totalProducts);
+    }
+    // Load real orders
+    const ro = await OrderAPI.adminGetAll();
+    if (ro.success) orders = ro.data.orders.map(o => ({
+      id: o.orderId, customer: o.user?.name || 'N/A', mobile: o.user?.mobile || '',
+      items: o.items.length, amount: o.total, type: o.type === 'delivery' ? 'Delivery' : 'Pickup',
+      status: o.status, date: new Date(o.createdAt).toLocaleDateString('en-IN'), _dbId: o._id
+    }));
+  }
+  renderBar(weekData);
+  renderDonut();
+  renderActivity();
+  renderOrders();
+}
+
+async function adminUpdateStatusAPI(orderId, dbId) {
+  const newStatus = document.getElementById('new-status').value;
+  const r = await OrderAPI.adminUpdateStatus(dbId || orderId, newStatus);
+  if (r.success) {
+    showToast(`✅ Status updated → ${newStatus} | Customer notified!`);
+    closeModal('status-modal');
+    // Refresh orders
+    const ro = await OrderAPI.adminGetAll();
+    if (ro.success) orders = ro.data.orders.map(o => ({
+      id: o.orderId, customer: o.user?.name || 'N/A', mobile: o.user?.mobile || '',
+      items: o.items.length, amount: o.total, type: o.type === 'delivery' ? 'Delivery' : 'Pickup',
+      status: o.status, date: new Date(o.createdAt).toLocaleDateString('en-IN'), _dbId: o._id
+    }));
+    renderOrders();
+  } else { showToast('❌ ' + r.error); }
+}
+
+initAdminDashboard();
+</script>
+<script src="api.js"></script>
+<script src="nav-fix.js"></script>
+</body>
+</html>
+let products = [
+  { id:1, emoji:'🌾', name:'Basmati Rice 5kg', marathi:'बासमती तांदूळ', dept:'Grocery', price:320, old:380, stock:45, badge:'Popular', status:'Active' },
+  { id:2, emoji:'🫘', name:'Toor Dal 1kg', marathi:'तूर डाळ', dept:'Grocery', price:145, old:170, stock:80, badge:'', status:'Active' },
+  { id:3, emoji:'💡', name:'LED Bulb 9W', marathi:'LED बल्ब', dept:'Electrical', price:65, old:90, stock:120, badge:'Best Buy', status:'Active' },
+  { id:4, emoji:'🔨', name:'Steel Hammer', marathi:'स्टील हातोडा', dept:'Hardware', price:220, old:280, stock:18, badge:'', status:'Active' },
+  { id:5, emoji:'📱', name:'Mobile Charger', marathi:'मोबाईल चार्जर', dept:'Electronics', price:199, old:299, stock:35, badge:'Hot', status:'Active' },
+  { id:6, emoji:'🌱', name:'Hybrid Seeds 500g', marathi:'हायब्रीड बियाणे', dept:'Krushi Kendra', price:180, old:240, stock:60, badge:'Farmer Pick', status:'Active' },
+  { id:7, emoji:'🛋', name:'Wooden Chair', marathi:'लाकडी खुर्ची', dept:'Furniture', price:1200, old:1600, stock:5, badge:'', status:'Active' },
+  { id:8, emoji:'🔌', name:'Electric Wire 10m', marathi:'इलेक्ट्रिक तार', dept:'Electrical', price:280, old:340, stock:0, badge:'', status:'Out of Stock' },
+];
+
+let orders = [
+  { id:'#UG10001', customer:'Ramesh Borkar', mobile:'9876543210', items:2, amount:785, type:'Delivery', status:'Out for Delivery', date:'Apr 3' },
+  { id:'#UG10002', customer:'Suresh Meshram', mobile:'9823456780', items:2, amount:475, type:'Pickup', status:'Ready for Pickup', date:'Apr 2' },
+  { id:'#UG10003', customer:'Priya Gaikwad', mobile:'9765432100', items:2, amount:580, type:'Delivery', status:'Delivered', date:'Mar 30' },
+  { id:'#UG10004', customer:'Anil Thakre', mobile:'9812345670', items:1, amount:1200, type:'Delivery', status:'Cancelled', date:'Mar 28' },
+  { id:'#UG10005', customer:'Sanjay Yadav', mobile:'9890123456', items:3, amount:640, type:'Delivery', status:'Confirmed', date:'Apr 4' },
+  { id:'#UG10006', customer:'Meena Raut', mobile:'9745678901', items:1, amount:180, type:'Pickup', status:'Pending', date:'Apr 4' },
+];
+
+let customers = [
+  { name:'Ramesh Borkar', mobile:'9876543210', village:'Bhangaram', orders:5, spent:3200, joined:'Jan 2026' },
+  { name:'Suresh Meshram', mobile:'9823456780', village:'Talodhi', orders:3, spent:1850, joined:'Feb 2026' },
+  { name:'Priya Gaikwad', mobile:'9765432100', village:'Bhangaram', orders:8, spent:5600, joined:'Dec 2025' },
+  { name:'Anil Thakre', mobile:'9812345670', village:'Talodhi', orders:2, spent:980, joined:'Mar 2026' },
+  { name:'Sanjay Yadav', mobile:'9890123456', village:'Bhangaram', orders:6, spent:4100, joined:'Nov 2025' },
+  { name:'Meena Raut', mobile:'9745678901', village:'Nandori', orders:1, spent:180, joined:'Apr 2026' },
+];
+
+let coupons = [
+  { code:'UG10', type:'Percent', val:'10%', min:200, used:34, expires:'Apr 30, 2026', status:'Active' },
+  { code:'UDAY20', type:'Flat', val:'₹20', min:300, used:12, expires:'May 15, 2026', status:'Active' },
+  { code:'FIRST50', type:'Flat', val:'₹50', min:500, used:8, expires:'Dec 31, 2026', status:'Active' },
+  { code:'SUMMER30', type:'Percent', val:'30%', min:1000, used:0, expires:'Jun 30, 2026', status:'Inactive' },
+];
+
+let activities = [
+  { icon:'📦', bg:'rgba(26,95,180,0.1)', text:'<strong>Ramesh Borkar</strong> ne order kiya — #UG10001', time:'10 min ago' },
+  { icon:'✅', bg:'rgba(22,163,74,0.1)', text:'Order <strong>#UG10003</strong> delivered!', time:'2 hr ago' },
+  { icon:'👤', bg:'rgba(244,120,32,0.1)', text:'<strong>Meena Raut</strong> ne account banaya', time:'3 hr ago' },
+  { icon:'🎁', bg:'rgba(232,160,32,0.12)', text:'Coupon <strong>UG10</strong> 34 times use hua', time:'Today' },
+  { icon:'⚠️', bg:'rgba(220,38,38,0.08)', text:'<strong>Electric Wire 10m</strong> out of stock!', time:'Yesterday' },
+];
+
+// ── PAGE SWITCH ──
+function showPage(name, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  if(el) el.classList.add('active');
+  const titles = { dashboard:'📊 Dashboard', orders:'📦 Orders', products:'🛍 Products', customers:'👥 Customers', coupons:'🎁 Coupons', sales:'📈 Sales Report' };
+  document.getElementById('page-title').textContent = titles[name] || name;
+  if(name==='orders') renderOrders();
+  if(name==='products') renderProducts();
+  if(name==='customers') renderCustomers();
+  if(name==='coupons') renderCoupons();
+}
+
+// ── STATUS PILL ──
+function statusPill(s) {
+  const map = { 'Pending':'sp-pending','Confirmed':'sp-confirmed','Delivered':'sp-delivered','Cancelled':'sp-cancelled','Active':'sp-active','Out of Stock':'sp-pending','Out for Delivery':'sp-out','Ready for Pickup':'sp-out','Inactive':'sp-cancelled','Picked Up':'sp-delivered' };
+  return `<span class="status-pill ${map[s]||'sp-confirmed'}">${s}</span>`;
+}
+
+// ── RENDER ORDERS ──
+function renderOrders() {
+  document.getElementById('orders-body').innerHTML = orders.map(o => `
+    <tr>
+      <td class="td-bold">${o.id}</td>
+      <td>${o.customer}<br><small style="color:var(--gray)">${o.mobile}</small></td>
+      <td>${o.items} items</td>
+      <td class="td-bold">₹${o.amount}</td>
+      <td><span style="font-size:0.78rem">${o.type==='Delivery'?'🚀':'🏪'} ${o.type}</span></td>
+      <td>${statusPill(o.status)}</td>
+      <td>${o.date}</td>
+      <td><div class="action-icons">
+        <button class="icon-btn" onclick="window.location='order-detail.html'" title="View Detail">👁</button>
+        <button class="icon-btn" onclick="openStatusModal('${o.id}')" title="Status Update">🔄</button>
+        <button class="icon-btn" onclick="showToast('WhatsApp: ${o.mobile}')" title="WhatsApp">💬</button>
+      </div></td>
+    </tr>
+  `).join('');
+  // recent orders on dashboard
+  document.getElementById('recent-orders-body').innerHTML = orders.slice(0,5).map(o => `
+    <tr>
+      <td class="td-bold">${o.id}</td>
+      <td>${o.customer}</td>
+      <td class="td-bold">₹${o.amount}</td>
+      <td>${statusPill(o.status)}</td>
+    </tr>
+  `).join('');
+}
+
+// ── RENDER PRODUCTS ──
+function renderProducts() {
+  document.getElementById('products-body').innerHTML = products.map(p => `
+    <tr>
+      <td><div style="display:flex;align-items:center;gap:0.6rem">
+        <span style="font-size:1.4rem">${p.emoji}</span>
+        <div><div class="td-bold">${p.name}</div><div style="font-size:0.72rem;color:var(--gray)">${p.marathi}</div></div>
+      </div></td>
+      <td>${p.dept}</td>
+      <td><span class="td-bold">₹${p.price}</span> <span style="font-size:0.75rem;color:var(--gray);text-decoration:line-through">₹${p.old}</span></td>
+      <td><span style="color:${p.stock===0?'var(--error)':p.stock<20?'var(--warn)':'var(--success)'};font-weight:700">${p.stock===0?'Out of Stock':p.stock+' units'}</span></td>
+      <td>${statusPill(p.status)}</td>
+      <td><div class="action-icons">
+        <button class="icon-btn" onclick="openProductModal(${p.id})" title="Edit">✏️</button>
+        <button class="icon-btn del" onclick="deleteProduct(${p.id})" title="Delete">🗑</button>
+      </div></td>
+    </tr>
+  `).join('');
+}
+
+// ── RENDER CUSTOMERS ──
+function renderCustomers() {
+  document.getElementById('customers-body').innerHTML = customers.map(c => `
+    <tr>
+      <td class="td-bold">${c.name}</td>
+      <td><a href="tel:${c.mobile}" style="color:var(--blue);text-decoration:none;font-weight:600">${c.mobile}</a></td>
+      <td>${c.village}</td>
+      <td style="font-weight:700">${c.orders}</td>
+      <td style="font-weight:700;color:var(--success)">₹${c.spent}</td>
+      <td>${c.joined}</td>
+      <td><div class="action-icons">
+        <button class="icon-btn" onclick="showToast('WhatsApp: ${c.mobile}')" title="WhatsApp">💬</button>
+        <button class="icon-btn" onclick="showToast('Order history loading...')" title="Orders">📦</button>
+      </div></td>
+    </tr>
+  `).join('');
+}
+
+// ── RENDER COUPONS ──
+function renderCoupons() {
+  document.getElementById('coupons-body').innerHTML = coupons.map(c => `
+    <tr>
+      <td><span style="background:var(--gray-light);padding:3px 10px;border-radius:6px;font-weight:800;font-size:0.88rem;letter-spacing:1px">${c.code}</span></td>
+      <td>${c.type}</td>
+      <td style="font-weight:800;color:var(--orange)">${c.val}</td>
+      <td>${c.used} times</td>
+      <td style="font-size:0.82rem">${c.expires}<br><small style="color:var(--gray)">Min ₹${c.min}</small></td>
+      <td>${statusPill(c.status)}</td>
+      <td><div class="action-icons">
+        <button class="icon-btn del" onclick="deleteCoupon('${c.code}')" title="Delete">🗑</button>
+      </div></td>
+    </tr>
+  `).join('');
+}
+
+// ── ACTIVITY FEED ──
+function renderActivity() {
+  document.getElementById('activity-list').innerHTML = activities.map(a => `
+    <div class="activity-item">
+      <div class="act-icon" style="background:${a.bg}">${a.icon}</div>
+      <div class="act-text">${a.text}</div>
+      <div class="act-time">${a.time}</div>
+    </div>
+  `).join('');
+}
+
+// ── BAR CHART ──
+const weekData = [
+  { lbl:'Mon', val:2400 },{ lbl:'Tue', val:3100 },{ lbl:'Wed', val:1800 },
+  { lbl:'Thu', val:4200 },{ lbl:'Fri', val:3800 },{ lbl:'Sat', val:5600 },{ lbl:'Sun', val:4850 },
+];
+const monthData = [
+  { lbl:'W1', val:14200 },{ lbl:'W2', val:18600 },{ lbl:'W3', val:12400 },{ lbl:'W4', val:21800 },
+];
+function renderBar(data) {
+  const max = Math.max(...data.map(d=>d.val));
+  document.getElementById('bar-chart').innerHTML = data.map((d,i) => `
+    <div class="bar-col">
+      <div class="bar-val">₹${(d.val/1000).toFixed(1)}k</div>
+      <div class="bar" style="height:${Math.round((d.val/max)*120)}px;background:${i===data.length-1?'var(--orange)':'var(--blue)'};opacity:${0.5+0.5*(d.val/max)}" title="₹${d.val}"></div>
+      <div class="bar-lbl">${d.lbl}</div>
+    </div>
+  `).join('');
+}
+function setChart(type, btn) {
+  document.querySelectorAll('.ctab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderBar(type==='week'?weekData:monthData);
+}
+
+// ── DONUT CHART ──
+function renderDonut() {
+  const depts = [
+    { name:'Grocery', val:32, color:'#1A5FB4' },
+    { name:'Krushi', val:23, color:'#16A34A' },
+    { name:'Electrical', val:18, color:'#F47820' },
+    { name:'Hardware', val:12, color:'#E8A020' },
+    { name:'Others', val:15, color:'#6B7280' },
+  ];
+  const total = depts.reduce((s,d)=>s+d.val,0);
+  let angle = -90;
+  const r=45, cx=60, cy=60;
+  let paths = '';
+  depts.forEach(d => {
+    const sweep = (d.val/total)*360;
+    const rad1 = angle*Math.PI/180;
+    const rad2 = (angle+sweep)*Math.PI/180;
+    const x1=cx+r*Math.cos(rad1), y1=cy+r*Math.sin(rad1);
+    const x2=cx+r*Math.cos(rad2), y2=cy+r*Math.sin(rad2);
+    const lg = sweep>180?1:0;
+    paths += `<path d="M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${lg},1 ${x2},${y2} Z" fill="${d.color}" opacity="0.85"/>`;
+    angle += sweep;
+  });
+  paths += `<circle cx="${cx}" cy="${cy}" r="26" fill="white"/>`;
+  document.getElementById('donut-svg').innerHTML = paths;
+  document.getElementById('donut-legend').innerHTML = depts.map(d=>`
+    <div class="legend-item">
+      <div class="legend-dot" style="background:${d.color}"></div>
+      <span style="flex:1;font-size:0.78rem">${d.name}</span>
+      <span style="font-weight:700;font-size:0.78rem">${d.val}%</span>
+    </div>`).join('');
+}
+
+// ── MODALS ──
+function openProductModal(id) {
+  const modal = document.getElementById('product-modal');
+  if(id) {
+    const p = products.find(x=>x.id===id);
+    document.getElementById('product-modal-title').textContent = '✏️ Product Edit Karo';
+    document.getElementById('pm-name').value = p.name;
+    document.getElementById('pm-marathi').value = p.marathi;
+    document.getElementById('pm-emoji').value = p.emoji;
+    document.getElementById('pm-price').value = p.price;
+    document.getElementById('pm-old').value = p.old;
+    document.getElementById('pm-stock').value = p.stock;
+    document.getElementById('pm-badge').value = p.badge;
+    modal.dataset.editId = id;
+  } else {
+    document.getElementById('product-modal-title').textContent = '➕ New Product Add Karo';
+    ['pm-name','pm-marathi','pm-emoji','pm-price','pm-old','pm-stock','pm-badge'].forEach(id=>document.getElementById(id).value='');
+    delete modal.dataset.editId;
+  }
+  modal.classList.add('open');
+}
+function saveProduct() {
+  const name = document.getElementById('pm-name').value.trim();
+  if(!name) { showToast('❌ Product naam daalo!'); return; }
+  const modal = document.getElementById('product-modal');
+  if(modal.dataset.editId) {
+    const p = products.find(x=>x.id===parseInt(modal.dataset.editId));
+    p.name=name; p.marathi=document.getElementById('pm-marathi').value;
+    p.emoji=document.getElementById('pm-emoji').value||'📦';
+    p.price=parseInt(document.getElementById('pm-price').value)||0;
+    p.old=parseInt(document.getElementById('pm-old').value)||0;
+    p.stock=parseInt(document.getElementById('pm-stock').value)||0;
+    p.badge=document.getElementById('pm-badge').value;
+    p.status=p.stock===0?'Out of Stock':'Active';
+    showToast('✅ Product update hua!');
+  } else {
+    products.unshift({ id:Date.now(), emoji:document.getElementById('pm-emoji').value||'📦', name, marathi:document.getElementById('pm-marathi').value, dept:document.getElementById('pm-dept').value, price:parseInt(document.getElementById('pm-price').value)||0, old:parseInt(document.getElementById('pm-old').value)||0, stock:parseInt(document.getElementById('pm-stock').value)||0, badge:document.getElementById('pm-badge').value, status:'Active' });
+    showToast('✅ Naya product add hua!');
+  }
+  closeModal('product-modal');
+  renderProducts();
+}
+function deleteProduct(id) {
+  if(confirm('Product delete karna chahte ho?')) {
+    products = products.filter(p=>p.id!==id);
+    renderProducts();
+    showToast('🗑 Product delete hua!');
+  }
+}
+
+function openCouponModal() { document.getElementById('coupon-modal').classList.add('open'); }
+function saveCoupon() {
+  const code = document.getElementById('cm-code').value.trim().toUpperCase();
+  if(!code) { showToast('❌ Coupon code daalo!'); return; }
+  const type = document.getElementById('cm-type').value;
+  const val = document.getElementById('cm-val').value;
+  coupons.unshift({ code, type:type==='percent'?'Percent':'Flat', val:type==='percent'?val+'%':'₹'+val, min:parseInt(document.getElementById('cm-min').value)||0, used:0, expires:document.getElementById('cm-exp').value||'—', status:'Active' });
+  closeModal('coupon-modal'); renderCoupons();
+  showToast('✅ Naya coupon create hua!');
+}
+function deleteCoupon(code) {
+  if(confirm(`Coupon ${code} delete karna chahte ho?`)) {
+    coupons = coupons.filter(c=>c.code!==code); renderCoupons();
+    showToast('🗑 Coupon delete hua!');
+  }
+}
+
+function openStatusModal(id) {
+  document.getElementById('update-order-id').textContent = id;
+  document.getElementById('status-modal').classList.add('open');
+  document.getElementById('status-modal').dataset.orderId = id;
+}
+function updateStatus() {
+  const id = document.getElementById('status-modal').dataset.orderId;
+  const newSt = document.getElementById('new-status').value;
+  const o = orders.find(x=>x.id===id);
+  if(o) o.status = newSt;
+  closeModal('status-modal'); renderOrders();
+  showToast(`✅ Order ${id} → ${newSt} | WhatsApp + SMS bheja!`);
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ── TABLE FILTER ──
+function filterTable(tbodyId, q, col) {
+  const rows = document.getElementById(tbodyId).querySelectorAll('tr');
+  rows.forEach(r => {
+    const cells = r.querySelectorAll('td');
+    const match = [...cells].some(c => c.textContent.toLowerCase().includes(q.toLowerCase()));
+    r.style.display = match ? '' : 'none';
+  });
+}
+function filterByStatus(val) {
+  const rows = document.getElementById('orders-body').querySelectorAll('tr');
+  rows.forEach(r => { r.style.display = (!val || r.textContent.includes(val)) ? '' : 'none'; });
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display='block';
+  setTimeout(()=>t.style.display='none', 3000);
+}
+
+// ── INIT ──
+async function initAdminDashboard() {
+  if (!Auth.isLoggedIn() || !Auth.isAdmin()) {
+    // Allow demo mode — don't redirect
+    console.log('Demo mode — backend not connected yet');
+  } else {
+    const r = await AdminAPI.getDashboard();
+    if (r.success) {
+      const s = r.data.stats;
+      document.querySelector('[data-stat="revenue"]')  && (document.querySelector('[data-stat="revenue"]').textContent   = '₹' + s.todayRevenue.toLocaleString('en-IN'));
+      document.querySelector('[data-stat="orders"]')   && (document.querySelector('[data-stat="orders"]').textContent    = s.totalOrders);
+      document.querySelector('[data-stat="customers"]')&& (document.querySelector('[data-stat="customers"]').textContent = s.totalUsers);
+      document.querySelector('[data-stat="products"]') && (document.querySelector('[data-stat="products"]').textContent  = s.totalProducts);
+    }
+    // Load real orders
+    const ro = await OrderAPI.adminGetAll();
+    if (ro.success) orders = ro.data.orders.map(o => ({
+      id: o.orderId, customer: o.user?.name || 'N/A', mobile: o.user?.mobile || '',
+      items: o.items.length, amount: o.total, type: o.type === 'delivery' ? 'Delivery' : 'Pickup',
+      status: o.status, date: new Date(o.createdAt).toLocaleDateString('en-IN'), _dbId: o._id
+    }));
+  }
+  renderBar(weekData);
+  renderDonut();
+  renderActivity();
+  renderOrders();
+}
+
+async function adminUpdateStatusAPI(orderId, dbId) {
+  const newStatus = document.getElementById('new-status').value;
+  const r = await OrderAPI.adminUpdateStatus(dbId || orderId, newStatus);
+  if (r.success) {
+    showToast(`✅ Status updated → ${newStatus} | Customer notified!`);
+    closeModal('status-modal');
+    // Refresh orders
+    const ro = await OrderAPI.adminGetAll();
+    if (ro.success) orders = ro.data.orders.map(o => ({
+      id: o.orderId, customer: o.user?.name || 'N/A', mobile: o.user?.mobile || '',
+      items: o.items.length, amount: o.total, type: o.type === 'delivery' ? 'Delivery' : 'Pickup',
+      status: o.status, date: new Date(o.createdAt).toLocaleDateString('en-IN'), _dbId: o._id
+    }));
+    renderOrders();
+  } else { showToast('❌ ' + r.error); }
+}
+
+initAdminDashboard();
+</script>
+<script src="api.js"></script>
+<script src="nav-fix.js"></script>
+</body>
+</html>

@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Search Results — UG Bazaar</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange:#F47820; --blue:#1A5FB4; --blue-dark:#0D3A6E;
+    --blue-light:#3A82D4; --gold:#E8A020; --off-white:#F4F6FB;
+    --gray:#6B7280; --gray-light:#F3F4F6; --text:#1A1A2E;
+    --text-soft:#4B5563; --border:#E2E8F0;
+    --success:#16A34A; --success-bg:#F0FDF4;
+    --star:#F59E0B; --radius:14px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { font-family:'Baloo 2',sans-serif; background:var(--off-white); color:var(--text); }
+
+  /* TOPBAR */
+  .topbar { background:var(--blue-dark); color:rgba(255,255,255,0.85); font-size:0.78rem; padding:0.4rem 2rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.3rem; }
+  .topbar a { color:#FFD580; text-decoration:none; font-weight:600; }
+
+  /* NAVBAR */
+  nav { background:#fff; display:flex; justify-content:space-between; align-items:center; padding:0.8rem 2rem; box-shadow:0 2px 12px rgba(26,95,180,0.08); position:sticky; top:0; z-index:200; gap:1rem; }
+  .logo-area { display:flex; align-items:center; gap:0.7rem; text-decoration:none; flex-shrink:0; }
+  .logo-icon { width:44px; height:44px; background:linear-gradient(135deg,var(--orange),var(--gold)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; font-weight:800; color:#fff; }
+  .logo-text .ug { font-size:1.2rem; font-weight:800; color:var(--blue); display:block; line-height:1; }
+  .logo-text .sub { font-size:0.7rem; font-weight:600; color:var(--orange); letter-spacing:1.5px; text-transform:uppercase; }
+
+  /* SEARCH BAR IN NAV */
+  .nav-search { flex:1; max-width:560px; display:flex; gap:0; position:relative; }
+  .search-input { flex:1; padding:0.65rem 1rem; border:2px solid var(--border); border-right:none; border-radius:12px 0 0 12px; font-size:0.92rem; font-family:'Baloo 2',sans-serif; color:var(--text); background:var(--off-white); outline:none; transition:border-color 0.2s; }
+  .search-input:focus { border-color:var(--blue); background:#fff; }
+  .img-search-trigger { padding:0 0.8rem; border:2px solid var(--border); border-right:none; border-left:none; background:var(--off-white); font-size:1rem; cursor:pointer; transition:all 0.2s; color:var(--gray); }
+  .img-search-trigger:hover { background:#fff; color:var(--orange); }
+  .search-go { padding:0.65rem 1.2rem; background:var(--orange); color:#fff; border:none; border-radius:0 12px 12px 0; font-size:0.92rem; font-weight:800; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:background 0.2s; white-space:nowrap; }
+  .search-go:hover { background:var(--blue); }
+  /* AI suggestions dropdown */
+  .ai-suggest-drop { position:absolute; top:calc(100% + 6px); left:0; right:0; background:#fff; border-radius:12px; border:1px solid var(--border); box-shadow:0 8px 28px rgba(26,95,180,0.12); z-index:300; display:none; overflow:hidden; }
+  .ai-suggest-drop.show { display:block; animation:fadeDown 0.2s ease; }
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+  .suggest-header { padding:0.5rem 1rem; background:var(--off-white); border-bottom:1px solid var(--border); font-size:0.7rem; font-weight:700; color:var(--gray); letter-spacing:0.5px; display:flex; align-items:center; gap:0.4rem; }
+  .suggest-item { display:flex; align-items:center; gap:0.8rem; padding:0.65rem 1rem; cursor:pointer; transition:background 0.15s; border-bottom:1px solid var(--border); }
+  .suggest-item:last-child { border-bottom:none; }
+  .suggest-item:hover { background:rgba(244,120,32,0.04); }
+  .si-emoji { font-size:1.3rem; flex-shrink:0; }
+  .si-info { flex:1; }
+  .si-name { font-size:0.85rem; font-weight:700; color:var(--text); }
+  .si-dept { font-size:0.68rem; color:var(--blue); font-weight:600; }
+  .si-price { font-size:0.88rem; font-weight:800; color:var(--orange); }
+  /* AI image search overlay */
+  .img-search-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:500; display:none; align-items:center; justify-content:center; padding:1rem; }
+  .img-search-overlay.open { display:flex; animation:fadeIn 0.25s ease; }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  .img-search-modal { background:#fff; border-radius:20px; padding:2rem; width:100%; max-width:480px; box-shadow:0 20px 60px rgba(0,0,0,0.25); }
+  .ism-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.2rem; }
+  .ism-head h3 { font-size:1rem; font-weight:800; }
+  .ism-close { background:var(--gray-light); border:none; border-radius:8px; width:30px; height:30px; cursor:pointer; font-size:1rem; display:flex; align-items:center; justify-content:center; }
+  .ism-preview { width:100%; height:180px; border-radius:14px; object-fit:contain; background:var(--off-white); border:1px solid var(--border); display:none; margin-bottom:1rem; }
+  .ism-upload-zone { border:2px dashed rgba(26,95,180,0.25); border-radius:14px; padding:2rem; text-align:center; background:rgba(26,95,180,0.03); margin-bottom:1rem; cursor:pointer; transition:all 0.2s; }
+  .ism-upload-zone:hover { border-color:var(--orange); background:rgba(244,120,32,0.03); }
+  .ism-icon { font-size:2.5rem; margin-bottom:0.5rem; }
+  .ism-text { font-size:0.85rem; color:var(--text-soft); }
+  .ism-text strong { color:var(--orange); }
+  .ism-result { background:var(--off-white); border-radius:12px; padding:1rem; margin-top:0.8rem; display:none; }
+  .ism-result.show { display:block; animation:fadeDown 0.2s ease; }
+  .ism-result-label { font-size:0.7rem; font-weight:700; color:var(--blue); letter-spacing:0.5px; text-transform:uppercase; margin-bottom:0.6rem; }
+  .ism-result-text { font-size:0.85rem; color:var(--text-soft); line-height:1.7; }
+  .ism-action-btn { width:100%; padding:0.8rem; border-radius:12px; border:none; background:linear-gradient(135deg,var(--orange),#D4620F); color:#fff; font-size:0.92rem; font-weight:800; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:all 0.2s; margin-top:0.8rem; }
+  .ism-action-btn:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(244,120,32,0.35); }
+  .ism-action-btn:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
+  /* AI search badge */
+  .ai-search-banner { background:linear-gradient(135deg,rgba(26,95,180,0.06),rgba(244,120,32,0.04)); border:1px solid rgba(26,95,180,0.12); border-radius:12px; padding:0.7rem 1rem; margin-bottom:1rem; display:none; align-items:center; gap:0.8rem; }
+  .ai-search-banner.show { display:flex; animation:fadeDown 0.2s ease; }
+  .asb-icon { font-size:1.1rem; }
+  .asb-text { flex:1; font-size:0.82rem; color:var(--text-soft); line-height:1.5; }
+  .asb-text strong { color:var(--blue); }
+  .asb-clear { background:none; border:1px solid var(--border); border-radius:6px; padding:0.25rem 0.6rem; font-size:0.72rem; font-weight:700; cursor:pointer; color:var(--gray); font-family:'Baloo 2',sans-serif; }
+  .asb-clear:hover { border-color:var(--orange); color:var(--orange); }
+  /* typing indicator */
+  .tdots { display:inline-flex; gap:3px; margin-left:4px; }
+  .tdots span { width:5px; height:5px; background:var(--orange); border-radius:50%; animation:td 1.2s infinite; }
+  .tdots span:nth-child(2){ animation-delay:0.2s; }
+  .tdots span:nth-child(3){ animation-delay:0.4s; }
+  @keyframes td { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-5px)} }
+  .nav-cart { background:var(--orange); color:#fff; border:none; padding:0.5rem 1.2rem; border-radius:25px; font-weight:700; font-size:0.85rem; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:background 0.2s; flex-shrink:0; }
+  .nav-cart:hover { background:var(--blue); }
+
+  /* POPULAR TAGS */
+  .popular-bar { background:#fff; border-bottom:1px solid var(--border); padding:0.6rem 2rem; display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; }
+  .popular-label { font-size:0.75rem; font-weight:700; color:var(--gray); flex-shrink:0; }
+  .pop-tag { padding:0.25rem 0.8rem; border-radius:20px; border:1px solid var(--border); background:#fff; color:var(--text-soft); font-size:0.75rem; font-weight:700; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:all 0.2s; }
+  .pop-tag:hover { background:var(--orange); color:#fff; border-color:var(--orange); }
+
+  /* LAYOUT */
+  .layout { max-width:1200px; margin:1.5rem auto; padding:0 1.5rem 4rem; display:grid; grid-template-columns:260px 1fr; gap:1.5rem; align-items:start; }
+
+  /* SIDEBAR FILTERS */
+  .filter-sidebar { background:#fff; border-radius:var(--radius); border:1px solid var(--border); overflow:hidden; position:sticky; top:80px; }
+  .filter-head { padding:1rem 1.2rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+  .filter-head h3 { font-size:0.95rem; font-weight:800; }
+  .clear-btn { font-size:0.75rem; font-weight:700; color:var(--orange); background:none; border:none; cursor:pointer; font-family:'Baloo 2',sans-serif; }
+  .filter-section { padding:1rem 1.2rem; border-bottom:1px solid var(--border); }
+  .filter-section:last-child { border-bottom:none; }
+  .filter-section-title { font-size:0.8rem; font-weight:800; color:var(--text); margin-bottom:0.7rem; display:flex; align-items:center; justify-content:space-between; cursor:pointer; }
+  .filter-opts { display:flex; flex-direction:column; gap:0.5rem; }
+  .filter-opt { display:flex; align-items:center; gap:0.6rem; cursor:pointer; }
+  .filter-opt input[type=checkbox] { width:16px; height:16px; accent-color:var(--orange); cursor:pointer; }
+  .filter-opt label { font-size:0.83rem; color:var(--text-soft); cursor:pointer; flex:1; }
+  .filter-opt .count { font-size:0.7rem; color:var(--gray); background:var(--gray-light); padding:1px 6px; border-radius:6px; }
+  .price-range { padding:0.5rem 0; }
+  .price-inputs { display:flex; gap:0.5rem; align-items:center; margin-top:0.6rem; }
+  .price-inp { width:80px; padding:0.4rem 0.6rem; border:1.5px solid var(--border); border-radius:8px; font-size:0.82rem; font-family:'Baloo 2',sans-serif; outline:none; color:var(--text); }
+  .price-inp:focus { border-color:var(--blue); }
+  .price-sep { font-size:0.8rem; color:var(--gray); }
+  .apply-price { padding:0.4rem 0.9rem; background:var(--blue); color:#fff; border:none; border-radius:8px; font-size:0.78rem; font-weight:700; cursor:pointer; font-family:'Baloo 2',sans-serif; }
+  .rating-filter { display:flex; flex-direction:column; gap:0.5rem; }
+  .rating-opt { display:flex; align-items:center; gap:0.5rem; cursor:pointer; padding:0.3rem 0; }
+  .rating-opt:hover .rating-stars { color:var(--star); }
+  .rating-stars { color:var(--star); font-size:0.85rem; }
+  .rating-lbl { font-size:0.78rem; color:var(--text-soft); }
+
+  /* RESULTS HEADER */
+  .results-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; flex-wrap:wrap; gap:0.7rem; }
+  .results-info { font-size:0.88rem; color:var(--text-soft); }
+  .results-info strong { color:var(--text); font-weight:800; }
+  .results-info .query { color:var(--orange); font-weight:800; }
+  .sort-row { display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; }
+  .sort-label { font-size:0.8rem; color:var(--gray); font-weight:600; }
+  .sort-select { padding:0.4rem 0.8rem; border:1.5px solid var(--border); border-radius:9px; font-size:0.82rem; font-family:'Baloo 2',sans-serif; color:var(--text); outline:none; transition:border-color 0.2s; }
+  .sort-select:focus { border-color:var(--blue); }
+  .view-toggle { display:flex; gap:0.3rem; }
+  .view-btn { width:32px; height:32px; border:1.5px solid var(--border); border-radius:8px; background:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:0.9rem; transition:all 0.2s; }
+  .view-btn.active { border-color:var(--blue); background:rgba(26,95,180,0.08); }
+
+  /* PRODUCT GRID */
+  .products-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:1.1rem; }
+  .products-grid.list-view { grid-template-columns:1fr; }
+
+  /* PRODUCT CARD */
+  .product-card { background:#fff; border-radius:var(--radius); border:1px solid var(--border); overflow:hidden; transition:all 0.25s; cursor:pointer; box-shadow:0 2px 8px rgba(26,95,180,0.05); }
+  .product-card:hover { transform:translateY(-4px); border-color:var(--orange); box-shadow:0 10px 28px rgba(26,95,180,0.12); }
+  .card-img { height:150px; background:var(--off-white); display:flex; align-items:center; justify-content:center; font-size:3.5rem; position:relative; }
+  .card-discount { position:absolute; top:8px; left:8px; background:var(--error,#DC2626); color:#fff; font-size:0.65rem; font-weight:800; padding:2px 7px; border-radius:6px; }
+  .card-badge { position:absolute; top:8px; right:8px; background:var(--orange); color:#fff; font-size:0.62rem; font-weight:800; padding:2px 7px; border-radius:6px; }
+  .card-body { padding:0.9rem; }
+  .card-dept { font-size:0.65rem; font-weight:700; color:var(--blue); letter-spacing:1px; text-transform:uppercase; margin-bottom:0.2rem; }
+  .card-name { font-size:0.9rem; font-weight:800; color:var(--text); margin-bottom:0.15rem; line-height:1.3; }
+  .card-marathi { font-size:0.72rem; color:var(--gray); font-family:'Noto Sans Devanagari',sans-serif; margin-bottom:0.5rem; }
+  .card-rating { display:flex; align-items:center; gap:0.3rem; margin-bottom:0.5rem; }
+  .card-stars { color:var(--star); font-size:0.75rem; }
+  .card-rating-val { font-size:0.75rem; font-weight:700; }
+  .card-rating-cnt { font-size:0.7rem; color:var(--gray); }
+  .card-price-row { display:flex; align-items:center; justify-content:space-between; }
+  .card-price { font-size:1rem; font-weight:800; color:var(--text); }
+  .card-old { font-size:0.75rem; color:var(--gray); text-decoration:line-through; margin-left:4px; }
+  .add-btn { background:var(--orange); color:#fff; border:none; border-radius:8px; padding:0.4rem 0.8rem; font-size:0.78rem; font-weight:800; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:background 0.2s; }
+  .add-btn:hover { background:var(--blue); }
+
+  /* LIST VIEW CARD */
+  .products-grid.list-view .product-card { display:flex; gap:1rem; }
+  .products-grid.list-view .card-img { width:120px; height:120px; flex-shrink:0; font-size:3rem; }
+  .products-grid.list-view .card-body { flex:1; display:flex; flex-direction:column; justify-content:space-between; }
+
+  /* NO RESULTS */
+  .no-results { text-align:center; padding:4rem 1rem; grid-column:1/-1; }
+  .no-results-icon { font-size:4rem; margin-bottom:1rem; opacity:0.4; }
+  .no-results h3 { font-size:1.2rem; font-weight:800; margin-bottom:0.5rem; }
+  .no-results p { color:var(--text-soft); font-size:0.88rem; margin-bottom:1.5rem; }
+
+  /* PAGINATION */
+  .pagination { display:flex; justify-content:center; gap:0.5rem; margin-top:2rem; flex-wrap:wrap; }
+  .page-btn { width:36px; height:36px; border-radius:9px; border:1.5px solid var(--border); background:#fff; color:var(--text-soft); font-size:0.85rem; font-weight:700; cursor:pointer; font-family:'Baloo 2',sans-serif; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
+  .page-btn.active { background:var(--blue); color:#fff; border-color:var(--blue); }
+  .page-btn:hover:not(.active) { border-color:var(--blue); color:var(--blue); }
+
+  /* TOAST */
+  .toast { position:fixed; bottom:2rem; right:2rem; background:var(--blue); color:#fff; padding:0.8rem 1.4rem; border-radius:12px; font-weight:600; font-size:0.88rem; z-index:999; box-shadow:0 8px 24px rgba(0,0,0,0.2); display:none; }
+
+  @media(max-width:900px) {
+    .layout { grid-template-columns:1fr; }
+    .filter-sidebar { position:static; }
+    .filter-opts { flex-direction:row; flex-wrap:wrap; }
+    nav { flex-wrap:wrap; }
+    .nav-search { order:3; width:100%; max-width:100%; }
+  }
+  @media(max-width:600px) {
+    .products-grid { grid-template-columns:repeat(2,1fr); }
+    .products-grid.list-view { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <span>📍 Bhangaram, Talodhi, Dist. Chandrapur</span>
+  <span>🕐 9AM–9PM &nbsp;|&nbsp; <a href="tel:8390901925">📞 8390901925</a></span>
+</div>
+
+<!-- NAVBAR -->
+<nav>
+  <a class="logo-area" href="index.html">
+    <div class="logo-icon">UG</div>
+    <div class="logo-text">
+      <span class="ug">UG Bazaar</span>
+      <span class="sub">Your Local Superstore</span>
+    </div>
+  </a>
+  <div class="nav-search" style="position:relative">
+    <input class="search-input" id="search-input" placeholder="Search in Hindi, Marathi or English..." value="rice" oninput="onSearchInput(this.value)">
+    <button class="img-search-trigger" id="img-trigger-btn" onclick="document.getElementById('img-file-input').click()" title="Search by photo">📸</button>
+    <input type="file" id="img-file-input" accept="image/*" style="display:none" onchange="handleImgUpload(this)">
+    <button class="search-go" onclick="doSearch()">🔍 Search</button>
+    <!-- AI suggestions dropdown -->
+    <div class="ai-suggest-drop" id="ai-suggest-drop"></div>
+  </div>
+  <a class="nav-link" href="offers.html">🏷️ Offers</a>
+    <a class="nav-link nav-login-link" href="auth.html">👤 Login</a>
+    <button class="nav-cart" id="cart-btn" onclick="window.location='cart.html'">🛒 Cart <span id="cart-btn-badge" class="cart-count-badge">(0)</span></button>
+</nav>
+
+<!-- POPULAR TAGS -->
+<div class="popular-bar">
+  <span class="popular-label">Popular:</span>
+  <span class="pop-tag" onclick="quickSearch('rice')">🌾 Rice</span>
+  <span class="pop-tag" onclick="quickSearch('dal')">🫘 Dal</span>
+  <span class="pop-tag" onclick="quickSearch('bulb')">💡 LED Bulb</span>
+  <span class="pop-tag" onclick="quickSearch('seeds')">🌱 Seeds</span>
+  <span class="pop-tag" onclick="quickSearch('hammer')">🔨 Hammer</span>
+  <span class="pop-tag" onclick="quickSearch('fan')">🌀 Fan</span>
+  <span class="pop-tag" onclick="quickSearch('fertilizer')">🌿 Fertilizer</span>
+  <span class="pop-tag" onclick="quickSearch('chair')">🛋 Chair</span>
+  <span class="pop-tag" onclick="quickSearch('charger')">📱 Charger</span>
+  <span class="pop-tag" onclick="quickSearch('')">✨ Show All</span>
+</div>
+
+<!-- IMAGE SEARCH MODAL -->
+<div class="img-search-overlay" id="img-overlay">
+  <div class="img-search-modal">
+    <div class="ism-head">
+      <h3>📸 Search by Photo</h3>
+      <button class="ism-close" onclick="closeImgModal()">✕</button>
+    </div>
+    <img id="ism-preview" class="ism-preview" alt="Uploaded image">
+    <div class="ism-upload-zone" id="ism-zone" onclick="document.getElementById('img-file-input').click()">
+      <div class="ism-icon">📸</div>
+      <div class="ism-text">Kisi bhi product ki <strong>photo upload karo</strong><br>AI automatically identify karega aur match dhundega</div>
+    </div>
+    <div class="ism-result" id="ism-result">
+      <div class="ism-result-label">🔍 AI Analysis</div>
+      <div class="ism-result-text" id="ism-result-text"></div>
+    </div>
+    <button class="ism-action-btn" id="ism-search-btn" onclick="runImageSearch()" disabled>📸 Identify & Search</button>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- FILTER SIDEBAR -->
+  <div class="filter-sidebar">
+    <div class="filter-head">
+      <h3>🎛 Filters</h3>
+      <button class="clear-btn" onclick="clearFilters()">Clear All</button>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-title">🏪 Department</div>
+      <div class="filter-opts" id="dept-filters"></div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-title">💰 Price Range</div>
+      <div class="price-range">
+        <input type="range" min="0" max="2000" value="2000" id="price-slider" style="width:100%;accent-color:var(--orange)" oninput="updatePriceSlider(this.value)">
+        <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--gray);margin-top:0.3rem">
+          <span>₹0</span><span id="price-slider-val" style="font-weight:700;color:var(--orange)">₹2000</span>
+        </div>
+        <div class="price-inputs">
+          <input class="price-inp" id="min-price" type="number" placeholder="Min" value="0">
+          <span class="price-sep">to</span>
+          <input class="price-inp" id="max-price" type="number" placeholder="Max" value="2000">
+          <button class="apply-price" onclick="applyPriceFilter()">Go</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-title">⭐ Rating</div>
+      <div class="rating-filter">
+        <div class="rating-opt" onclick="setRatingFilter(4)"><span class="rating-stars">★★★★</span><span style="color:var(--star);font-size:0.85rem">★</span><span class="rating-lbl">& above</span></div>
+        <div class="rating-opt" onclick="setRatingFilter(3)"><span class="rating-stars">★★★</span><span style="color:#E5E7EB;font-size:0.85rem">★★</span><span class="rating-lbl">& above</span></div>
+        <div class="rating-opt" onclick="setRatingFilter(0)"><span class="rating-lbl" style="color:var(--blue);font-weight:700">Show All Ratings</span></div>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-title">📦 Availability</div>
+      <div class="filter-opts">
+        <div class="filter-opt"><input type="checkbox" id="in-stock" onchange="renderResults()"><label for="in-stock">In Stock Only</label></div>
+        <div class="filter-opt"><input type="checkbox" id="on-sale" onchange="renderResults()"><label for="on-sale">On Sale</label></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div>
+    <!-- AI Search Banner -->
+    <div class="ai-search-banner" id="ai-banner">
+      <span class="asb-icon">✨</span>
+      <div class="asb-text" id="ai-banner-text">AI searching <div class="tdots"><span></span><span></span><span></span></div></div>
+      <button class="asb-clear" onclick="clearAiBanner()">✕ Clear</button>
+    </div>
+
+    <div class="results-header">
+      <div class="results-info" id="results-info">
+        Searching for <span class="query">"rice"</span>...
+      </div>
+      <div class="sort-row">
+        <span class="sort-label">Sort:</span>
+        <select class="sort-select" onchange="sortResults(this.value)">
+          <option value="relevant">Most Relevant</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+          <option value="rating">Highest Rated</option>
+          <option value="discount">Highest Discount</option>
+        </select>
+        <div class="view-toggle">
+          <button class="view-btn active" id="grid-btn" onclick="setView('grid')" title="Grid View">⊞</button>
+          <button class="view-btn" id="list-btn" onclick="setView('list')" title="List View">☰</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="products-grid" id="products-grid"></div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── ALL PRODUCTS ──
+const allProducts = [
+  { id:1, emoji:'🌾', name:'Basmati Rice 5kg', marathi:'बासमती तांदूळ', dept:'Grocery', price:280, old:380, rating:4.5, reviews:28, stock:45, badge:'Popular', sale:true },
+  { id:2, emoji:'🍚', name:'Sona Masoori Rice 5kg', marathi:'सोना मसुरी तांदूळ', dept:'Grocery', price:220, old:290, rating:4.2, reviews:15, stock:30, badge:'', sale:true },
+  { id:3, emoji:'🫘', name:'Toor Dal 1kg', marathi:'तूर डाळ', dept:'Grocery', price:145, old:170, rating:4.3, reviews:22, stock:80, badge:'', sale:true },
+  { id:4, emoji:'🫘', name:'Moong Dal 500g', marathi:'मूग डाळ', dept:'Grocery', price:72, old:95, rating:4.1, reviews:11, stock:60, badge:'', sale:true },
+  { id:5, emoji:'🛢', name:'Sunflower Oil 1L', marathi:'सूर्यफूल तेल', dept:'Grocery', price:165, old:185, rating:4.0, reviews:18, stock:50, badge:'', sale:false },
+  { id:6, emoji:'🧂', name:'Iodized Salt 1kg', marathi:'आयोडीन मीठ', dept:'Grocery', price:22, old:30, rating:4.6, reviews:8, stock:100, badge:'', sale:false },
+  { id:7, emoji:'💡', name:'LED Bulb 9W', marathi:'LED बल्ब', dept:'Electrical', price:65, old:90, rating:4.2, reviews:45, stock:120, badge:'Best Buy', sale:true },
+  { id:8, emoji:'💡', name:'LED Bulb 18W', marathi:'LED बल्ब मोठा', dept:'Electrical', price:95, old:140, rating:4.0, reviews:22, stock:80, badge:'', sale:true },
+  { id:9, emoji:'🔌', name:'Electric Wire 10m', marathi:'इलेक्ट्रिक तार', dept:'Electrical', price:280, old:340, rating:3.9, reviews:16, stock:0, badge:'', sale:true },
+  { id:10, emoji:'🔲', name:'Switch Board 6A', marathi:'स्विच बोर्ड', dept:'Electrical', price:85, old:120, rating:4.3, reviews:30, stock:45, badge:'', sale:false },
+  { id:11, emoji:'🔨', name:'Steel Hammer', marathi:'स्टील हातोडा', dept:'Hardware', price:220, old:280, rating:4.0, reviews:18, stock:18, badge:'', sale:true },
+  { id:12, emoji:'🪛', name:'Screwdriver Set', marathi:'स्क्रूड्रायव्हर सेट', dept:'Hardware', price:180, old:250, rating:4.4, reviews:12, stock:25, badge:'', sale:true },
+  { id:13, emoji:'🔩', name:'Nut Bolt Set 50pcs', marathi:'नट बोल्ट सेट', dept:'Hardware', price:85, old:130, rating:3.8, reviews:9, stock:40, badge:'', sale:false },
+  { id:14, emoji:'📱', name:'Mobile Charger', marathi:'मोबाईल चार्जर', dept:'Electronics', price:199, old:299, rating:3.8, reviews:33, stock:35, badge:'Hot', sale:true },
+  { id:15, emoji:'🌀', name:'Table Fan', marathi:'टेबल फॅन', dept:'Electronics', price:850, old:1100, rating:4.1, reviews:14, stock:6, badge:'', sale:true },
+  { id:16, emoji:'🌱', name:'Hybrid Seeds 500g', marathi:'हायब्रीड बियाणे', dept:'Krushi Kendra', price:180, old:240, rating:4.7, reviews:62, stock:60, badge:'Farmer Pick', sale:true },
+  { id:17, emoji:'🌿', name:'DAP Fertilizer 5kg', marathi:'डीएपी खत', dept:'Krushi Kendra', price:650, old:780, rating:4.5, reviews:28, stock:18, badge:'', sale:false },
+  { id:18, emoji:'💧', name:'Pesticide Spray 1L', marathi:'कीटकनाशक स्प्रे', dept:'Krushi Kendra', price:320, old:420, rating:4.3, reviews:19, stock:22, badge:'', sale:true },
+  { id:19, emoji:'🛋', name:'Wooden Chair', marathi:'लाकडी खुर्ची', dept:'Furniture', price:1200, old:1600, rating:4.2, reviews:7, stock:5, badge:'', sale:true },
+  { id:20, emoji:'🪑', name:'Steel Stool', marathi:'स्टील स्टूल', dept:'Furniture', price:650, old:850, rating:4.0, reviews:5, stock:8, badge:'', sale:false },
+  { id:21, emoji:'🧹', name:'Broom Pack of 2', marathi:'झाडू पॅक', dept:'General Store', price:80, old:110, rating:4.1, reviews:14, stock:55, badge:'', sale:false },
+  { id:22, emoji:'🪣', name:'Plastic Bucket 15L', marathi:'प्लास्टिक बादली', dept:'General Store', price:95, old:130, rating:4.3, reviews:20, stock:40, badge:'', sale:false },
+];
+
+const depts = [...new Set(allProducts.map(p => p.dept))];
+let currentQuery = 'rice';
+let filteredProducts = [];
+let selectedDepts = [];
+let maxPrice = 2000;
+let minRating = 0;
+let currentSort = 'relevant';
+let currentView = 'grid';
+let cartCount = 0;
+
+// ── RENDER DEPT FILTERS ──
+function renderDeptFilters() {
+  document.getElementById('dept-filters').innerHTML = depts.map(d => {
+    const count = allProducts.filter(p => p.dept === d).length;
+    return `<div class="filter-opt">
+      <input type="checkbox" id="dept-${d}" onchange="toggleDept('${d}')">
+      <label for="dept-${d}">${d}</label>
+      <span class="count">${count}</span>
+    </div>`;
+  }).join('');
+}
+
+function toggleDept(dept) {
+  const idx = selectedDepts.indexOf(dept);
+  if(idx > -1) selectedDepts.splice(idx, 1);
+  else selectedDepts.push(dept);
+  renderResults();
+}
+
+// ── SEARCH ──
+function doSearch() {
+  currentQuery = document.getElementById('search-input').value.trim().toLowerCase();
+  renderResults();
+}
+
+function quickSearch(q) {
+  document.getElementById('search-input').value = q;
+  currentQuery = q.toLowerCase();
+  renderResults();
+}
+
+// ── FILTER & SORT ──
+function getFiltered() {
+  let results = allProducts.filter(p => {
+    const q = currentQuery;
+    const matchQ = !q || p.name.toLowerCase().includes(q) || p.marathi.includes(q) || p.dept.toLowerCase().includes(q);
+    const matchDept = selectedDepts.length === 0 || selectedDepts.includes(p.dept);
+    const matchPrice = p.price <= maxPrice;
+    const matchRating = p.rating >= minRating;
+    const matchStock = !document.getElementById('in-stock')?.checked || p.stock > 0;
+    const matchSale = !document.getElementById('on-sale')?.checked || p.sale;
+    return matchQ && matchDept && matchPrice && matchRating && matchStock && matchSale;
+  });
+
+  if(currentSort === 'price-low') results.sort((a,b) => a.price - b.price);
+  else if(currentSort === 'price-high') results.sort((a,b) => b.price - a.price);
+  else if(currentSort === 'rating') results.sort((a,b) => b.rating - a.rating);
+  else if(currentSort === 'discount') results.sort((a,b) => (b.old-b.price) - (a.old-a.price));
+
+  return results;
+}
+
+// ── RENDER RESULTS ──
+function renderResults() {
+  filteredProducts = getFiltered();
+  const grid = document.getElementById('products-grid');
+  grid.className = 'products-grid' + (currentView === 'list' ? ' list-view' : '');
+
+  const info = document.getElementById('results-info');
+  if(currentQuery) {
+    info.innerHTML = `<strong>${filteredProducts.length}</strong> results for <span class="query">"${currentQuery}"</span>`;
+  } else {
+    info.innerHTML = `<strong>${filteredProducts.length}</strong> products found`;
+  }
+
+  if(filteredProducts.length === 0) {
+    grid.innerHTML = `<div class="no-results">
+      <div class="no-results-icon">🔍</div>
+      <h3>Koi product nahi mila!</h3>
+      <p>"${currentQuery}" ke liye koi result nahi. Koi aur keyword try karo.</p>
+      <button onclick="quickSearch('')" style="padding:0.6rem 1.4rem;border-radius:10px;border:none;background:var(--orange);color:#fff;font-weight:700;cursor:pointer;font-family:'Baloo 2',sans-serif;">Sab Products Dekho</button>
+    </div>`;
+    document.getElementById('pagination').innerHTML = '';
+    return;
+  }
+
+  grid.innerHTML = filteredProducts.map(p => `
+    <div class="product-card" onclick="window.location='product.html'">
+      <div class="card-img">
+        <span>${p.emoji}</span>
+        ${p.old > p.price ? `<div class="card-discount">-${Math.round((1-p.price/p.old)*100)}%</div>` : ''}
+        ${p.badge ? `<div class="card-badge">${p.badge}</div>` : ''}
+      </div>
+      <div class="card-body">
+        <div class="card-dept">${p.dept}</div>
+        <div class="card-name">${highlightQuery(p.name)}</div>
+        <div class="card-marathi">${p.marathi}</div>
+        <div class="card-rating">
+          <span class="card-stars">${'★'.repeat(Math.round(p.rating))}${'★'.repeat(5-Math.round(p.rating)).split('').map(()=>'<span style="opacity:0.3">★</span>').join('')}</span>
+          <span class="card-rating-val">${p.rating}</span>
+          <span class="card-rating-cnt">(${p.reviews})</span>
+        </div>
+        <div class="card-price-row">
+          <div>
+            <span class="card-price">₹${p.price}</span>
+            ${p.old > p.price ? `<span class="card-old">₹${p.old}</span>` : ''}
+          </div>
+          ${p.stock === 0
+            ? `<span style="font-size:0.72rem;color:var(--error,#DC2626);font-weight:700">Out of Stock</span>`
+            : `<button class="add-btn" onclick="event.stopPropagation();addCart('${p.name}')">+ Add</button>`
+          }
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  renderPagination();
+}
+
+function highlightQuery(text) {
+  if(!currentQuery) return text;
+  const re = new RegExp(`(${currentQuery})`, 'gi');
+  return text.replace(re, '<mark style="background:#FFF3CD;border-radius:3px;padding:0 2px">$1</mark>');
+}
+
+// ── PAGINATION ──
+function renderPagination() {
+  const total = Math.ceil(filteredProducts.length / 12);
+  if(total <= 1) { document.getElementById('pagination').innerHTML = ''; return; }
+  document.getElementById('pagination').innerHTML =
+    `<button class="page-btn" onclick="showToast('Previous page!')">←</button>` +
+    Array.from({length:Math.min(total,5)},(_,i) =>
+      `<button class="page-btn ${i===0?'active':''}" onclick="showToast('Page ${i+1} loading!')">${i+1}</button>`
+    ).join('') +
+    (total > 5 ? `<span style="padding:0 0.3rem;color:var(--gray)">...</span><button class="page-btn" onclick="showToast('Last page!')">${total}</button>` : '') +
+    `<button class="page-btn" onclick="showToast('Next page!')">→</button>`;
+}
+
+// ── SORT ──
+function sortResults(val) {
+  currentSort = val;
+  renderResults();
+}
+
+// ── VIEW TOGGLE ──
+function setView(view) {
+  currentView = view;
+  document.getElementById('grid-btn').classList.toggle('active', view === 'grid');
+  document.getElementById('list-btn').classList.toggle('active', view === 'list');
+  renderResults();
+}
+
+// ── PRICE FILTER ──
+function updatePriceSlider(val) {
+  document.getElementById('price-slider-val').textContent = '₹' + val;
+  document.getElementById('max-price').value = val;
+  maxPrice = parseInt(val);
+  renderResults();
+}
+
+function applyPriceFilter() {
+  const min = parseInt(document.getElementById('min-price').value) || 0;
+  const max = parseInt(document.getElementById('max-price').value) || 2000;
+  maxPrice = max;
+  document.getElementById('price-slider').value = max;
+  document.getElementById('price-slider-val').textContent = '₹' + max;
+  renderResults();
+}
+
+// ── RATING FILTER ──
+function setRatingFilter(rating) {
+  minRating = rating;
+  renderResults();
+  showToast(rating > 0 ? `⭐ ${rating}+ rating filter applied!` : '⭐ All ratings shown');
+}
+
+// ── CLEAR FILTERS ──
+function clearFilters() {
+  selectedDepts = [];
+  maxPrice = 2000;
+  minRating = 0;
+  document.querySelectorAll('.filter-opt input[type=checkbox]').forEach(c => c.checked = false);
+  document.getElementById('price-slider').value = 2000;
+  document.getElementById('price-slider-val').textContent = '₹2000';
+  document.getElementById('min-price').value = 0;
+  document.getElementById('max-price').value = 2000;
+  renderResults();
+  showToast('🔄 Sab filters clear ho gaye!');
+}
+
+// ── ADD CART ──
+function addCart(name) {
+  Cart.add(name);
+  showToast(`✅ ${name} cart mein add hua!`);
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 2800);
+}
+
+// ── INIT ──
+renderDeptFilters();
+renderResults();
+
+// search on Enter
+document.getElementById('search-input').addEventListener('keydown', e => {
+  if(e.key === 'Enter') doSearch();
+});
+
+// ── CLAUDE API ──
+async function callClaude(system, user, maxTokens=400) {
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens: maxTokens,
+        system, messages:[{ role:'user', content: user }]
+      })
+    });
+    const d = await res.json();
+    return d.content?.[0]?.text || '';
+  } catch(e) { return ''; }
+}
+
+// ── AI SMART SEARCH (real-time suggestions) ──
+let suggestTimer = null;
+let lastAiQuery = '';
+let isAiMode = false;
+
+function onSearchInput(val) {
+  clearTimeout(suggestTimer);
+  const drop = document.getElementById('ai-suggest-drop');
+  if(val.length < 2) { drop.classList.remove('show'); return; }
+  // show loading
+  drop.className = 'ai-suggest-drop show';
+  drop.innerHTML = `<div class="suggest-header">✨ AI Searching<div class="tdots" style="display:inline-flex;gap:3px;margin-left:6px"><span></span><span></span><span></span></div></div>`;
+
+  suggestTimer = setTimeout(() => fetchAiSuggestions(val), 500);
+}
+
+async function fetchAiSuggestions(query) {
+  const system = `You are a smart search assistant for UG Bazaar store in Maharashtra, India.
+Products: ${allProducts.map(p=>p.name+'('+p.dept+',₹'+p.price+')').join(', ')}.
+User may search in Hindi, Marathi, English, or mix. Understand intent.
+Return ONLY a JSON array of max 5 matching product objects: [{"name":"exact product name","emoji":"emoji","dept":"dept","price":number}]
+No markdown, no text. Just the JSON array.`;
+
+  const result = await callClaude(system, `Search: "${query}"`);
+  const drop = document.getElementById('ai-suggest-drop');
+
+  let matches = [];
+  try {
+    const clean = result.replace(/```json|```/g,'').trim();
+    matches = JSON.parse(clean);
+  } catch(e) {
+    // fallback to local filter
+    matches = allProducts
+      .filter(p => p.name.toLowerCase().includes(query.toLowerCase()) || p.dept.toLowerCase().includes(query.toLowerCase()))
+      .slice(0,5)
+      .map(p => ({ name:p.name, emoji:p.emoji||'🛍', dept:p.dept, price:p.price }));
+  }
+
+  if(matches.length === 0) { drop.classList.remove('show'); return; }
+
+  drop.className = 'ai-suggest-drop show';
+  drop.innerHTML = `<div class="suggest-header">✨ Suggestions for "${query}"</div>` +
+    matches.map(m => `
+      <div class="suggest-item" onclick="selectSuggestion('${m.name}')">
+        <span class="si-emoji">${m.emoji||'🛍'}</span>
+        <div class="si-info">
+          <div class="si-name">${m.name}</div>
+          <div class="si-dept">${m.dept}</div>
+        </div>
+        <div class="si-price">₹${m.price}</div>
+      </div>`).join('');
+}
+
+function selectSuggestion(name) {
+  document.getElementById('search-input').value = name;
+  document.getElementById('ai-suggest-drop').classList.remove('show');
+  runAiSearch(name);
+}
+
+// close suggestions on outside click
+document.addEventListener('click', e => {
+  if(!e.target.closest('.nav-search')) {
+    document.getElementById('ai-suggest-drop').classList.remove('show');
+  }
+});
+
+// ── AI ENHANCED SEARCH ──
+async function doSearch() {
+  const q = document.getElementById('search-input').value.trim();
+  document.getElementById('ai-suggest-drop').classList.remove('show');
+  if (!q) { renderResults(); return; }
+
+  // Try real API search first
+  const r = await ProductAPI.search(q);
+  if (r.success && r.data.products.length > 0) {
+    allProducts = r.data.products.map(p => ({
+      ...p, price: p.price, old: p.mrp, emoji: p.emoji || '🛍',
+      dept: p.dept, marathi: p.nameHindi || '', rating: p.ratings?.average || 4.0,
+      reviews: p.ratings?.count || 0, stock: p.stock, badge: p.badge || '', cat: p.dept.toLowerCase()
+    }));
+    filteredProducts = allProducts;
+    renderProductGrid(allProducts);
+    const banner = document.getElementById('ai-banner');
+    const bannerText = document.getElementById('ai-banner-text');
+    if (banner && bannerText) {
+      banner.classList.add('show');
+      bannerText.innerHTML = `✅ "${q}" ke liye <strong>${allProducts.length} products</strong> mile`;
+    }
+  } else {
+    runAiSearch(q); // fallback to static + AI
+  }
+}
+
+async function addCartFromSearch(productId, name) {
+  if (!Auth.isLoggedIn()) { window.location.href = 'auth.html'; return; }
+  const r = await CartAPI.add(productId);
+  if (r.success) { Cart.count = Cart.count + 1; showToast(`✅ ${name} cart mein add hua!`); }
+  else showToast('❌ ' + r.error);
+}
+
+async function runAiSearch(query) {
+  currentQuery = query;
+  isAiMode = true;
+
+  // show AI banner loading
+  const banner = document.getElementById('ai-banner');
+  const bannerText = document.getElementById('ai-banner-text');
+  banner.classList.add('show');
+  bannerText.innerHTML = `Searching for "<strong>${query}</strong>" <div class="tdots"><span></span><span></span><span></span></div>`;
+
+  // regular render first (instant)
+  renderResults();
+
+  // then AI enhancement
+  const system = `You are a semantic product search engine for UG Bazaar store in Maharashtra.
+Products available: ${allProducts.map(p=>p.name+'('+p.dept+',₹'+p.price+')').join(', ')}.
+User may search in Hindi, Marathi, English or any mix. Understand true intent.
+Examples: "tel" means oil, "kheti" means farming, "ujala" means light/bulb, "gharka kaam" means household items.
+Return ONLY JSON: {"matched":["product name1","product name2"],"interpretation":"what user meant in English (max 8 words)"}`;
+
+  const result = await callClaude(system, `Query: "${query}"`, 300);
+
+  try {
+    const clean = result.replace(/```json|```/g,'').trim();
+    const parsed = JSON.parse(clean);
+
+    if(parsed.matched && parsed.matched.length > 0) {
+      // AI-enhanced results
+      const aiMatched = allProducts.filter(p =>
+        parsed.matched.some(m => p.name.toLowerCase().includes(m.toLowerCase().split(' ')[0]))
+      );
+      const others = filteredProducts.filter(p => !aiMatched.find(a => a.name === p.name));
+      filteredProducts = [...aiMatched, ...others];
+      renderProductGrid(filteredProducts);
+      bannerText.innerHTML = `✨ Understood: <strong>"${parsed.interpretation || query}"</strong> — ${filteredProducts.length} results found`;
+    } else {
+      bannerText.innerHTML = `🔍 Results for <strong>"${query}"</strong> — ${filteredProducts.length} found`;
+    }
+  } catch(e) {
+    bannerText.innerHTML = `🔍 Results for <strong>"${query}"</strong> — ${filteredProducts.length} found`;
+  }
+}
+
+function renderProductGrid(products) {
+  const grid = document.getElementById('products-grid');
+  grid.className = 'products-grid' + (currentView === 'list' ? ' list-view' : '');
+  if(products.length === 0) {
+    grid.innerHTML = `<div class="no-results"><div class="no-results-icon">🔍</div><h3>Koi product nahi mila!</h3><p>Different keyword try karo ya camera se search karo.</p><button onclick="openImgModal()" style="padding:0.6rem 1.4rem;border-radius:10px;border:none;background:var(--orange);color:#fff;font-weight:700;cursor:pointer;font-family:'Baloo 2',sans-serif;margin-top:0.5rem">📸 Photo se Search Karo</button></div>`;
+    return;
+  }
+  grid.innerHTML = products.map(p => `
+    <div class="product-card" onclick="window.location='product.html'">
+      <div class="card-img">
+        <span>${p.emoji}</span>
+        ${p.old > p.price ? `<div class="card-discount">-${Math.round((1-p.price/p.old)*100)}%</div>` : ''}
+        ${p.badge ? `<div class="card-badge">${p.badge}</div>` : ''}
+      </div>
+      <div class="card-body">
+        <div class="card-dept">${p.dept}</div>
+        <div class="card-name">${highlightQuery(p.name)}</div>
+        <div class="card-marathi">${p.marathi}</div>
+        <div class="card-rating">
+          <span class="card-stars">${'★'.repeat(Math.round(p.rating))}<span style="opacity:0.3">${'★'.repeat(5-Math.round(p.rating))}</span></span>
+          <span class="card-rating-val">${p.rating}</span>
+          <span class="card-rating-cnt">(${p.reviews})</span>
+        </div>
+        <div class="card-price-row">
+          <div><span class="card-price">₹${p.price}</span>${p.old > p.price ? `<span class="card-old">₹${p.old}</span>` : ''}</div>
+          ${p.stock === 0
+            ? `<span style="font-size:0.72rem;color:var(--error,#DC2626);font-weight:700">Out of Stock</span>`
+            : `<button class="add-btn" onclick="event.stopPropagation();addCart('${p.name}')">+ Add</button>`}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function clearAiBanner() {
+  document.getElementById('ai-banner').classList.remove('show');
+  isAiMode = false;
+}
+
+function quickSearch(q) {
+  document.getElementById('search-input').value = q;
+  currentQuery = q.toLowerCase();
+  document.getElementById('ai-suggest-drop').classList.remove('show');
+  if(q) runAiSearch(q); else { renderResults(); document.getElementById('ai-banner').classList.remove('show'); }
+}
+
+// ── IMAGE SEARCH ──
+let uploadedBase64 = null;
+
+function handleImgUpload(input) {
+  const file = input.files[0];
+  if(!file) return;
+  openImgModal();
+  const reader = new FileReader();
+  reader.onload = e => {
+    const preview = document.getElementById('ism-preview');
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+    document.getElementById('ism-zone').style.display = 'none';
+    uploadedBase64 = e.target.result.split(',')[1];
+    document.getElementById('ism-search-btn').disabled = false;
+    document.getElementById('ism-search-btn').textContent = '📸 Identify & Search';
+  };
+  reader.readAsDataURL(file);
+}
+
+function openImgModal() {
+  document.getElementById('img-overlay').classList.add('open');
+}
+
+function closeImgModal() {
+  document.getElementById('img-overlay').classList.remove('open');
+  uploadedBase64 = null;
+  document.getElementById('ism-preview').style.display = 'none';
+  document.getElementById('ism-zone').style.display = 'block';
+  document.getElementById('ism-result').classList.remove('show');
+  document.getElementById('ism-search-btn').disabled = true;
+  document.getElementById('img-file-input').value = '';
+}
+
+async function runImageSearch() {
+  if(!uploadedBase64) return;
+  const btn = document.getElementById('ism-search-btn');
+  btn.disabled = true;
+  btn.innerHTML = 'Identifying <div class="tdots" style="display:inline-flex;gap:3px;margin-left:6px"><span></span><span></span><span></span></div>';
+
+  const resultEl = document.getElementById('ism-result');
+  const resultText = document.getElementById('ism-result-text');
+  resultEl.classList.add('show');
+  resultText.innerHTML = '<div class="tdots"><span></span><span></span><span></span></div> Analyzing image...';
+
+  const system = `You are a product identification AI for UG Bazaar store in rural Maharashtra, India.
+Available products: ${allProducts.map(p=>p.name+'('+p.dept+')').join(', ')}.
+Analyze the image and: 1) Identify what object/product is shown 2) Find closest matching products from available list (max 3) 3) Give confidence level.
+Reply in this format:
+"Identified: [what you see]. Closest matches: [product1], [product2]. Search keyword: [one word to search]"
+Keep it under 40 words.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:200,
+        system,
+        messages:[{ role:'user', content:[
+          { type:'image', source:{ type:'base64', media_type:'image/jpeg', data:uploadedBase64 }},
+          { type:'text', text:'Identify this product and match with UG Bazaar inventory.' }
+        ]}]
+      })
+    });
+    const data = await res.json();
+    const result = data.content?.[0]?.text || '';
+    resultText.innerHTML = result;
+
+    // extract keyword and search
+    const kwMatch = result.match(/Search keyword:\s*(\w+)/i);
+    if(kwMatch) {
+      setTimeout(() => {
+        closeImgModal();
+        document.getElementById('search-input').value = kwMatch[1];
+        runAiSearch(kwMatch[1]);
+      }, 1800);
+      btn.textContent = `✅ Searching for "${kwMatch[1]}"...`;
+    } else {
+      btn.textContent = '✅ Done';
+      btn.disabled = false;
+    }
+  } catch(e) {
+    resultText.innerHTML = 'Image identify ho gayi! Searching similar products...';
+    btn.textContent = '✅ Done'; btn.disabled = false;
+  }
+}
+</script>
+<script src="api.js"></script>
+<script src="nav-fix.js"></script>
+</body>
+</html>
