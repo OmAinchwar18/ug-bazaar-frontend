@@ -238,13 +238,23 @@
   .dot-pulse span:nth-child(2){ animation-delay:0.2s; }
   .dot-pulse span:nth-child(3){ animation-delay:0.4s; }
 
+  .hamburger { display: none; font-size: 1.5rem; background: none; border: none; cursor: pointer; color: var(--blue); padding: 0.2rem; }
+
   /* ── RESPONSIVE ── */
-  @media(max-width: 768px) {
-    nav ul { display: none; }
-    .hero-content { grid-template-columns: 1fr; }
-    .hero-right { display: none; }
+  @media(max-width: 850px) {
+    nav { padding: 0.8rem 1rem; }
+    .hamburger { display: block; }
+    nav ul { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: #fff; padding: 1rem 2rem; box-shadow: 0 10px 20px rgba(0,0,0,0.1); gap: 1rem; align-items: flex-start; }
+    nav ul.show { display: flex; }
+    .hero { padding: 4rem 1rem; }
+    .hero-content { grid-template-columns: 1fr; gap: 2rem; }
+    .hero-right { display: block; max-width: 400px; margin: 0 auto; }
+    .shop-photo-wrap { display: none; } /* Hide the photo on mobile if it takes too much space, or we can keep it */
     .contact-inner { grid-template-columns: 1fr; }
-    .topbar { font-size: 0.7rem; }
+    .topbar { font-size: 0.75rem; justify-content: center; text-align: center; }
+    .section { padding: 3rem 1rem; }
+    .filter-row { gap: 0.4rem; }
+    .filter-btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
   }
 </style>
 </head>
@@ -270,6 +280,8 @@
     <li><a href="#products">Products</a></li>
     <li><a href="#offers">Offers</a></li>
     <li><a href="#contact">Contact</a></li>
+    <li><a href="auth.html" class="nav-login-link">👤 Login</a></li>
+    <li class="nav-admin-item" style="display:none;"><a href="admin.html">⚙️ Admin</a></li>
   </ul>
   <div style="display:flex;gap:0.7rem;align-items:center;">
     <div class="lang-toggle">
@@ -278,6 +290,7 @@
       <button class="lang-btn" onclick="setLang('mr',this)">म</button>
     </div>
     <button class="nav-cart" onclick="showToast('🛒 Cart opened!')">🛒 Cart <span id="cart-count">(0)</span></button>
+    <button class="hamburger" onclick="document.querySelector('nav ul').classList.toggle('show')">☰</button>
   </div>
 </nav>
 
@@ -302,7 +315,7 @@
       </div>
     </div>
     <div class="hero-right fade-in" style="transition-delay:0.2s">
-      <div class="shop-photo-wrap">
+      <div class="shop-photo-wrap" style="display: block;">
         <img src="IMG_20230224_190151.jpg" alt="UG Bazaar Shop — Bhangaram" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#1A5FB4,#0D3A6E)';this.parentElement.innerHTML+='<div style=\'padding:3rem;text-align:center;color:#fff\'><div style=\'font-size:5rem\'>🏪</div><div style=\'font-weight:700;font-size:1.2rem;margin-top:1rem\'>UG Bazaar</div><div style=\'opacity:0.7;font-size:0.9rem\'>Bhangaram, Talodhi</div></div>'">
         <div class="photo-badge">📍 Opp. CDCC Bank, Bhangaram, Talodhi</div>
       </div>
@@ -544,14 +557,19 @@ async function filterProducts(cat, btn) {
   grid.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--gray)">Loading...</div>`;
 
   const dept = cat === 'all' ? '' : cat;
-  const r = await ProductAPI.getAll({ dept, limit: 12 });
+  try {
+    const r = await ProductAPI.getAll({ dept, limit: 12 });
 
-  if (!r.success) {
-    // Fallback to static data if API not connected yet
+    if (!r.success) {
+      // Fallback to static data if API not connected yet
+      renderStaticProducts(cat);
+      return;
+    }
+    renderProducts(r.data.products);
+  } catch (error) {
+    console.error("API error, loading static products", error);
     renderStaticProducts(cat);
-    return;
   }
-  renderProducts(r.data.products);
   document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -643,7 +661,11 @@ function setLang(lang, btn) {
   document.getElementById('dept-title').innerHTML = t.deptTitle;
 }
 
-filterProducts('all');
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    filterProducts('all');
+  }, 500);
+});
 
 const observer = new IntersectionObserver(entries => {
   entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
