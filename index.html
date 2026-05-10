@@ -239,10 +239,14 @@
   .dot-pulse span:nth-child(3){ animation-delay:0.4s; }
 
   .hamburger { display: none; font-size: 1.5rem; background: none; border: none; cursor: pointer; color: var(--blue); padding: 0.2rem; }
+  .mobile-search-fab { display:none; position:fixed; bottom:6rem; right:2rem; width:58px; height:58px; background:var(--blue); border-radius:50%; align-items:center; justify-content:center; color:#fff; font-size:1.5rem; box-shadow:0 6px 24px rgba(0,0,0,0.2); z-index:998; text-decoration:none; transition:transform 0.2s; }
+  .mobile-search-fab:hover { transform:scale(1.08); }
 
   /* ── RESPONSIVE ── */
   @media(max-width: 850px) {
     nav { padding: 0.8rem 1rem; }
+    .nav-search { display: none !important; }
+    .mobile-search-fab { display: flex; }
     .hamburger { display: block; }
     nav ul { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: #fff; padding: 1rem 2rem; box-shadow: 0 10px 20px rgba(0,0,0,0.1); gap: 1rem; align-items: flex-start; }
     nav ul.show { display: flex; }
@@ -283,6 +287,19 @@
     <li><a href="auth.html" class="nav-login-link">👤 Login</a></li>
     <li class="nav-admin-item" style="display:none;"><a href="admin.html">⚙️ Admin</a></li>
   </ul>
+  <div class="nav-search" style="display:flex;gap:0;max-width:300px;flex:1;margin:0 1.5rem;">
+    <input 
+      id="nav-search-input"
+      placeholder="Search products..." 
+      style="flex:1;padding:0.5rem 1rem;border:2px solid #E2E8F0;border-right:none;border-radius:12px 0 0 12px;font-size:0.88rem;outline:none;"
+      onkeydown="if(event.key==='Enter') window.location='search.html?q='+this.value"
+    >
+    <button 
+      onclick="window.location='search.html?q='+document.getElementById('nav-search-input').value"
+      style="padding:0.5rem 1rem;background:#F47820;color:#fff;border:none;border-radius:0 12px 12px 0;cursor:pointer;font-weight:700;">
+      🔍
+    </button>
+  </div>
   <div style="display:flex;gap:0.7rem;align-items:center;">
     <div class="lang-toggle">
       <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
@@ -500,6 +517,9 @@
     </div>
   </div>
 </section>
+
+<!-- FLOATING SEARCH (MOBILE) -->
+<a href="search.html" class="mobile-search-fab">🔍</a>
 
 <!-- FLOATING CHATBOT -->
 <div class="chat-fab" onclick="toggleChat()" id="chat-fab">
