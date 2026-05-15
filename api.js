@@ -128,6 +128,7 @@ function initPage() {
   });
   if(Auth.isLoggedIn()) CartAPI.refreshCount();
   if(window.location.pathname.includes('admin')&&!Auth.isAdmin()) window.location.href='auth.html';
+  if(Auth.isAdmin()) document.querySelectorAll('.nav-admin-item').forEach(el=>el.style.display='block');
 }
 
 document.addEventListener('DOMContentLoaded', initPage);
