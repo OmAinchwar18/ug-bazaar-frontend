@@ -10,13 +10,13 @@
     rel="stylesheet">
   <style>
     :root {
-      --orange: #F47820;
-      --blue: #1A5FB4;
-      --blue-light: #3A82D4;
-      --blue-dark: #0D3A6E;
-      --gold: #E8A020;
+      --orange: #FF9900;
+      --blue: #232f3e;
+      --blue-light: #37475A;
+      --blue-dark: #131921;
+      --gold: #FFD814;
       --white: #FFFFFF;
-      --off-white: #F8F9FC;
+      --off-white: #EAEDED;
       --gray: #6B7280;
       --gray-light: #F3F4F6;
       --text: #1A1A2E;
@@ -1507,14 +1507,27 @@
     @media(max-width: 850px) {
       nav {
         padding: 0.8rem 1rem;
+        flex-wrap: wrap;
       }
 
       .nav-search {
-        display: none !important;
+        display: flex !important;
+        max-width: 100% !important;
+        margin: 0.8rem 0 0 0 !important;
+        order: 3;
+        width: 100%;
+      }
+
+      .logo-area {
+        order: 1;
+      }
+
+      nav > div:last-child {
+        order: 2;
       }
 
       .mobile-search-fab {
-        display: flex;
+        display: none;
       }
 
       .hamburger {
