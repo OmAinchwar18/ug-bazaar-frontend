@@ -1,605 +1,1988 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UG Bazaar — Bhangaram, Talodhi</title>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --orange: #F47820;
-    --blue: #1A5FB4;
-    --blue-light: #3A82D4;
-    --blue-dark: #0D3A6E;
-    --gold: #E8A020;
-    --white: #FFFFFF;
-    --off-white: #F8F9FC;
-    --gray: #6B7280;
-    --gray-light: #F3F4F6;
-    --text: #1A1A2E;
-    --text-soft: #4B5563;
-    --radius: 14px;
-    --shadow: 0 4px 24px rgba(26,95,180,0.10);
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body { font-family: 'Baloo 2', sans-serif; background: var(--off-white); color: var(--text); overflow-x: hidden; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UG Bazaar — Bhangaram, Talodhi</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --orange: #F47820;
+      --blue: #1A5FB4;
+      --blue-light: #3A82D4;
+      --blue-dark: #0D3A6E;
+      --gold: #E8A020;
+      --white: #FFFFFF;
+      --off-white: #F8F9FC;
+      --gray: #6B7280;
+      --gray-light: #F3F4F6;
+      --text: #1A1A2E;
+      --text-soft: #4B5563;
+      --radius: 14px;
+      --shadow: 0 4px 24px rgba(26, 95, 180, 0.10);
+    }
 
-  /* ── TOPBAR ── */
-  .topbar { background: var(--blue-dark); color: #fff; font-size: 0.78rem; padding: 0.4rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.3rem; }
-  .topbar a { color: #FFD580; text-decoration: none; font-weight: 600; }
-  .topbar span { opacity: 0.8; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  /* ── NAVBAR ── */
-  nav { background: #fff; display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 2rem; box-shadow: 0 2px 16px rgba(26,95,180,0.08); position: sticky; top: 0; z-index: 200; }
-  .logo-area { display: flex; align-items: center; gap: 0.7rem; }
-  .logo-icon { width: 52px; height: 52px; background: linear-gradient(135deg, var(--orange), var(--gold)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; font-weight: 800; color: #fff; letter-spacing: -1px; box-shadow: 0 4px 12px rgba(244,120,32,0.3); }
-  .logo-text { display: flex; flex-direction: column; line-height: 1.1; }
-  .logo-text .ug { font-size: 1.5rem; font-weight: 800; color: var(--blue); }
-  .logo-text .bazar { font-size: 0.85rem; font-weight: 600; color: var(--orange); letter-spacing: 2px; text-transform: uppercase; }
-  nav ul { list-style: none; display: flex; gap: 1.8rem; align-items: center; }
-  nav ul li a { color: var(--text-soft); text-decoration: none; font-size: 0.92rem; font-weight: 600; transition: color 0.2s; }
-  nav ul li a:hover { color: var(--orange); }
-  .lang-toggle { display: flex; gap: 0.3rem; }
-  .lang-btn { padding: 0.25rem 0.6rem; border-radius: 6px; border: 1.5px solid var(--blue-light); background: transparent; color: var(--blue); font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: 'Baloo 2', sans-serif; }
-  .lang-btn.active, .lang-btn:hover { background: var(--blue); color: #fff; border-color: var(--blue); }
-  .nav-cart { background: var(--orange); color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 25px; font-weight: 700; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; transition: background 0.2s; font-family: 'Baloo 2', sans-serif; }
-  .nav-cart:hover { background: var(--blue); }
+    html {
+      scroll-behavior: smooth;
+    }
 
-  /* ── HERO ── */
-  .hero { background: linear-gradient(120deg, var(--blue-dark) 0%, var(--blue) 60%, var(--blue-light) 100%); padding: 6rem 2rem; display: flex; align-items: center; position: relative; overflow: hidden; min-height: auto; }
-  .hero-bg-pattern { position: absolute; inset: 0; opacity: 0.06; background-image: repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 0, transparent 50%); background-size: 20px 20px; }
-  .hero-orange-blob { position: absolute; right: -5%; top: -10%; width: min(40vw, 420px); height: min(40vw, 420px); background: var(--orange); border-radius: 50%; opacity: 0.15; }
-  .hero-gold-blob { position: absolute; right: 10%; bottom: -10%; width: min(30vw, 300px); height: min(30vw, 300px); background: var(--gold); border-radius: 50%; opacity: 0.12; }
-  .hero-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; width: 100%; position: relative; z-index: 2; }
-  .hero-left { color: #fff; display: flex; flex-direction: column; align-items: flex-start; }
-  .hero-badge { display: inline-block; background: rgba(244,120,32,0.25); border: 1px solid rgba(244,120,32,0.5); color: #FFD580; font-size: 0.85rem; font-weight: 700; padding: 0.4rem 1.2rem; border-radius: 20px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 1.5rem; }
-  .hero-left h1 { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; line-height: 1.15; margin-bottom: 1.2rem; text-wrap: balance; }
-  .hero-left h1 span { color: var(--gold); }
-  .hero-left p { font-size: 1.05rem; opacity: 0.85; line-height: 1.7; margin-bottom: 2.5rem; max-width: 500px; text-wrap: balance; }
-  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
-  .btn-orange { background: var(--orange); color: #fff; padding: 0.85rem 2rem; border-radius: 30px; font-weight: 700; font-size: 1rem; border: none; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 6px 20px rgba(244,120,32,0.4); font-family: 'Baloo 2', sans-serif; }
-  .btn-orange:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(244,120,32,0.5); }
-  .btn-outline { background: transparent; color: #fff; padding: 0.85rem 2rem; border-radius: 30px; font-weight: 700; font-size: 1rem; border: 2px solid rgba(255,255,255,0.5); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s; font-family: 'Baloo 2', sans-serif; }
-  .btn-outline:hover { background: rgba(255,255,255,0.1); border-color: #fff; }
-  .hero-stats { display: flex; gap: 2.5rem; margin-top: 3rem; flex-wrap: wrap; }
-  .hero-stat { text-align: left; }
-  .hero-stat .num { font-size: 2rem; font-weight: 800; color: var(--gold); line-height: 1; margin-bottom: 0.3rem; }
-  .hero-stat .lbl { font-size: 0.8rem; opacity: 0.8; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 600; }
-  .hero-right { display: flex; justify-content: flex-end; align-items: center; width: 100%; }
-  .shop-photo-wrap { border-radius: 24px; overflow: hidden; box-shadow: 0 24px 64px rgba(0,0,0,0.4); border: 4px solid rgba(255,255,255,0.15); max-width: 520px; width: 100%; position: relative; aspect-ratio: 4/3; }
-  .shop-photo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .photo-badge { position: absolute; bottom: 20px; left: 20px; right: 20px; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); color: #fff; padding: 0.8rem 1.2rem; border-radius: 12px; font-size: 0.85rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.2); text-align: center; }
+    body {
+      font-family: 'Baloo 2', sans-serif;
+      background: var(--off-white);
+      color: var(--text);
+      overflow-x: hidden;
+    }
 
-  /* ── MARQUEE ── */
-  .marquee-bar { background: var(--orange); padding: 0.65rem 0; overflow: hidden; white-space: nowrap; }
-  .marquee-inner { display: inline-flex; animation: scroll 22s linear infinite; gap: 3rem; }
-  .marquee-inner span { font-weight: 700; font-size: 0.85rem; color: #fff; letter-spacing: 1px; }
-  .marquee-dot { color: rgba(255,255,255,0.5); }
-  @keyframes scroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+    /* ── TOPBAR ── */
+    .topbar {
+      background: var(--blue-dark);
+      color: #fff;
+      font-size: 0.78rem;
+      padding: 0.4rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+    }
 
-  /* ── SECTION ── */
-  .section { padding: 5rem 2rem; max-width: 1100px; margin: 0 auto; }
-  .section-header { text-align: center; margin-bottom: 3rem; }
-  .section-label { font-size: 0.78rem; font-weight: 700; color: var(--orange); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.5rem; }
-  .section-title { font-size: clamp(1.6rem, 3.5vw, 2.2rem); font-weight: 800; color: var(--text); }
-  .section-title span { color: var(--blue); }
-  .section-line { width: 50px; height: 4px; background: linear-gradient(90deg, var(--orange), var(--gold)); border-radius: 2px; margin: 0.8rem auto 0; }
+    .topbar a {
+      color: #FFD580;
+      text-decoration: none;
+      font-weight: 600;
+    }
 
-  /* ── DEPARTMENTS ── */
-  .dept-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1.2rem; }
-  .dept-card { background: #fff; border-radius: var(--radius); padding: 1.5rem 1rem; text-align: center; border: 1.5px solid #E8EDF5; cursor: pointer; transition: all 0.25s; box-shadow: var(--shadow); }
-  .dept-card:hover { transform: translateY(-5px); border-color: var(--orange); box-shadow: 0 8px 28px rgba(244,120,32,0.15); }
-  .dept-emoji { font-size: 2.2rem; margin-bottom: 0.7rem; display: block; }
-  .dept-name { font-size: 0.88rem; font-weight: 700; color: var(--text); margin-bottom: 0.2rem; }
-  .dept-marathi { font-size: 0.75rem; color: var(--gray); font-family: 'Noto Sans Devanagari', sans-serif; }
+    .topbar span {
+      opacity: 0.8;
+    }
 
-  /* ── PRODUCTS ── */
-  .products-section { background: var(--gray-light); padding: 5rem 0; }
-  .products-inner { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
-  .filter-row { display: flex; gap: 0.7rem; flex-wrap: wrap; margin-bottom: 2rem; justify-content: center; }
-  .filter-btn { padding: 0.45rem 1.2rem; border-radius: 20px; border: 1.5px solid #D1D8E8; background: #fff; color: var(--text-soft); font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'Baloo 2', sans-serif; }
-  .filter-btn.active, .filter-btn:hover { background: var(--blue); color: #fff; border-color: var(--blue); }
-  .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.3rem; }
-  .product-card { background: #fff; border-radius: var(--radius); overflow: hidden; border: 1px solid #E8EDF5; transition: all 0.25s; box-shadow: var(--shadow); }
-  .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(26,95,180,0.13); }
-  .product-img { height: 160px; display: flex; align-items: center; justify-content: center; font-size: 4rem; background: var(--off-white); position: relative; }
-  .product-badge { position: absolute; top: 10px; left: 10px; background: var(--orange); color: #fff; font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; letter-spacing: 0.5px; }
-  .product-body { padding: 1rem; }
-  .product-cat { font-size: 0.7rem; font-weight: 700; color: var(--blue); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.3rem; }
-  .product-name { font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 0.2rem; }
-  .product-marathi { font-size: 0.78rem; color: var(--gray); font-family: 'Noto Sans Devanagari', sans-serif; margin-bottom: 0.6rem; }
-  .product-price-row { display: flex; align-items: center; justify-content: space-between; }
-  .product-price { font-size: 1.1rem; font-weight: 800; color: var(--text); }
-  .product-old { font-size: 0.8rem; color: var(--gray); text-decoration: line-through; margin-left: 4px; }
-  .add-to-cart { background: var(--orange); color: #fff; border: none; border-radius: 8px; padding: 0.45rem 0.9rem; font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: background 0.2s; font-family: 'Baloo 2', sans-serif; }
-  .add-to-cart:hover { background: var(--blue); }
+    /* ── NAVBAR ── */
+    nav {
+      background: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem 2rem;
+      box-shadow: 0 2px 16px rgba(26, 95, 180, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 200;
+    }
 
-  /* ── OFFERS ── */
-  .offers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
-  .offer-card { border-radius: 18px; padding: 2rem; position: relative; overflow: hidden; color: #fff; }
-  .offer-card.o1 { background: linear-gradient(135deg, #1A5FB4, #0D3A6E); }
-  .offer-card.o2 { background: linear-gradient(135deg, #F47820, #C45A10); }
-  .offer-card.o3 { background: linear-gradient(135deg, #0D6E3F, #085030); }
-  .offer-card h3 { font-size: 1.3rem; font-weight: 800; margin-bottom: 0.5rem; }
-  .offer-card p { font-size: 0.88rem; opacity: 0.85; margin-bottom: 1.2rem; line-height: 1.6; }
-  .offer-bg-icon { position: absolute; right: 1.5rem; top: 50%; transform: translateY(-50%); font-size: 5rem; opacity: 0.15; }
-  .offer-price { font-size: 1.6rem; font-weight: 800; color: #FFD580; margin-bottom: 1rem; }
-  .btn-white { background: #fff; color: var(--blue); border: none; padding: 0.55rem 1.4rem; border-radius: 20px; font-weight: 700; font-size: 0.88rem; cursor: pointer; font-family: 'Baloo 2', sans-serif; transition: opacity 0.2s; }
-  .btn-white:hover { opacity: 0.88; }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
 
-  /* ── WHY US ── */
-  .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
-  .why-card { background: #fff; border-radius: var(--radius); padding: 1.8rem 1.4rem; text-align: center; border: 1px solid #E8EDF5; box-shadow: var(--shadow); }
-  .why-icon-wrap { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 1.6rem; }
-  .wi-orange { background: rgba(244,120,32,0.12); }
-  .wi-blue { background: rgba(26,95,180,0.10); }
-  .wi-green { background: rgba(13,110,63,0.10); }
-  .wi-gold { background: rgba(232,160,32,0.12); }
-  .why-card h4 { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 0.4rem; }
-  .why-card p { font-size: 0.83rem; color: var(--text-soft); line-height: 1.6; }
+    .logo-icon {
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, var(--orange), var(--gold));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -1px;
+      box-shadow: 0 4px 12px rgba(244, 120, 32, 0.3);
+    }
 
-  /* ── CONTACT ── */
-  .contact-section { background: var(--blue-dark); color: #fff; padding: 5rem 2rem; }
-  .contact-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
-  .contact-info h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.5rem; }
-  .contact-info .sub { opacity: 0.7; margin-bottom: 2rem; font-size: 0.95rem; }
-  .contact-item { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.4rem; }
-  .contact-icon { width: 42px; height: 42px; border-radius: 10px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
-  .contact-detail { font-size: 0.9rem; }
-  .contact-detail .label { opacity: 0.6; font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.2rem; }
-  .contact-detail .value { font-weight: 600; }
-  .contact-detail a { color: #FFD580; text-decoration: none; }
-  .map-placeholder { background: rgba(255,255,255,0.06); border-radius: 16px; border: 1px solid rgba(255,255,255,0.12); padding: 2rem; text-align: center; }
-  .map-placeholder .map-icon { font-size: 3rem; margin-bottom: 1rem; }
-  .map-placeholder h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.4rem; }
-  .map-placeholder p { opacity: 0.65; font-size: 0.85rem; margin-bottom: 1.2rem; line-height: 1.6; }
-  .wa-btn { display: inline-flex; align-items: center; gap: 0.5rem; background: #25D366; color: #fff; padding: 0.75rem 1.6rem; border-radius: 25px; font-weight: 700; text-decoration: none; font-size: 0.92rem; transition: background 0.2s; }
-  .wa-btn:hover { background: #1DA050; }
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
 
-  /* ── FOOTER ── */
-  footer { background: #08122A; color: rgba(255,255,255,0.6); padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; font-size: 0.82rem; }
-  .footer-logo { font-size: 1.1rem; font-weight: 800; color: #fff; }
-  .footer-logo span { color: var(--orange); }
+    .logo-text .ug {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--blue);
+    }
 
-  /* ── TOAST ── */
-  .toast { position: fixed; bottom: 2rem; right: 2rem; background: var(--blue); color: #fff; padding: 0.8rem 1.5rem; border-radius: 12px; font-weight: 600; font-size: 0.9rem; display: none; z-index: 999; box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
-  .toast.show { display: flex; align-items: center; gap: 0.5rem; animation: slideIn 0.3s ease; }
-  @keyframes slideIn { from{transform:translateX(80px);opacity:0} to{transform:translateX(0);opacity:1} }
+    .logo-text .bazar {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--orange);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
 
-  /* ── FADE IN ── */
-  .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
-  .fade-in.visible { opacity: 1; transform: translateY(0); }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.8rem;
+      align-items: center;
+    }
 
-  /* ── AI CHATBOT FLOATING ── */
-  .chat-fab { position:fixed; bottom:2rem; right:2rem; width:58px; height:58px; background:linear-gradient(135deg,var(--orange),#C45A10); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:998; box-shadow:0 6px 24px rgba(244,120,32,0.45); transition:transform 0.2s; }
-  .chat-fab:hover { transform:scale(1.08); }
-  .chat-fab-icon { font-size:1.5rem; }
-  .chat-fab-pulse { position:absolute; top:-3px; right:-3px; width:14px; height:14px; background:#16A34A; border-radius:50%; border:2px solid #fff; animation:chatpulse 2s infinite; }
-  @keyframes chatpulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.3)} }
-  .chat-window-wrap { position:fixed; bottom:6rem; right:2rem; width:340px; background:#fff; border-radius:20px; box-shadow:0 16px 48px rgba(0,0,0,0.18); border:1px solid var(--border,#E2E8F0); z-index:997; display:none; flex-direction:column; overflow:hidden; }
-  .chat-window-wrap.open { display:flex; animation:slideUp 0.25s ease; }
-  @keyframes slideUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-  .chat-header { background:linear-gradient(135deg,var(--blue-dark),var(--blue)); padding:0.9rem 1.2rem; display:flex; align-items:center; gap:0.7rem; }
-  .chat-header-avatar { width:36px; height:36px; background:rgba(255,255,255,0.2); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.1rem; border:2px solid rgba(255,255,255,0.3); }
-  .chat-header-info { flex:1; }
-  .chat-header-name { font-size:0.88rem; font-weight:800; color:#fff; }
-  .chat-header-status { font-size:0.68rem; color:rgba(255,255,255,0.75); display:flex; align-items:center; gap:0.3rem; }
-  .status-dot-g { width:6px; height:6px; background:#4ADE80; border-radius:50%; }
-  .chat-close { background:rgba(255,255,255,0.15); border:none; color:#fff; width:28px; height:28px; border-radius:50%; cursor:pointer; font-size:0.95rem; display:flex; align-items:center; justify-content:center; }
-  .chat-msgs { overflow-y:auto; padding:0.9rem; display:flex; flex-direction:column; gap:0.6rem; background:var(--off-white); max-height:300px; }
-  .cmsg { display:flex; gap:0.5rem; align-items:flex-end; }
-  .cmsg.user { flex-direction:row-reverse; }
-  .cmsg-av { width:26px; height:26px; border-radius:50%; background:var(--orange); display:flex; align-items:center; justify-content:center; font-size:0.72rem; font-weight:800; color:#fff; flex-shrink:0; }
-  .cmsg-av.ai { background:linear-gradient(135deg,var(--blue),var(--blue-dark)); }
-  .cmsg-bubble { padding:0.5rem 0.8rem; border-radius:12px; font-size:0.82rem; line-height:1.55; max-width:78%; }
-  .cmsg-bubble.ai { background:#fff; border:1px solid var(--border,#E2E8F0); color:var(--text-soft); border-radius:4px 12px 12px 12px; }
-  .cmsg-bubble.user { background:var(--orange); color:#fff; border-radius:12px 4px 12px 12px; }
-  .chat-quick { display:flex; gap:0.4rem; flex-wrap:wrap; padding:0.5rem 0.9rem 0.3rem; }
-  .cqbtn { padding:0.22rem 0.65rem; border-radius:20px; border:1px solid var(--border,#E2E8F0); background:#fff; color:var(--blue); font-size:0.68rem; font-weight:700; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:all 0.2s; white-space:nowrap; }
-  .cqbtn:hover { background:var(--orange); color:#fff; border-color:var(--orange); }
-  .chat-input-area { padding:0.7rem 0.8rem; border-top:1px solid var(--border,#E2E8F0); display:flex; gap:0.5rem; background:#fff; }
-  .chat-text-input { flex:1; padding:0.5rem 0.85rem; border:1.5px solid var(--border,#E2E8F0); border-radius:20px; font-size:0.82rem; font-family:'Baloo 2',sans-serif; outline:none; color:var(--text); transition:border-color 0.2s; }
-  .chat-text-input:focus { border-color:var(--orange); }
-  .chat-send-btn { width:34px; height:34px; background:var(--orange); border:none; border-radius:50%; color:#fff; font-size:0.95rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.2s; flex-shrink:0; }
-  .chat-send-btn:hover { background:var(--blue); }
-  .typing-ind { display:flex; gap:3px; align-items:center; padding:0.3rem 0.5rem; }
-  .typing-dot { width:6px; height:6px; background:var(--gray); border-radius:50%; animation:tdot 1.2s infinite; }
-  .typing-dot:nth-child(2){ animation-delay:0.2s; }
-  .typing-dot:nth-child(3){ animation-delay:0.4s; }
-  @keyframes tdot { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-5px)} }
+    nav ul li a {
+      color: var(--text-soft);
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
 
-  /* ── AI RECOMMENDATIONS ── */
-  .ai-rec-section { padding:3.5rem 2rem; background:#fff; }
-  .ai-rec-inner { max-width:1100px; margin:0 auto; }
-  .ai-rec-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem; }
-  .ai-rec-label { font-size:0.72rem; font-weight:700; color:var(--orange); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:0.2rem; }
-  .ai-rec-title { font-size:1.5rem; font-weight:800; color:var(--text); }
-  .ai-rec-title span { color:var(--blue); }
-  .rec-chips { display:flex; gap:0.5rem; flex-wrap:wrap; }
-  .rec-chip { padding:0.35rem 1rem; border-radius:20px; border:1.5px solid var(--border,#E2E8F0); background:#fff; color:var(--text-soft); font-size:0.8rem; font-weight:700; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:all 0.2s; }
-  .rec-chip.active,.rec-chip:hover { background:var(--blue); color:#fff; border-color:var(--blue); }
-  .rec-products-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:1rem; }
-  .rec-pcard { background:var(--off-white); border-radius:var(--radius); border:1px solid var(--border,#E2E8F0); overflow:hidden; cursor:pointer; transition:all 0.25s; }
-  .rec-pcard:hover { transform:translateY(-4px); border-color:var(--orange); box-shadow:0 10px 28px rgba(244,120,32,0.12); background:#fff; }
-  .rec-pcard-img { height:110px; background:#fff; display:flex; align-items:center; justify-content:center; font-size:3rem; position:relative; }
-  .rec-ai-tag { position:absolute; top:6px; right:6px; background:var(--blue); color:#fff; font-size:0.58rem; font-weight:800; padding:2px 6px; border-radius:5px; letter-spacing:0.3px; }
-  .rec-pcard-body { padding:0.8rem; }
-  .rec-pcard-name { font-size:0.85rem; font-weight:800; color:var(--text); margin-bottom:0.15rem; }
-  .rec-pcard-why { font-size:0.67rem; color:var(--orange); font-weight:700; margin-bottom:0.5rem; }
-  .rec-pcard-row { display:flex; align-items:center; justify-content:space-between; }
-  .rec-pcard-price { font-size:0.92rem; font-weight:800; }
-  .rec-pcard-old { font-size:0.72rem; color:var(--gray); text-decoration:line-through; }
-  .rec-padd { background:var(--orange); color:#fff; border:none; border-radius:7px; padding:0.32rem 0.65rem; font-size:0.7rem; font-weight:800; cursor:pointer; font-family:'Baloo 2',sans-serif; transition:background 0.2s; }
-  .rec-padd:hover { background:var(--blue); }
-  .rec-loading { text-align:center; padding:2rem; color:var(--gray); font-size:0.88rem; grid-column:1/-1; }
-  .dot-pulse { display:inline-flex; gap:3px; margin-left:0.4rem; }
-  .dot-pulse span { width:5px; height:5px; background:var(--orange); border-radius:50%; animation:tdot 1.2s infinite; }
-  .dot-pulse span:nth-child(2){ animation-delay:0.2s; }
-  .dot-pulse span:nth-child(3){ animation-delay:0.4s; }
+    nav ul li a:hover {
+      color: var(--orange);
+    }
 
-  .hamburger { display: none; font-size: 1.5rem; background: none; border: none; cursor: pointer; color: var(--blue); padding: 0.2rem; }
-  .mobile-search-fab { display:none; position:fixed; bottom:6rem; right:2rem; width:58px; height:58px; background:var(--blue); border-radius:50%; align-items:center; justify-content:center; color:#fff; font-size:1.5rem; box-shadow:0 6px 24px rgba(0,0,0,0.2); z-index:998; text-decoration:none; transition:transform 0.2s; }
-  .mobile-search-fab:hover { transform:scale(1.08); }
+    .lang-toggle {
+      display: flex;
+      gap: 0.3rem;
+    }
 
-  /* ── RESPONSIVE ── */
-  @media(max-width: 850px) {
-    nav { padding: 0.8rem 1rem; }
-    .nav-search { display: none !important; }
-    .mobile-search-fab { display: flex; }
-    .hamburger { display: block; }
-    nav ul { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: #fff; padding: 1rem 2rem; box-shadow: 0 10px 20px rgba(0,0,0,0.1); gap: 1rem; align-items: flex-start; }
-    nav ul.show { display: flex; }
-    .hero { padding: 4rem 1rem; }
-    .hero-content { grid-template-columns: 1fr; gap: 2rem; }
-    .hero-right { display: block; max-width: 400px; margin: 0 auto; }
-    .shop-photo-wrap { display: none; } /* Hide the photo on mobile if it takes too much space, or we can keep it */
-    .contact-inner { grid-template-columns: 1fr; }
-    .topbar { font-size: 0.75rem; justify-content: center; text-align: center; }
-    .section { padding: 3rem 1rem; }
-    .filter-row { gap: 0.4rem; }
-    .filter-btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
-  }
-</style>
+    .lang-btn {
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      border: 1.5px solid var(--blue-light);
+      background: transparent;
+      color: var(--blue);
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Baloo 2', sans-serif;
+    }
+
+    .lang-btn.active,
+    .lang-btn:hover {
+      background: var(--blue);
+      color: #fff;
+      border-color: var(--blue);
+    }
+
+    .nav-cart {
+      background: var(--orange);
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1.2rem;
+      border-radius: 25px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background 0.2s;
+      font-family: 'Baloo 2', sans-serif;
+    }
+
+    .nav-cart:hover {
+      background: var(--blue);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(120deg, var(--blue-dark) 0%, var(--blue) 60%, var(--blue-light) 100%);
+      padding: 6rem 2rem;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      min-height: auto;
+    }
+
+    .hero-bg-pattern {
+      position: absolute;
+      inset: 0;
+      opacity: 0.06;
+      background-image: repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 0, transparent 50%);
+      background-size: 20px 20px;
+    }
+
+    .hero-orange-blob {
+      position: absolute;
+      right: -5%;
+      top: -10%;
+      width: min(40vw, 420px);
+      height: min(40vw, 420px);
+      background: var(--orange);
+      border-radius: 50%;
+      opacity: 0.15;
+    }
+
+    .hero-gold-blob {
+      position: absolute;
+      right: 10%;
+      bottom: -10%;
+      width: min(30vw, 300px);
+      height: min(30vw, 300px);
+      background: var(--gold);
+      border-radius: 50%;
+      opacity: 0.12;
+    }
+
+    .hero-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-left {
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(244, 120, 32, 0.25);
+      border: 1px solid rgba(244, 120, 32, 0.5);
+      color: #FFD580;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 0.4rem 1.2rem;
+      border-radius: 20px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-left h1 {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 1.2rem;
+      text-wrap: balance;
+    }
+
+    .hero-left h1 span {
+      color: var(--gold);
+    }
+
+    .hero-left p {
+      font-size: 1.05rem;
+      opacity: 0.85;
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+      max-width: 500px;
+      text-wrap: balance;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-orange {
+      background: var(--orange);
+      color: #fff;
+      padding: 0.85rem 2rem;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 1rem;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 6px 20px rgba(244, 120, 32, 0.4);
+      font-family: 'Baloo 2', sans-serif;
+    }
+
+    .btn-orange:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 28px rgba(244, 120, 32, 0.5);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: #fff;
+      padding: 0.85rem 2rem;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 1rem;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      font-family: 'Baloo 2', sans-serif;
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: #fff;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 2.5rem;
+      margin-top: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-stat {
+      text-align: left;
+    }
+
+    .hero-stat .num {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+
+    .hero-stat .lbl {
+      font-size: 0.8rem;
+      opacity: 0.8;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .hero-right {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      width: 100%;
+    }
+
+    .shop-photo-wrap {
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+      border: 4px solid rgba(255, 255, 255, 0.15);
+      max-width: 520px;
+      width: 100%;
+      position: relative;
+      aspect-ratio: 4/3;
+    }
+
+    .shop-photo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .photo-badge {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      color: #fff;
+      padding: 0.8rem 1.2rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      text-align: center;
+    }
+
+    /* ── MARQUEE ── */
+    .marquee-bar {
+      background: var(--orange);
+      padding: 0.65rem 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .marquee-inner {
+      display: inline-flex;
+      animation: scroll 22s linear infinite;
+      gap: 3rem;
+    }
+
+    .marquee-inner span {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: #fff;
+      letter-spacing: 1px;
+    }
+
+    .marquee-dot {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    @keyframes scroll {
+      0% {
+        transform: translateX(0)
+      }
+
+      100% {
+        transform: translateX(-50%)
+      }
+    }
+
+    /* ── SECTION ── */
+    .section {
+      padding: 5rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .section-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--orange);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-title {
+      font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .section-title span {
+      color: var(--blue);
+    }
+
+    .section-line {
+      width: 50px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--orange), var(--gold));
+      border-radius: 2px;
+      margin: 0.8rem auto 0;
+    }
+
+    /* ── DEPARTMENTS ── */
+    .dept-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .dept-card {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 1.5rem 1rem;
+      text-align: center;
+      border: 1.5px solid #E8EDF5;
+      cursor: pointer;
+      transition: all 0.25s;
+      box-shadow: var(--shadow);
+    }
+
+    .dept-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--orange);
+      box-shadow: 0 8px 28px rgba(244, 120, 32, 0.15);
+    }
+
+    .dept-emoji {
+      font-size: 2.2rem;
+      margin-bottom: 0.7rem;
+      display: block;
+    }
+
+    .dept-name {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.2rem;
+    }
+
+    .dept-marathi {
+      font-size: 0.75rem;
+      color: var(--gray);
+      font-family: 'Noto Sans Devanagari', sans-serif;
+    }
+
+    /* ── PRODUCTS ── */
+    .products-section {
+      background: var(--gray-light);
+      padding: 5rem 0;
+    }
+
+    .products-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 0.7rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+      justify-content: center;
+    }
+
+    .filter-btn {
+      padding: 0.45rem 1.2rem;
+      border-radius: 20px;
+      border: 1.5px solid #D1D8E8;
+      background: #fff;
+      color: var(--text-soft);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Baloo 2', sans-serif;
+    }
+
+    .filter-btn.active,
+    .filter-btn:hover {
+      background: var(--blue);
+      color: #fff;
+      border-color: var(--blue);
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.3rem;
+    }
+
+    .product-card {
+      background: #fff;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid #E8EDF5;
+      transition: all 0.25s;
+      box-shadow: var(--shadow);
+    }
+
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(26, 95, 180, 0.13);
+    }
+
+    .product-img {
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      background: var(--off-white);
+      position: relative;
+    }
+
+    .product-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: var(--orange);
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .product-body {
+      padding: 1rem;
+    }
+
+    .product-cat {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--blue);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 0.3rem;
+    }
+
+    .product-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.2rem;
+    }
+
+    .product-marathi {
+      font-size: 0.78rem;
+      color: var(--gray);
+      font-family: 'Noto Sans Devanagari', sans-serif;
+      margin-bottom: 0.6rem;
+    }
+
+    .product-price-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .product-price {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .product-old {
+      font-size: 0.8rem;
+      color: var(--gray);
+      text-decoration: line-through;
+      margin-left: 4px;
+    }
+
+    .add-to-cart {
+      background: var(--orange);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: 'Baloo 2', sans-serif;
+    }
+
+    .add-to-cart:hover {
+      background: var(--blue);
+    }
+
+    /* ── OFFERS ── */
+    .offers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .offer-card {
+      border-radius: 18px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      color: #fff;
+    }
+
+    .offer-card.o1 {
+      background: linear-gradient(135deg, #1A5FB4, #0D3A6E);
+    }
+
+    .offer-card.o2 {
+      background: linear-gradient(135deg, #F47820, #C45A10);
+    }
+
+    .offer-card.o3 {
+      background: linear-gradient(135deg, #0D6E3F, #085030);
+    }
+
+    .offer-card h3 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .offer-card p {
+      font-size: 0.88rem;
+      opacity: 0.85;
+      margin-bottom: 1.2rem;
+      line-height: 1.6;
+    }
+
+    .offer-bg-icon {
+      position: absolute;
+      right: 1.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 5rem;
+      opacity: 0.15;
+    }
+
+    .offer-price {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #FFD580;
+      margin-bottom: 1rem;
+    }
+
+    .btn-white {
+      background: #fff;
+      color: var(--blue);
+      border: none;
+      padding: 0.55rem 1.4rem;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      font-family: 'Baloo 2', sans-serif;
+      transition: opacity 0.2s;
+    }
+
+    .btn-white:hover {
+      opacity: 0.88;
+    }
+
+    /* ── WHY US ── */
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .why-card {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 1.8rem 1.4rem;
+      text-align: center;
+      border: 1px solid #E8EDF5;
+      box-shadow: var(--shadow);
+    }
+
+    .why-icon-wrap {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      font-size: 1.6rem;
+    }
+
+    .wi-orange {
+      background: rgba(244, 120, 32, 0.12);
+    }
+
+    .wi-blue {
+      background: rgba(26, 95, 180, 0.10);
+    }
+
+    .wi-green {
+      background: rgba(13, 110, 63, 0.10);
+    }
+
+    .wi-gold {
+      background: rgba(232, 160, 32, 0.12);
+    }
+
+    .why-card h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.4rem;
+    }
+
+    .why-card p {
+      font-size: 0.83rem;
+      color: var(--text-soft);
+      line-height: 1.6;
+    }
+
+    /* ── CONTACT ── */
+    .contact-section {
+      background: var(--blue-dark);
+      color: #fff;
+      padding: 5rem 2rem;
+    }
+
+    .contact-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .contact-info h2 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .contact-info .sub {
+      opacity: 0.7;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .contact-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .contact-detail {
+      font-size: 0.9rem;
+    }
+
+    .contact-detail .label {
+      opacity: 0.6;
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+    }
+
+    .contact-detail .value {
+      font-weight: 600;
+    }
+
+    .contact-detail a {
+      color: #FFD580;
+      text-decoration: none;
+    }
+
+    .map-placeholder {
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .map-placeholder .map-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .map-placeholder h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+
+    .map-placeholder p {
+      opacity: 0.65;
+      font-size: 0.85rem;
+      margin-bottom: 1.2rem;
+      line-height: 1.6;
+    }
+
+    .wa-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #25D366;
+      color: #fff;
+      padding: 0.75rem 1.6rem;
+      border-radius: 25px;
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 0.92rem;
+      transition: background 0.2s;
+    }
+
+    .wa-btn:hover {
+      background: #1DA050;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #08122A;
+      color: rgba(255, 255, 255, 0.6);
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: 0.82rem;
+    }
+
+    .footer-logo {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .footer-logo span {
+      color: var(--orange);
+    }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--blue);
+      color: #fff;
+      padding: 0.8rem 1.5rem;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: none;
+      z-index: 999;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .toast.show {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(80px);
+        opacity: 0
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1
+      }
+    }
+
+    /* ── FADE IN ── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── AI CHATBOT FLOATING ── */
+    .chat-fab {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 58px;
+      height: 58px;
+      background: linear-gradient(135deg, var(--orange), #C45A10);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 998;
+      box-shadow: 0 6px 24px rgba(244, 120, 32, 0.45);
+      transition: transform 0.2s;
+    }
+
+    .chat-fab:hover {
+      transform: scale(1.08);
+    }
+
+    .chat-fab-icon {
+      font-size: 1.5rem;
+    }
+
+    .chat-fab-pulse {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      width: 14px;
+      height: 14px;
+      background: #16A34A;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      animation: chatpulse 2s infinite;
+    }
+
+    @keyframes chatpulse {
+
+      0%,
+      100% {
+        transform: scale(1)
+      }
+
+      50% {
+        transform: scale(1.3)
+      }
+    }
+
+    .chat-window-wrap {
+      position: fixed;
+      bottom: 6rem;
+      right: 2rem;
+      width: 340px;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18);
+      border: 1px solid var(--border, #E2E8F0);
+      z-index: 997;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .chat-window-wrap.open {
+      display: flex;
+      animation: slideUp 0.25s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .chat-header {
+      background: linear-gradient(135deg, var(--blue-dark), var(--blue));
+      padding: 0.9rem 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    .chat-header-avatar {
+      width: 36px;
+      height: 36px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .chat-header-info {
+      flex: 1;
+    }
+
+    .chat-header-name {
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .chat-header-status {
+      font-size: 0.68rem;
+      color: rgba(255, 255, 255, 0.75);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .status-dot-g {
+      width: 6px;
+      height: 6px;
+      background: #4ADE80;
+      border-radius: 50%;
+    }
+
+    .chat-close {
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      color: #fff;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .chat-msgs {
+      overflow-y: auto;
+      padding: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      background: var(--off-white);
+      max-height: 300px;
+    }
+
+    .cmsg {
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-end;
+    }
+
+    .cmsg.user {
+      flex-direction: row-reverse;
+    }
+
+    .cmsg-av {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--orange);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .cmsg-av.ai {
+      background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+    }
+
+    .cmsg-bubble {
+      padding: 0.5rem 0.8rem;
+      border-radius: 12px;
+      font-size: 0.82rem;
+      line-height: 1.55;
+      max-width: 78%;
+    }
+
+    .cmsg-bubble.ai {
+      background: #fff;
+      border: 1px solid var(--border, #E2E8F0);
+      color: var(--text-soft);
+      border-radius: 4px 12px 12px 12px;
+    }
+
+    .cmsg-bubble.user {
+      background: var(--orange);
+      color: #fff;
+      border-radius: 12px 4px 12px 12px;
+    }
+
+    .chat-quick {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      padding: 0.5rem 0.9rem 0.3rem;
+    }
+
+    .cqbtn {
+      padding: 0.22rem 0.65rem;
+      border-radius: 20px;
+      border: 1px solid var(--border, #E2E8F0);
+      background: #fff;
+      color: var(--blue);
+      font-size: 0.68rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Baloo 2', sans-serif;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .cqbtn:hover {
+      background: var(--orange);
+      color: #fff;
+      border-color: var(--orange);
+    }
+
+    .chat-input-area {
+      padding: 0.7rem 0.8rem;
+      border-top: 1px solid var(--border, #E2E8F0);
+      display: flex;
+      gap: 0.5rem;
+      background: #fff;
+    }
+
+    .chat-text-input {
+      flex: 1;
+      padding: 0.5rem 0.85rem;
+      border: 1.5px solid var(--border, #E2E8F0);
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-family: 'Baloo 2', sans-serif;
+      outline: none;
+      color: var(--text);
+      transition: border-color 0.2s;
+    }
+
+    .chat-text-input:focus {
+      border-color: var(--orange);
+    }
+
+    .chat-send-btn {
+      width: 34px;
+      height: 34px;
+      background: var(--orange);
+      border: none;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+
+    .chat-send-btn:hover {
+      background: var(--blue);
+    }
+
+    .typing-ind {
+      display: flex;
+      gap: 3px;
+      align-items: center;
+      padding: 0.3rem 0.5rem;
+    }
+
+    .typing-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--gray);
+      border-radius: 50%;
+      animation: tdot 1.2s infinite;
+    }
+
+    .typing-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes tdot {
+
+      0%,
+      60%,
+      100% {
+        transform: translateY(0)
+      }
+
+      30% {
+        transform: translateY(-5px)
+      }
+    }
+
+    /* ── AI RECOMMENDATIONS ── */
+    .ai-rec-section {
+      padding: 3.5rem 2rem;
+      background: #fff;
+    }
+
+    .ai-rec-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .ai-rec-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .ai-rec-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--orange);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+    }
+
+    .ai-rec-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .ai-rec-title span {
+      color: var(--blue);
+    }
+
+    .rec-chips {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .rec-chip {
+      padding: 0.35rem 1rem;
+      border-radius: 20px;
+      border: 1.5px solid var(--border, #E2E8F0);
+      background: #fff;
+      color: var(--text-soft);
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Baloo 2', sans-serif;
+      transition: all 0.2s;
+    }
+
+    .rec-chip.active,
+    .rec-chip:hover {
+      background: var(--blue);
+      color: #fff;
+      border-color: var(--blue);
+    }
+
+    .rec-products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 1rem;
+    }
+
+    .rec-pcard {
+      background: var(--off-white);
+      border-radius: var(--radius);
+      border: 1px solid var(--border, #E2E8F0);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .rec-pcard:hover {
+      transform: translateY(-4px);
+      border-color: var(--orange);
+      box-shadow: 0 10px 28px rgba(244, 120, 32, 0.12);
+      background: #fff;
+    }
+
+    .rec-pcard-img {
+      height: 110px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      position: relative;
+    }
+
+    .rec-ai-tag {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: var(--blue);
+      color: #fff;
+      font-size: 0.58rem;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 5px;
+      letter-spacing: 0.3px;
+    }
+
+    .rec-pcard-body {
+      padding: 0.8rem;
+    }
+
+    .rec-pcard-name {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 0.15rem;
+    }
+
+    .rec-pcard-why {
+      font-size: 0.67rem;
+      color: var(--orange);
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .rec-pcard-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .rec-pcard-price {
+      font-size: 0.92rem;
+      font-weight: 800;
+    }
+
+    .rec-pcard-old {
+      font-size: 0.72rem;
+      color: var(--gray);
+      text-decoration: line-through;
+    }
+
+    .rec-padd {
+      background: var(--orange);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 0.32rem 0.65rem;
+      font-size: 0.7rem;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: 'Baloo 2', sans-serif;
+      transition: background 0.2s;
+    }
+
+    .rec-padd:hover {
+      background: var(--blue);
+    }
+
+    .rec-loading {
+      text-align: center;
+      padding: 2rem;
+      color: var(--gray);
+      font-size: 0.88rem;
+      grid-column: 1/-1;
+    }
+
+    .dot-pulse {
+      display: inline-flex;
+      gap: 3px;
+      margin-left: 0.4rem;
+    }
+
+    .dot-pulse span {
+      width: 5px;
+      height: 5px;
+      background: var(--orange);
+      border-radius: 50%;
+      animation: tdot 1.2s infinite;
+    }
+
+    .dot-pulse span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .dot-pulse span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    .hamburger {
+      display: none;
+      font-size: 1.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--blue);
+      padding: 0.2rem;
+    }
+
+    .mobile-search-fab {
+      display: none;
+      position: fixed;
+      bottom: 6rem;
+      right: 2rem;
+      width: 58px;
+      height: 58px;
+      background: var(--blue);
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 1.5rem;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+      z-index: 998;
+      text-decoration: none;
+      transition: transform 0.2s;
+    }
+
+    .mobile-search-fab:hover {
+      transform: scale(1.08);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width: 850px) {
+      nav {
+        padding: 0.8rem 1rem;
+      }
+
+      .nav-search {
+        display: none !important;
+      }
+
+      .mobile-search-fab {
+        display: flex;
+      }
+
+      .hamburger {
+        display: block;
+      }
+
+      nav ul {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #fff;
+        padding: 1rem 2rem;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        gap: 1rem;
+        align-items: flex-start;
+      }
+
+      nav ul.show {
+        display: flex;
+      }
+
+      .hero {
+        padding: 4rem 1rem;
+      }
+
+      .hero-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .hero-right {
+        display: block;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+
+      .shop-photo-wrap {
+        display: none;
+      }
+
+      /* Hide the photo on mobile if it takes too much space, or we can keep it */
+      .contact-inner {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        font-size: 0.75rem;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .section {
+        padding: 3rem 1rem;
+      }
+
+      .filter-row {
+        gap: 0.4rem;
+      }
+
+      .filter-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<!-- TOPBAR -->
-<div class="topbar">
-  <span>📍 Opp. CDCC Bank, Bhangaram, Talodhi, Tq. Gondpipri, Dist. Chandrapur, Maharashtra</span>
-  <span>🕐 Open: 9:00 AM – 9:00 PM &nbsp;|&nbsp; 📞 <a href="tel:8390901925">8390901925</a></span>
-</div>
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <span>📍 Opp. CDCC Bank, Bhangaram, Talodhi, Tq. Gondpipri, Dist. Chandrapur, Maharashtra</span>
+    <span>🕐 Open: 9:00 AM – 9:00 PM &nbsp;|&nbsp; 📞 <a href="tel:8390901925">8390901925</a></span>
+  </div>
 
-<!-- NAVBAR -->
-<nav>
-  <div class="logo-area">
-    <div class="logo-icon">UG</div>
-    <div class="logo-text">
-      <span class="ug">UG Bazaar</span>
-      <span class="bazar">Your Local Superstore</span>
-    </div>
-  </div>
-  <ul>
-    <li><a href="#departments">Departments</a></li>
-    <li><a href="#products">Products</a></li>
-    <li><a href="#offers">Offers</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="auth.html" class="nav-login-link">👤 Login</a></li>
-    <li class="nav-admin-item" style="display:none;"><a href="admin.html">⚙️ Admin</a></li>
-  </ul>
-  <div class="nav-search" style="display:flex;gap:0;max-width:300px;flex:1;margin:0 1.5rem;">
-    <input 
-      id="nav-search-input"
-      placeholder="Search products..." 
-      style="flex:1;padding:0.5rem 1rem;border:2px solid #E2E8F0;border-right:none;border-radius:12px 0 0 12px;font-size:0.88rem;outline:none;"
-      onkeydown="if(event.key==='Enter') window.location='search.html?q='+this.value"
-    >
-    <button 
-      onclick="window.location='search.html?q='+document.getElementById('nav-search-input').value"
-      style="padding:0.5rem 1rem;background:#F47820;color:#fff;border:none;border-radius:0 12px 12px 0;cursor:pointer;font-weight:700;">
-      🔍
-    </button>
-  </div>
-  <div style="display:flex;gap:0.7rem;align-items:center;">
-    <div class="lang-toggle">
-      <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
-      <button class="lang-btn" onclick="setLang('hi',this)">हि</button>
-      <button class="lang-btn" onclick="setLang('mr',this)">म</button>
-    </div>
-    <button class="nav-cart" onclick="showToast('🛒 Cart opened!')">🛒 Cart <span id="cart-count">(0)</span></button>
-    <button class="hamburger" onclick="document.querySelector('nav ul').classList.toggle('show')">☰</button>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-bg-pattern"></div>
-  <div class="hero-orange-blob"></div>
-  <div class="hero-gold-blob"></div>
-  <div class="hero-content">
-    <div class="hero-left fade-in">
-      <div class="hero-badge" id="hero-badge">🌟 Bhangaram's Favourite Multi-Store</div>
-      <h1 id="hero-h1">Everything You Need,<br><span>One Place.</span></h1>
-      <p id="hero-p">Grocery to Electronics, Hardware to Furniture, Krushi Kendra to General Store — UG Bazaar has it all, right here in Bhangaram, Talodhi.</p>
-      <div class="hero-btns">
-        <a href="#products" class="btn-orange" id="hero-btn1">Shop Now →</a>
-        <a href="https://wa.me/918390901925" class="btn-outline" target="_blank">💬 WhatsApp Order</a>
-      </div>
-      <div class="hero-stats">
-        <div class="hero-stat"><div class="num">8+</div><div class="lbl" id="stat1">Departments</div></div>
-        <div class="hero-stat"><div class="num">500+</div><div class="lbl" id="stat2">Products</div></div>
-        <div class="hero-stat"><div class="num">9AM</div><div class="lbl" id="stat3">Opens Daily</div></div>
+  <!-- NAVBAR -->
+  <nav>
+    <div class="logo-area">
+      <div class="logo-icon">UG</div>
+      <div class="logo-text">
+        <span class="ug">UG Bazaar</span>
+        <span class="bazar">Your Local Superstore</span>
       </div>
     </div>
-    <div class="hero-right fade-in" style="transition-delay:0.2s">
-      <div class="shop-photo-wrap" style="display: block;">
-        <img src="IMG_20230224_190151.jpg" alt="UG Bazaar Shop — Bhangaram" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#1A5FB4,#0D3A6E)';this.parentElement.innerHTML+='<div style=\'padding:3rem;text-align:center;color:#fff\'><div style=\'font-size:5rem\'>🏪</div><div style=\'font-weight:700;font-size:1.2rem;margin-top:1rem\'>UG Bazaar</div><div style=\'opacity:0.7;font-size:0.9rem\'>Bhangaram, Talodhi</div></div>'">
-        <div class="photo-badge">📍 Opp. CDCC Bank, Bhangaram, Talodhi</div>
+    <ul>
+      <li><a href="#departments">Departments</a></li>
+      <li><a href="#products">Products</a></li>
+      <li><a href="#offers">Offers</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="auth.html" class="nav-login-link">👤 Login</a></li>
+      <li class="nav-admin-item" style="display:none;"><a href="admin.html">⚙️ Admin</a></li>
+    </ul>
+    <div class="nav-search" style="display:flex;gap:0;max-width:300px;flex:1;margin:0 1.5rem;">
+      <input id="nav-search-input" placeholder="Search products..."
+        style="flex:1;padding:0.5rem 1rem;border:2px solid #E2E8F0;border-right:none;border-radius:12px 0 0 12px;font-size:0.88rem;outline:none;"
+        onkeydown="if(event.key==='Enter') window.location='search.html?q='+this.value">
+      <button onclick="window.location='search.html?q='+document.getElementById('nav-search-input').value"
+        style="padding:0.5rem 1rem;background:#F47820;color:#fff;border:none;border-radius:0 12px 12px 0;cursor:pointer;font-weight:700;">
+        🔍
+      </button>
+    </div>
+    <div style="display:flex;gap:0.7rem;align-items:center;">
+      <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
+        <button class="lang-btn" onclick="setLang('hi',this)">हि</button>
+        <button class="lang-btn" onclick="setLang('mr',this)">म</button>
       </div>
+      <button class="nav-cart" onclick="showToast('🛒 Cart opened!')">🛒 Cart <span id="cart-count">(0)</span></button>
+      <button class="hamburger" onclick="document.querySelector('nav ul').classList.toggle('show')">☰</button>
     </div>
-  </div>
-</section>
+  </nav>
 
-<!-- MARQUEE -->
-<div class="marquee-bar">
-  <div class="marquee-inner" id="marquee">
-    <span>🛒 FREE HOME DELIVERY AVAILABLE</span><span class="marquee-dot">•</span>
-    <span>🌾 KRUSHI KENDRA — SEEDS & FERTILIZERS</span><span class="marquee-dot">•</span>
-    <span>💡 ELECTRICAL & ELECTRONICS IN STOCK</span><span class="marquee-dot">•</span>
-    <span>🛋 READY-MADE FURNITURE AVAILABLE</span><span class="marquee-dot">•</span>
-    <span>📞 ORDER ON WHATSAPP: 8390901925</span><span class="marquee-dot">•</span>
-    <span>🔧 HARDWARE & TOOLS AVAILABLE</span><span class="marquee-dot">•</span>
-    <span>🛒 FREE HOME DELIVERY AVAILABLE</span><span class="marquee-dot">•</span>
-    <span>🌾 KRUSHI KENDRA — SEEDS & FERTILIZERS</span><span class="marquee-dot">•</span>
-    <span>💡 ELECTRICAL & ELECTRONICS IN STOCK</span><span class="marquee-dot">•</span>
-    <span>🛋 READY-MADE FURNITURE AVAILABLE</span><span class="marquee-dot">•</span>
-    <span>📞 ORDER ON WHATSAPP: 8390901925</span><span class="marquee-dot">•</span>
-    <span>🔧 HARDWARE & TOOLS AVAILABLE</span><span class="marquee-dot">•</span>
-  </div>
-</div>
-
-<!-- DEPARTMENTS -->
-<div id="departments">
-<div class="section fade-in">
-  <div class="section-header">
-    <div class="section-label">Browse By Department</div>
-    <div class="section-title" id="dept-title">All Departments at <span>UG Bazaar</span></div>
-    <div class="section-line"></div>
-  </div>
-  <div class="dept-grid">
-    <div class="dept-card" onclick="filterProducts('grocery')" ondblclick="window.location='search.html'"><span class="dept-emoji">🛒</span><div class="dept-name">Grocery</div><div class="dept-marathi">किराणा</div></div>
-    <div class="dept-card" onclick="filterProducts('general')"><span class="dept-emoji">🏪</span><div class="dept-name">General Store</div><div class="dept-marathi">जनरल स्टोअर</div></div>
-    <div class="dept-card" onclick="filterProducts('hardware')"><span class="dept-emoji">🔧</span><div class="dept-name">Hardware</div><div class="dept-marathi">हार्डवेअर</div></div>
-    <div class="dept-card" onclick="filterProducts('electrical')"><span class="dept-emoji">💡</span><div class="dept-name">Electrical</div><div class="dept-marathi">इलेक्ट्रिकल</div></div>
-    <div class="dept-card" onclick="filterProducts('electronics')"><span class="dept-emoji">📱</span><div class="dept-name">Electronics</div><div class="dept-marathi">इलेक्ट्रॉनिक्स</div></div>
-    <div class="dept-card" onclick="filterProducts('furniture')"><span class="dept-emoji">🛋</span><div class="dept-name">Furniture</div><div class="dept-marathi">फर्निचर</div></div>
-    <div class="dept-card" onclick="filterProducts('krushi')"><span class="dept-emoji">🌾</span><div class="dept-name">Krushi Kendra</div><div class="dept-marathi">कृषी केंद्र</div></div>
-    <div class="dept-card" onclick="filterProducts('all')"><span class="dept-emoji">✨</span><div class="dept-name">View All</div><div class="dept-marathi">सर्व पहा</div></div>
-  </div>
-</div>
-</div>
-
-<!-- PRODUCTS -->
-<div class="products-section" id="products">
-<div class="products-inner">
-  <div class="section-header fade-in">
-    <div class="section-label">Our Products</div>
-    <div class="section-title">Popular <span>Items</span></div>
-    <div class="section-line"></div>
-  </div>
-  <div class="filter-row">
-    <button class="filter-btn active" onclick="filterProducts('all',this)">All</button>
-    <button class="filter-btn" onclick="filterProducts('grocery',this)">Grocery</button>
-    <button class="filter-btn" onclick="filterProducts('hardware',this)">Hardware</button>
-    <button class="filter-btn" onclick="filterProducts('electrical',this)">Electrical</button>
-    <button class="filter-btn" onclick="filterProducts('electronics',this)">Electronics</button>
-    <button class="filter-btn" onclick="filterProducts('furniture',this)">Furniture</button>
-    <button class="filter-btn" onclick="filterProducts('krushi',this)">Krushi</button>
-  </div>
-  <div class="products-grid" id="products-grid"></div>
-</div>
-</div>
-
-<!-- OFFERS -->
-<div id="offers">
-<div class="section fade-in">
-  <div class="section-header">
-    <div class="section-label">Special Deals</div>
-    <div class="section-title">Today's <span>Best Offers</span></div>
-    <div class="section-line"></div>
-  </div>
-  <div class="offers-grid">
-    <div class="offer-card o1">
-      <div class="offer-bg-icon">🛒</div>
-      <h3>Grocery Combo Pack</h3>
-      <p>Rice, Dal, Oil, Spices — complete monthly ration kit at special price.</p>
-      <div class="offer-price">₹899 <span style="font-size:0.9rem;opacity:0.6;text-decoration:line-through;font-weight:400;">₹1,199</span></div>
-      <button class="btn-white" onclick="showToast('✅ Grocery Combo added to cart!')">Add to Cart</button>
-    </div>
-    <div class="offer-card o2">
-      <div class="offer-bg-icon">🌾</div>
-      <h3>Krushi Kendra Special</h3>
-      <p>Seeds + Fertilizer + Pesticide combo — best price for farmers in Talodhi.</p>
-      <div class="offer-price">₹1,499 <span style="font-size:0.9rem;opacity:0.6;text-decoration:line-through;font-weight:400;">₹2,000</span></div>
-      <button class="btn-white" onclick="showToast('✅ Krushi Combo added to cart!')">Add to Cart</button>
-    </div>
-    <div class="offer-card o3">
-      <div class="offer-bg-icon">💡</div>
-      <h3>Electrical Home Kit</h3>
-      <p>Switches, wires, bulbs, plug — complete home wiring starter kit.</p>
-      <div class="offer-price">₹649 <span style="font-size:0.9rem;opacity:0.6;text-decoration:line-through;font-weight:400;">₹850</span></div>
-      <button class="btn-white" onclick="showToast('✅ Electrical Kit added to cart!')">Add to Cart</button>
-    </div>
-  </div>
-</div>
-</div>
-
-<!-- WHY US -->
-<div style="background:var(--off-white);padding:1rem 0;">
-<div class="section fade-in">
-  <div class="section-header">
-    <div class="section-label">Why UG Bazaar</div>
-    <div class="section-title">Why Locals <span>Love Us</span></div>
-    <div class="section-line"></div>
-  </div>
-  <div class="why-grid">
-    <div class="why-card"><div class="why-icon-wrap wi-orange">🚀</div><h4>Fast Delivery</h4><p>Home delivery available in Bhangaram & nearby villages. Order by WhatsApp!</p></div>
-    <div class="why-card"><div class="why-icon-wrap wi-blue">🏪</div><h4>All Under One Roof</h4><p>8+ departments — Grocery to Furniture. No need to visit multiple shops.</p></div>
-    <div class="why-card"><div class="why-icon-wrap wi-green">💰</div><h4>Best Local Prices</h4><p>Fair & transparent pricing for every customer. Seasonal discounts & offers.</p></div>
-    <div class="why-card"><div class="why-icon-wrap wi-gold">⭐</div><h4>Trusted Since Years</h4><p>Your family's trusted shop. Known & loved by people of Talodhi region.</p></div>
-  </div>
-</div>
-</div>
-
-<!-- CONTACT -->
-<div class="contact-section" id="contact">
-  <div class="contact-inner">
-    <div class="contact-info fade-in">
-      <div class="section-label" style="color:#FFD580">Get In Touch</div>
-      <h2>Visit or Call Us</h2>
-      <p class="sub">We're open every day. Come visit us or order on WhatsApp!</p>
-      <div class="contact-item">
-        <div class="contact-icon">📍</div>
-        <div class="contact-detail">
-          <div class="label">Address</div>
-          <div class="value">Opp. CDCC Bank, Bhangaram, Talodhi,<br>Tq. Gondpipri, Dist. Chandrapur,<br>Maharashtra</div>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg-pattern"></div>
+    <div class="hero-orange-blob"></div>
+    <div class="hero-gold-blob"></div>
+    <div class="hero-content">
+      <div class="hero-left fade-in">
+        <div class="hero-badge" id="hero-badge">🌟 Bhangaram's Favourite Multi-Store</div>
+        <h1 id="hero-h1">Everything You Need,<br><span>One Place.</span></h1>
+        <p id="hero-p">Grocery to Electronics, Hardware to Furniture, Krushi Kendra to General Store — UG Bazaar has it
+          all, right here in Bhangaram, Talodhi.</p>
+        <div class="hero-btns">
+          <a href="#products" class="btn-orange" id="hero-btn1">Shop Now →</a>
+          <a href="https://wa.me/918390901925" class="btn-outline" target="_blank">💬 WhatsApp Order</a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="num">8+</div>
+            <div class="lbl" id="stat1">Departments</div>
+          </div>
+          <div class="hero-stat">
+            <div class="num">500+</div>
+            <div class="lbl" id="stat2">Products</div>
+          </div>
+          <div class="hero-stat">
+            <div class="num">9AM</div>
+            <div class="lbl" id="stat3">Opens Daily</div>
+          </div>
         </div>
       </div>
-      <div class="contact-item">
-        <div class="contact-icon">📞</div>
-        <div class="contact-detail">
-          <div class="label">Phone / WhatsApp</div>
-          <div class="value"><a href="tel:8390901925">8390901925</a></div>
+      <div class="hero-right fade-in" style="transition-delay:0.2s">
+        <div class="shop-photo-wrap" style="display: block;">
+          <img src="IMG_20230224_190151.jpg" alt="UG Bazaar Shop — Bhangaram"
+            onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#1A5FB4,#0D3A6E)';this.parentElement.innerHTML+='<div style=\'padding:3rem;text-align:center;color:#fff\'><div style=\'font-size:5rem\'>🏪</div><div style=\'font-weight:700;font-size:1.2rem;margin-top:1rem\'>UG Bazaar</div><div style=\'opacity:0.7;font-size:0.9rem\'>Bhangaram, Talodhi</div></div>'">
+          <div class="photo-badge">📍 Opp. CDCC Bank, Bhangaram, Talodhi</div>
         </div>
       </div>
-      <div class="contact-item">
-        <div class="contact-icon">👤</div>
-        <div class="contact-detail">
-          <div class="label">Owner</div>
-          <div class="value">Uday Ainchwar — <a href="tel:9422137293">9422137293</a></div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-bar">
+    <div class="marquee-inner" id="marquee">
+      <span>🛒 FREE HOME DELIVERY AVAILABLE</span><span class="marquee-dot">•</span>
+      <span>🌾 KRUSHI KENDRA — SEEDS & FERTILIZERS</span><span class="marquee-dot">•</span>
+      <span>💡 ELECTRICAL & ELECTRONICS IN STOCK</span><span class="marquee-dot">•</span>
+      <span>🛋 READY-MADE FURNITURE AVAILABLE</span><span class="marquee-dot">•</span>
+      <span>📞 ORDER ON WHATSAPP: 8390901925</span><span class="marquee-dot">•</span>
+      <span>🔧 HARDWARE & TOOLS AVAILABLE</span><span class="marquee-dot">•</span>
+      <span>🛒 FREE HOME DELIVERY AVAILABLE</span><span class="marquee-dot">•</span>
+      <span>🌾 KRUSHI KENDRA — SEEDS & FERTILIZERS</span><span class="marquee-dot">•</span>
+      <span>💡 ELECTRICAL & ELECTRONICS IN STOCK</span><span class="marquee-dot">•</span>
+      <span>🛋 READY-MADE FURNITURE AVAILABLE</span><span class="marquee-dot">•</span>
+      <span>📞 ORDER ON WHATSAPP: 8390901925</span><span class="marquee-dot">•</span>
+      <span>🔧 HARDWARE & TOOLS AVAILABLE</span><span class="marquee-dot">•</span>
+    </div>
+  </div>
+
+  <!-- DEPARTMENTS -->
+  <div id="departments">
+    <div class="section fade-in">
+      <div class="section-header">
+        <div class="section-label">Browse By Department</div>
+        <div class="section-title" id="dept-title">All Departments at <span>UG Bazaar</span></div>
+        <div class="section-line"></div>
+      </div>
+      <div class="dept-grid">
+        <div class="dept-card" onclick="filterProducts('grocery')" ondblclick="window.location='search.html'"><span
+            class="dept-emoji">🛒</span>
+          <div class="dept-name">Grocery</div>
+          <div class="dept-marathi">किराणा</div>
+        </div>
+        <div class="dept-card" onclick="filterProducts('general')"><span class="dept-emoji">🏪</span>
+          <div class="dept-name">General Store</div>
+          <div class="dept-marathi">जनरल स्टोअर</div>
+        </div>
+        <div class="dept-card" onclick="filterProducts('hardware')"><span class="dept-emoji">🔧</span>
+          <div class="dept-name">Hardware</div>
+          <div class="dept-marathi">हार्डवेअर</div>
+        </div>
+        <div class="dept-card" onclick="filterProducts('electrical')"><span class="dept-emoji">💡</span>
+          <div class="dept-name">Electrical</div>
+          <div class="dept-marathi">इलेक्ट्रिकल</div>
+        </div>
+        <div class="dept-card" onclick="filterProducts('electronics')"><span class="dept-emoji">📱</span>
+          <div class="dept-name">Electronics</div>
+          <div class="dept-marathi">इलेक्ट्रॉनिक्स</div>
+        </div>
+        <div class="dept-card" onclick="filterProducts('furniture')"><span class="dept-emoji">🛋</span>
+          <div class="dept-name">Furniture</div>
+          <div class="dept-marathi">फर्निचर</div>
+        </div>
+        <div class="dept-card" onclick="filterProducts('krushi')"><span class="dept-emoji">🌾</span>
+          <div class="dept-name">Krushi Kendra</div>
+          <div class="dept-marathi">कृषी केंद्र</div>
+        </div>
+        <div class="dept-card" onclick="filterProducts('all')"><span class="dept-emoji">✨</span>
+          <div class="dept-name">View All</div>
+          <div class="dept-marathi">सर्व पहा</div>
         </div>
       </div>
-      <div class="contact-item">
-        <div class="contact-icon">🕐</div>
-        <div class="contact-detail">
-          <div class="label">Timing</div>
-          <div class="value">9:00 AM – 9:00 PM (Daily)</div>
+    </div>
+  </div>
+
+  <!-- PRODUCTS -->
+  <div class="products-section" id="products">
+    <div class="products-inner">
+      <div class="section-header fade-in">
+        <div class="section-label">Our Products</div>
+        <div class="section-title">Popular <span>Items</span></div>
+        <div class="section-line"></div>
+      </div>
+      <div class="filter-row">
+        <button class="filter-btn active" onclick="filterProducts('all',this)">All</button>
+        <button class="filter-btn" onclick="filterProducts('grocery',this)">Grocery</button>
+        <button class="filter-btn" onclick="filterProducts('hardware',this)">Hardware</button>
+        <button class="filter-btn" onclick="filterProducts('electrical',this)">Electrical</button>
+        <button class="filter-btn" onclick="filterProducts('electronics',this)">Electronics</button>
+        <button class="filter-btn" onclick="filterProducts('furniture',this)">Furniture</button>
+        <button class="filter-btn" onclick="filterProducts('krushi',this)">Krushi</button>
+      </div>
+      <div class="products-grid" id="products-grid"></div>
+    </div>
+  </div>
+
+  <!-- OFFERS -->
+  <div id="offers">
+    <div class="section fade-in">
+      <div class="section-header">
+        <div class="section-label">Special Deals</div>
+        <div class="section-title">Today's <span>Best Offers</span></div>
+        <div class="section-line"></div>
+      </div>
+      <div class="offers-grid">
+        <div class="offer-card o1">
+          <div class="offer-bg-icon">🛒</div>
+          <h3>Grocery Combo Pack</h3>
+          <p>Rice, Dal, Oil, Spices — complete monthly ration kit at special price.</p>
+          <div class="offer-price">₹899 <span
+              style="font-size:0.9rem;opacity:0.6;text-decoration:line-through;font-weight:400;">₹1,199</span></div>
+          <button class="btn-white" onclick="showToast('✅ Grocery Combo added to cart!')">Add to Cart</button>
+        </div>
+        <div class="offer-card o2">
+          <div class="offer-bg-icon">🌾</div>
+          <h3>Krushi Kendra Special</h3>
+          <p>Seeds + Fertilizer + Pesticide combo — best price for farmers in Talodhi.</p>
+          <div class="offer-price">₹1,499 <span
+              style="font-size:0.9rem;opacity:0.6;text-decoration:line-through;font-weight:400;">₹2,000</span></div>
+          <button class="btn-white" onclick="showToast('✅ Krushi Combo added to cart!')">Add to Cart</button>
+        </div>
+        <div class="offer-card o3">
+          <div class="offer-bg-icon">💡</div>
+          <h3>Electrical Home Kit</h3>
+          <p>Switches, wires, bulbs, plug — complete home wiring starter kit.</p>
+          <div class="offer-price">₹649 <span
+              style="font-size:0.9rem;opacity:0.6;text-decoration:line-through;font-weight:400;">₹850</span></div>
+          <button class="btn-white" onclick="showToast('✅ Electrical Kit added to cart!')">Add to Cart</button>
         </div>
       </div>
-      <a href="https://wa.me/918390901925?text=Hello%20UG%20Bazaar!%20I%20want%20to%20place%20an%20order." class="wa-btn" target="_blank">💬 Order on WhatsApp</a>
-    </div>
-    <div class="map-placeholder fade-in" style="transition-delay:0.2s">
-      <div class="map-icon">🗺</div>
-      <h3>Bhangaram, Talodhi</h3>
-      <p>Opp. CDCC Bank, Tq. Gondpipri<br>Dist. Chandrapur, Maharashtra</p>
-      <p style="margin-top:1rem;font-size:0.82rem;opacity:0.5;">📦 Delivery available in Bhangaram, Talodhi & surrounding villages<br>Phase 2: Full Chandrapur District</p>
     </div>
   </div>
-</div>
 
-<!-- AI RECOMMENDATIONS -->
-<section class="ai-rec-section">
-  <div class="ai-rec-inner">
-    <div class="ai-rec-top">
-      <div>
-        <div class="ai-rec-label">Recommended For You</div>
-        <div class="ai-rec-title">Products You <span>Might Like</span></div>
+  <!-- WHY US -->
+  <div style="background:var(--off-white);padding:1rem 0;">
+    <div class="section fade-in">
+      <div class="section-header">
+        <div class="section-label">Why UG Bazaar</div>
+        <div class="section-title">Why Locals <span>Love Us</span></div>
+        <div class="section-line"></div>
       </div>
-      <div class="rec-chips">
-        <button class="rec-chip active" onclick="loadRecs('household',this)">🏠 Household</button>
-        <button class="rec-chip" onclick="loadRecs('farmer',this)">🌾 Farmer</button>
-        <button class="rec-chip" onclick="loadRecs('contractor',this)">🔧 Contractor</button>
-        <button class="rec-chip" onclick="loadRecs('shopkeeper',this)">🏪 Shopkeeper</button>
+      <div class="why-grid">
+        <div class="why-card">
+          <div class="why-icon-wrap wi-orange">🚀</div>
+          <h4>Fast Delivery</h4>
+          <p>Home delivery available in Bhangaram & nearby villages. Order by WhatsApp!</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon-wrap wi-blue">🏪</div>
+          <h4>All Under One Roof</h4>
+          <p>8+ departments — Grocery to Furniture. No need to visit multiple shops.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon-wrap wi-green">💰</div>
+          <h4>Best Local Prices</h4>
+          <p>Fair & transparent pricing for every customer. Seasonal discounts & offers.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon-wrap wi-gold">⭐</div>
+          <h4>Trusted Since Years</h4>
+          <p>Your family's trusted shop. Known & loved by people of Talodhi region.</p>
+        </div>
       </div>
     </div>
-    <div class="rec-products-grid" id="rec-grid">
-      <div class="rec-loading">Finding best products for you <div class="dot-pulse"><span></span><span></span><span></span></div></div>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="contact-section" id="contact">
+    <div class="contact-inner">
+      <div class="contact-info fade-in">
+        <div class="section-label" style="color:#FFD580">Get In Touch</div>
+        <h2>Visit or Call Us</h2>
+        <p class="sub">We're open every day. Come visit us or order on WhatsApp!</p>
+        <div class="contact-item">
+          <div class="contact-icon">📍</div>
+          <div class="contact-detail">
+            <div class="label">Address</div>
+            <div class="value">Opp. CDCC Bank, Bhangaram, Talodhi,<br>Tq. Gondpipri, Dist. Chandrapur,<br>Maharashtra
+            </div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">📞</div>
+          <div class="contact-detail">
+            <div class="label">Phone / WhatsApp</div>
+            <div class="value"><a href="tel:8390901925">8390901925</a></div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">👤</div>
+          <div class="contact-detail">
+            <div class="label">Owner</div>
+            <div class="value">Uday Ainchwar — <a href="tel:9422137293">9422137293</a></div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">🕐</div>
+          <div class="contact-detail">
+            <div class="label">Timing</div>
+            <div class="value">9:00 AM – 9:00 PM (Daily)</div>
+          </div>
+        </div>
+        <a href="https://wa.me/918390901925?text=Hello%20UG%20Bazaar!%20I%20want%20to%20place%20an%20order."
+          class="wa-btn" target="_blank">💬 Order on WhatsApp</a>
+      </div>
+      <div class="map-placeholder fade-in" style="transition-delay:0.2s">
+        <div class="map-icon">🗺</div>
+        <h3>Bhangaram, Talodhi</h3>
+        <p>Opp. CDCC Bank, Tq. Gondpipri<br>Dist. Chandrapur, Maharashtra</p>
+        <p style="margin-top:1rem;font-size:0.82rem;opacity:0.5;">📦 Delivery available in Bhangaram, Talodhi &
+          surrounding villages<br>Phase 2: Full Chandrapur District</p>
+      </div>
     </div>
   </div>
-</section>
 
-<!-- FLOATING SEARCH (MOBILE) -->
-<a href="search.html" class="mobile-search-fab">🔍</a>
-
-<!-- FLOATING CHATBOT -->
-<div class="chat-fab" onclick="toggleChat()" id="chat-fab">
-  <span class="chat-fab-icon">💬</span>
-  <div class="chat-fab-pulse"></div>
-</div>
-
-<div class="chat-window-wrap" id="chat-window-wrap">
-  <div class="chat-header">
-    <div class="chat-header-avatar">🤖</div>
-    <div class="chat-header-info">
-      <div class="chat-header-name">UG Bazaar Assistant</div>
-      <div class="chat-header-status"><span class="status-dot-g"></span> Online — Always here to help</div>
+  <!-- AI RECOMMENDATIONS -->
+  <section class="ai-rec-section">
+    <div class="ai-rec-inner">
+      <div class="ai-rec-top">
+        <div>
+          <div class="ai-rec-label">Recommended For You</div>
+          <div class="ai-rec-title">Products You <span>Might Like</span></div>
+        </div>
+        <div class="rec-chips">
+          <button class="rec-chip active" onclick="loadRecs('household',this)">🏠 Household</button>
+          <button class="rec-chip" onclick="loadRecs('farmer',this)">🌾 Farmer</button>
+          <button class="rec-chip" onclick="loadRecs('contractor',this)">🔧 Contractor</button>
+          <button class="rec-chip" onclick="loadRecs('shopkeeper',this)">🏪 Shopkeeper</button>
+        </div>
+      </div>
+      <div class="rec-products-grid" id="rec-grid">
+        <div class="rec-loading">Finding best products for you <div class="dot-pulse">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      </div>
     </div>
-    <button class="chat-close" onclick="toggleChat()">✕</button>
+  </section>
+
+  <!-- FLOATING SEARCH (MOBILE) -->
+  <a href="search.html" class="mobile-search-fab">🔍</a>
+
+  <!-- FLOATING CHATBOT -->
+  <div class="chat-fab" onclick="toggleChat()" id="chat-fab">
+    <span class="chat-fab-icon">💬</span>
+    <div class="chat-fab-pulse"></div>
   </div>
-  <div class="chat-msgs" id="chat-msgs">
-    <div class="cmsg">
-      <div class="cmsg-av ai">🤖</div>
-      <div class="cmsg-bubble ai">Namaste! 🙏 UG Bazaar mein aapka swagat hai! Main aapki kaise madad kar sakta hoon? Hindi, Marathi ya English — koi bhi bhasha mein poochho!</div>
+
+  <div class="chat-window-wrap" id="chat-window-wrap">
+    <div class="chat-header">
+      <div class="chat-header-avatar">🤖</div>
+      <div class="chat-header-info">
+        <div class="chat-header-name">UG Bazaar Assistant</div>
+        <div class="chat-header-status"><span class="status-dot-g"></span> Online — Always here to help</div>
+      </div>
+      <button class="chat-close" onclick="toggleChat()">✕</button>
+    </div>
+    <div class="chat-msgs" id="chat-msgs">
+      <div class="cmsg">
+        <div class="cmsg-av ai">🤖</div>
+        <div class="cmsg-bubble ai">Namaste! 🙏 UG Bazaar mein aapka swagat hai! Main aapki kaise madad kar sakta hoon?
+          Hindi, Marathi ya English — koi bhi bhasha mein poochho!</div>
+      </div>
+    </div>
+    <div class="chat-quick">
+      <button class="cqbtn" onclick="chatQuick('Delivery kab milegi?')">Delivery?</button>
+      <button class="cqbtn" onclick="chatQuick('Return policy kya hai?')">Return?</button>
+      <button class="cqbtn" onclick="chatQuick('Best offers kaunse hain?')">Offers?</button>
+      <button class="cqbtn" onclick="chatQuick('Shop ka timing?')">Timing?</button>
+    </div>
+    <div class="chat-input-area">
+      <input class="chat-text-input" id="chat-input" placeholder="Kuch bhi poochho..."
+        onkeydown="if(event.key==='Enter')chatSend()">
+      <button class="chat-send-btn" onclick="chatSend()">➤</button>
     </div>
   </div>
-  <div class="chat-quick">
-    <button class="cqbtn" onclick="chatQuick('Delivery kab milegi?')">Delivery?</button>
-    <button class="cqbtn" onclick="chatQuick('Return policy kya hai?')">Return?</button>
-    <button class="cqbtn" onclick="chatQuick('Best offers kaunse hain?')">Offers?</button>
-    <button class="cqbtn" onclick="chatQuick('Shop ka timing?')">Timing?</button>
-  </div>
-  <div class="chat-input-area">
-    <input class="chat-text-input" id="chat-input" placeholder="Kuch bhi poochho..." onkeydown="if(event.key==='Enter')chatSend()">
-    <button class="chat-send-btn" onclick="chatSend()">➤</button>
-  </div>
-</div>
 
-<!-- FOOTER -->
-<footer>
-  <div class="footer-logo">UG <span>Bazaar</span> — Opp. CDCC Bank, Bhangaram, Talodhi, Tq. Gondpipri, Dist. Chandrapur</div>
-  <div>© 2025 UG Bazaar. All rights reserved. | Uday Ainchwar</div>
-  <div><a href="tel:8390901925" style="color:#FFD580;text-decoration:none;">📞 8390901925</a></div>
-</footer>
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">UG <span>Bazaar</span> — Opp. CDCC Bank, Bhangaram, Talodhi, Tq. Gondpipri, Dist.
+      Chandrapur</div>
+    <div>© 2025 UG Bazaar. All rights reserved. | Uday Ainchwar</div>
+    <div><a href="tel:8390901925" style="color:#FFD580;text-decoration:none;">📞 8390901925</a></div>
+  </footer>
 
-<div class="toast" id="toast"></div>
+  <div class="toast" id="toast"></div>
 
-<script>
-// ── API INTEGRATION ──
-let currentCat = 'all';
+  <script>
+    // ── API INTEGRATION ──
+    let currentCat = 'all';
 
-async function filterProducts(cat, btn) {
-  if (btn) {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  }
-  currentCat = cat;
-  const grid = document.getElementById('products-grid');
-  grid.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--gray)">Loading...</div>`;
+    async function filterProducts(cat, btn) {
+      if (btn) {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      }
+      currentCat = cat;
+      const grid = document.getElementById('products-grid');
+      grid.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--gray)">Loading...</div>`;
 
-  const dept = cat === 'all' ? '' : cat;
-  try {
-    const r = await ProductAPI.getAll({ dept, limit: 12 });
+      const dept = cat === 'all' ? '' : cat;
+      try {
+        const r = await ProductAPI.getAll({ dept, limit: 12 });
 
-    if (!r.success) {
-      // Fallback to static data if API not connected yet
-      renderStaticProducts(cat);
-      return;
+        if (!r.success) {
+          // Fallback to static data if API not connected yet
+          renderStaticProducts(cat);
+          return;
+        }
+        renderProducts(r.data.products);
+      } catch (error) {
+        console.error("API error, loading static products", error);
+        renderStaticProducts(cat);
+      }
+      document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
     }
-    renderProducts(r.data.products);
-  } catch (error) {
-    console.error("API error, loading static products", error);
-    renderStaticProducts(cat);
-  }
-  document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
-}
 
-function renderProducts(products) {
-  const grid = document.getElementById('products-grid');
-  if (!products.length) {
-    grid.innerHTML = `<div style="text-align:center;padding:2rem;grid-column:1/-1">Koi product nahi mila</div>`;
-    return;
-  }
-  grid.innerHTML = products.map(p => `
+    function renderProducts(products) {
+      const grid = document.getElementById('products-grid');
+      if (!products.length) {
+        grid.innerHTML = `<div style="text-align:center;padding:2rem;grid-column:1/-1">Koi product nahi mila</div>`;
+        return;
+      }
+      grid.innerHTML = products.map(p => `
     <div class="product-card fade-in visible" onclick="window.location='product.html?id=${p._id}'" style="cursor:pointer">
       <div class="product-img">
         <span style="font-size:3.8rem">${p.emoji || '🛍'}</span>
@@ -616,201 +1999,215 @@ function renderProducts(products) {
       </div>
     </div>
   `).join('');
-}
+    }
 
-async function addCart(productId, name) {
-  if (!Auth.isLoggedIn()) {
-    window.location.href = 'auth.html?redirect=' + encodeURIComponent(window.location.href);
-    return;
-  }
-  const r = await CartAPI.add(productId);
-  if (r.success) {
-    Cart.count = Cart.count + 1;
-    showToast(`✅ ${name} cart mein add hua!`);
-  } else {
-    showToast(`❌ ${r.error}`);
-  }
-}
-
-// Static fallback (used until backend is live)
-const staticProducts = [
-  { _id:'s1', name:"Basmati Rice 5kg", nameHindi:"बासमती तांदूळ", emoji:"🌾", dept:"Grocery", price:320, mrp:380, badge:"Popular", cat:"grocery" },
-  { _id:'s2', name:"Toor Dal 1kg", nameHindi:"तूर डाळ", emoji:"🫘", dept:"Grocery", price:145, mrp:170, badge:"", cat:"grocery" },
-  { _id:'s3', name:"Sunflower Oil 1L", nameHindi:"सूर्यफूल तेल", emoji:"🛢", dept:"Grocery", price:165, mrp:185, badge:"", cat:"grocery" },
-  { _id:'s4', name:"Steel Hammer", nameHindi:"स्टील हातोडा", emoji:"🔨", dept:"Hardware", price:220, mrp:280, badge:"", cat:"hardware" },
-  { _id:'s5', name:"LED Bulb 9W", nameHindi:"LED बल्ब", emoji:"💡", dept:"Electrical", price:65, mrp:90, badge:"Best Buy", cat:"electrical" },
-  { _id:'s6', name:"Mobile Charger", nameHindi:"मोबाईल चार्जर", emoji:"📱", dept:"Electronics", price:199, mrp:299, badge:"Hot", cat:"electronics" },
-  { _id:'s7', name:"Wooden Chair", nameHindi:"लाकडी खुर्ची", emoji:"🪑", dept:"Furniture", price:1200, mrp:1600, badge:"", cat:"furniture" },
-  { _id:'s8', name:"Hybrid Seeds 500g", nameHindi:"हायब्रीड बियाणे", emoji:"🌱", dept:"Krushi Kendra", price:180, mrp:240, badge:"Farmer Pick", cat:"krushi" },
-  { _id:'s9', name:"DAP Fertilizer 5kg", nameHindi:"डीएपी खत", emoji:"🌿", dept:"Krushi Kendra", price:650, mrp:780, badge:"", cat:"krushi" },
-  { _id:'s10', name:"Electric Wire 10m", nameHindi:"इलेक्ट्रिक तार", emoji:"🔌", dept:"Electrical", price:280, mrp:340, badge:"", cat:"electrical" },
-  { _id:'s11', name:"Table Fan", nameHindi:"टेबल फॅन", emoji:"🌀", dept:"Electronics", price:850, mrp:1100, badge:"", cat:"electronics" },
-  { _id:'s12', name:"PVC Pipe 1m", nameHindi:"पीव्हीसी पाईप", emoji:"🪛", dept:"Hardware", price:85, mrp:110, badge:"", cat:"hardware" },
-];
-
-function renderStaticProducts(cat) {
-  const filtered = cat === 'all' ? staticProducts : staticProducts.filter(p => p.cat === cat);
-  renderProducts(filtered);
-  document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast show';
-  setTimeout(() => t.className = 'toast', 2800);
-}
-
-const translations = {
-  en: { badge:'🌟 Bhangaram\'s Favourite Multi-Store', h1:'Everything You Need,<br><span>One Place.</span>', p:'Grocery to Electronics, Hardware to Furniture, Krushi Kendra to General Store — UG Bazaar has it all.', btn1:'Shop Now →', stat1:'Departments', stat2:'Products', stat3:'Opens Daily', deptTitle:'All Departments at <span>UG Bazaar</span>' },
-  hi: { badge:'🌟 भंगाराम की पसंदीदा दुकान', h1:'सब कुछ एक ही जगह,<br><span>UG Bazaar.</span>', p:'किराना से इलेक्ट्रॉनिक्स, हार्डवेयर से फर्नीचर — यूजी बाज़ार में सब मिलता है।', btn1:'अभी खरीदें →', stat1:'विभाग', stat2:'उत्पाद', stat3:'रोज खुलता है', deptTitle:'UG Bazaar के <span>सभी विभाग</span>' },
-  mr: { badge:'🌟 भंगारामची आवडती दुकान', h1:'सगळं मिळेल एकाच ठिकाणी,<br><span>UG Bazaar.</span>', p:'किराणा ते इलेक्ट्रॉनिक्स, हार्डवेअर ते फर्निचर — युजी बझार मध्ये सर्व काही.', btn1:'आता खरेदी करा →', stat1:'विभाग', stat2:'उत्पादने', stat3:'रोज उघडते', deptTitle:'UG Bazaar चे <span>सर्व विभाग</span>' }
-};
-
-function setLang(lang, btn) {
-  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  const t = translations[lang];
-  document.getElementById('hero-badge').textContent = t.badge;
-  document.getElementById('hero-h1').innerHTML = t.h1;
-  document.getElementById('hero-p').textContent = t.p;
-  document.getElementById('hero-btn1').textContent = t.btn1;
-  document.getElementById('stat1').textContent = t.stat1;
-  document.getElementById('stat2').textContent = t.stat2;
-  document.getElementById('stat3').textContent = t.stat3;
-  document.getElementById('dept-title').innerHTML = t.deptTitle;
-}
-
-window.addEventListener('load', function() {
-  setTimeout(function() {
-    filterProducts('all');
-  }, 500);
-});
-
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
-}, { threshold: 0.1 });
-document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-// ── AI CLAUDE API ──
-async function callClaude(system, user, maxTokens=500) {
-  try {
-    const GEMINI_KEY = 'AIzaSyDW4Ht6M78PAzCB3HhKfvrmk0oc-V3ZtJU';
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{ 
-              text: system + '\n\nUser: ' + user 
-            }]
-          }]
-        })
+    async function addCart(productId, name) {
+      if (!Auth.isLoggedIn()) {
+        window.location.href = 'auth.html?redirect=' + encodeURIComponent(window.location.href);
+        return;
       }
-    );
-    const data = await res.json();
-    return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-  } catch(e) { 
-    return 'Sorry, response nahi aa raha. Please call: 8390901925'; 
-  }
-}
+      const r = await CartAPI.add(productId);
+      if (r.success) {
+        Cart.count = Cart.count + 1;
+        showToast(`✅ ${name} cart mein add hua!`);
+      } else {
+        showToast(`❌ ${r.error}`);
+      }
+    }
 
-// ── CHATBOT ──
-let chatOpen = false;
-function toggleChat() {
-  chatOpen = !chatOpen;
-  document.getElementById('chat-window-wrap').classList.toggle('open', chatOpen);
-  if(chatOpen) document.getElementById('chat-input').focus();
-}
+    // Static fallback (used until backend is live)
+    const staticProducts = [
+      { _id: 's1', name: "Basmati Rice 5kg", nameHindi: "बासमती तांदूळ", emoji: "🌾", dept: "Grocery", price: 320, mrp: 380, badge: "Popular", cat: "grocery" },
+      { _id: 's2', name: "Toor Dal 1kg", nameHindi: "तूर डाळ", emoji: "🫘", dept: "Grocery", price: 145, mrp: 170, badge: "", cat: "grocery" },
+      { _id: 's3', name: "Sunflower Oil 1L", nameHindi: "सूर्यफूल तेल", emoji: "🛢", dept: "Grocery", price: 165, mrp: 185, badge: "", cat: "grocery" },
+      { _id: 's4', name: "Steel Hammer", nameHindi: "स्टील हातोडा", emoji: "🔨", dept: "Hardware", price: 220, mrp: 280, badge: "", cat: "hardware" },
+      { _id: 's5', name: "LED Bulb 9W", nameHindi: "LED बल्ब", emoji: "💡", dept: "Electrical", price: 65, mrp: 90, badge: "Best Buy", cat: "electrical" },
+      { _id: 's6', name: "Mobile Charger", nameHindi: "मोबाईल चार्जर", emoji: "📱", dept: "Electronics", price: 199, mrp: 299, badge: "Hot", cat: "electronics" },
+      { _id: 's7', name: "Wooden Chair", nameHindi: "लाकडी खुर्ची", emoji: "🪑", dept: "Furniture", price: 1200, mrp: 1600, badge: "", cat: "furniture" },
+      { _id: 's8', name: "Hybrid Seeds 500g", nameHindi: "हायब्रीड बियाणे", emoji: "🌱", dept: "Krushi Kendra", price: 180, mrp: 240, badge: "Farmer Pick", cat: "krushi" },
+      { _id: 's9', name: "DAP Fertilizer 5kg", nameHindi: "डीएपी खत", emoji: "🌿", dept: "Krushi Kendra", price: 650, mrp: 780, badge: "", cat: "krushi" },
+      { _id: 's10', name: "Electric Wire 10m", nameHindi: "इलेक्ट्रिक तार", emoji: "🔌", dept: "Electrical", price: 280, mrp: 340, badge: "", cat: "electrical" },
+      { _id: 's11', name: "Table Fan", nameHindi: "टेबल फॅन", emoji: "🌀", dept: "Electronics", price: 850, mrp: 1100, badge: "", cat: "electronics" },
+      { _id: 's12', name: "PVC Pipe 1m", nameHindi: "पीव्हीसी पाईप", emoji: "🪛", dept: "Hardware", price: 85, mrp: 110, badge: "", cat: "hardware" },
+    ];
 
-function chatQuick(msg) {
-  document.getElementById('chat-input').value = msg;
-  chatSend();
-}
+    function renderStaticProducts(cat) {
+      const filtered = cat === 'all' ? staticProducts : staticProducts.filter(p => p.cat === cat);
+      renderProducts(filtered);
+      document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+    }
 
-async function chatSend() {
-  const input = document.getElementById('chat-input');
-  const msg = input.value.trim();
-  if(!msg) return;
-  input.value = '';
-  addMsg('user', msg);
-  addMsg('ai', null, true);
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast show';
+      setTimeout(() => t.className = 'toast', 2800);
+    }
 
-  const system = `You are UG Bazaar's friendly shop assistant in Bhangaram, Talodhi, Dist. Chandrapur, Maharashtra.
+    const translations = {
+      en: { badge: '🌟 Bhangaram\'s Favourite Multi-Store', h1: 'Everything You Need,<br><span>One Place.</span>', p: 'Grocery to Electronics, Hardware to Furniture, Krushi Kendra to General Store — UG Bazaar has it all.', btn1: 'Shop Now →', stat1: 'Departments', stat2: 'Products', stat3: 'Opens Daily', deptTitle: 'All Departments at <span>UG Bazaar</span>' },
+      hi: { badge: '🌟 भंगाराम की पसंदीदा दुकान', h1: 'सब कुछ एक ही जगह,<br><span>UG Bazaar.</span>', p: 'किराना से इलेक्ट्रॉनिक्स, हार्डवेयर से फर्नीचर — यूजी बाज़ार में सब मिलता है।', btn1: 'अभी खरीदें →', stat1: 'विभाग', stat2: 'उत्पाद', stat3: 'रोज खुलता है', deptTitle: 'UG Bazaar के <span>सभी विभाग</span>' },
+      mr: { badge: '🌟 भंगारामची आवडती दुकान', h1: 'सगळं मिळेल एकाच ठिकाणी,<br><span>UG Bazaar.</span>', p: 'किराणा ते इलेक्ट्रॉनिक्स, हार्डवेअर ते फर्निचर — युजी बझार मध्ये सर्व काही.', btn1: 'आता खरेदी करा →', stat1: 'विभाग', stat2: 'उत्पादने', stat3: 'रोज उघडते', deptTitle: 'UG Bazaar चे <span>सर्व विभाग</span>' }
+    };
+
+    function setLang(lang, btn) {
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const t = translations[lang];
+      document.getElementById('hero-badge').textContent = t.badge;
+      document.getElementById('hero-h1').innerHTML = t.h1;
+      document.getElementById('hero-p').textContent = t.p;
+      document.getElementById('hero-btn1').textContent = t.btn1;
+      document.getElementById('stat1').textContent = t.stat1;
+      document.getElementById('stat2').textContent = t.stat2;
+      document.getElementById('stat3').textContent = t.stat3;
+      document.getElementById('dept-title').innerHTML = t.deptTitle;
+    }
+
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        filterProducts('all');
+      }, 500);
+    });
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // ── AI CLAUDE API ──
+    async function callClaude(system, user, maxTokens = 500) {
+      try {
+        const GEMINI_KEY = 'AIzaSyDW4Ht6M78PAzCB3HhKfvrmk0oc-V3ZtJU';
+        const prompt = system + '\n\nUser message: ' + user;
+        
+        const res = await fetch(
+          'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + GEMINI_KEY,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ 
+                role: 'user',
+                parts: [{ text: prompt }]
+              }],
+              generationConfig: {
+                maxOutputTokens: 300,
+                temperature: 0.7
+              }
+            })
+          }
+        );
+        
+        if (!res.ok) {
+          const err = await res.json();
+          console.error('Gemini error:', err);
+          return 'Sorry, service unavailable. Call: 8390901925';
+        }
+        
+        const data = await res.json();
+        return data.candidates?.[0]?.content?.parts?.[0]?.text || 
+               'Koi response nahi mila.';
+      } catch(e) { 
+        console.error('Chatbot error:', e);
+        return 'Network error. Please call: 8390901925'; 
+      }
+    }
+
+    // ── CHATBOT ──
+    let chatOpen = false;
+    function toggleChat() {
+      chatOpen = !chatOpen;
+      document.getElementById('chat-window-wrap').classList.toggle('open', chatOpen);
+      if (chatOpen) document.getElementById('chat-input').focus();
+    }
+
+    function chatQuick(msg) {
+      document.getElementById('chat-input').value = msg;
+      chatSend();
+    }
+
+    async function chatSend() {
+      const input = document.getElementById('chat-input');
+      const msg = input.value.trim();
+      if (!msg) return;
+      input.value = '';
+      addMsg('user', msg);
+      addMsg('ai', null, true);
+
+      const system = `You are UG Bazaar's friendly shop assistant in Bhangaram, Talodhi, Dist. Chandrapur, Maharashtra.
 Owner: Uday Ainchwar (9422137293). Shop: 8390901925. Open 9AM-9PM daily.
 Departments: Grocery, Hardware, Electrical, Electronics, Furniture, Krushi Kendra, General Store.
 Free delivery above ₹500. 7-day returns. Payment: UPI, Card, COD.
 Coupons: UG10 (10% off), UDAY20 (₹20 off), FIRST50 (₹50 first order), KISAN30 (30% Krushi).
 Reply in same language as user (Hindi/Marathi/English). Short, friendly, use emojis. Max 3 sentences.`;
 
-  const reply = await callClaude(system, msg);
-  updateLastAiMsg(reply || 'Sorry, abhi response nahi aa raha. Please call karo: 8390901925 📞');
-}
+      const reply = await callClaude(system, msg);
+      updateLastAiMsg(reply || 'Sorry, abhi response nahi aa raha. Please call karo: 8390901925 📞');
+    }
 
-function addMsg(role, text, loading=false) {
-  const msgs = document.getElementById('chat-msgs');
-  const div = document.createElement('div');
-  div.className = `cmsg ${role}`;
-  div.id = loading ? 'chat-loading' : '';
-  div.innerHTML = `
-    <div class="cmsg-av ${role==='ai'?'ai':''}">${role==='ai'?'🤖':'👤'}</div>
-    <div class="cmsg-bubble ${role}">${loading?'<div class="typing-ind"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>':text}</div>`;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-}
+    function addMsg(role, text, loading = false) {
+      const msgs = document.getElementById('chat-msgs');
+      const div = document.createElement('div');
+      div.className = `cmsg ${role}`;
+      div.id = loading ? 'chat-loading' : '';
+      div.innerHTML = `
+    <div class="cmsg-av ${role === 'ai' ? 'ai' : ''}">${role === 'ai' ? '🤖' : '👤'}</div>
+    <div class="cmsg-bubble ${role}">${loading ? '<div class="typing-ind"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>' : text}</div>`;
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
 
-function updateLastAiMsg(text) {
-  const el = document.getElementById('chat-loading');
-  if(el) { el.id=''; el.querySelector('.cmsg-bubble').innerHTML = text; }
-  document.getElementById('chat-msgs').scrollTop = 99999;
-}
+    function updateLastAiMsg(text) {
+      const el = document.getElementById('chat-loading');
+      if (el) { el.id = ''; el.querySelector('.cmsg-bubble').innerHTML = text; }
+      document.getElementById('chat-msgs').scrollTop = 99999;
+    }
 
-// ── AI RECOMMENDATIONS ──
-const allProds = [
-  { emoji:'🌾', name:'Basmati Rice 5kg', price:280, old:380, cat:'grocery', why:'Daily essential', types:['household','shopkeeper'] },
-  { emoji:'🫘', name:'Toor Dal 1kg', price:145, old:170, cat:'grocery', why:'Protein-rich staple', types:['household'] },
-  { emoji:'💡', name:'LED Bulb 9W', price:65, old:90, cat:'electrical', why:'Energy saving', types:['household','contractor','shopkeeper'] },
-  { emoji:'🌱', name:'Hybrid Seeds 500g', price:180, old:240, cat:'krushi', why:'High yield this season', types:['farmer'] },
-  { emoji:'🌿', name:'DAP Fertilizer 5kg', price:650, old:780, cat:'krushi', why:'Best for Kharif crops', types:['farmer'] },
-  { emoji:'🔨', name:'Steel Hammer', price:220, old:280, cat:'hardware', why:'Heavy duty quality', types:['contractor'] },
-  { emoji:'🪛', name:'Screwdriver Set', price:180, old:250, cat:'hardware', why:'Essential toolkit', types:['contractor','household'] },
-  { emoji:'📱', name:'Mobile Charger', price:199, old:299, cat:'electronics', why:'Fast charging', types:['household','shopkeeper'] },
-  { emoji:'🌀', name:'Table Fan', price:850, old:1100, cat:'electronics', why:'Best for summer', types:['household','shopkeeper'] },
-  { emoji:'🛋', name:'Wooden Chair', price:1200, old:1600, cat:'furniture', why:'Ready-made, strong build', types:['shopkeeper','household'] },
-  { emoji:'🔌', name:'Electric Wire 10m', price:280, old:340, cat:'electrical', why:'ISI certified', types:['contractor'] },
-  { emoji:'💧', name:'Pesticide Spray 1L', price:320, old:420, cat:'krushi', why:'Effective pest control', types:['farmer'] },
-];
+    // ── AI RECOMMENDATIONS ──
+    const allProds = [
+      { emoji: '🌾', name: 'Basmati Rice 5kg', price: 280, old: 380, cat: 'grocery', why: 'Daily essential', types: ['household', 'shopkeeper'] },
+      { emoji: '🫘', name: 'Toor Dal 1kg', price: 145, old: 170, cat: 'grocery', why: 'Protein-rich staple', types: ['household'] },
+      { emoji: '💡', name: 'LED Bulb 9W', price: 65, old: 90, cat: 'electrical', why: 'Energy saving', types: ['household', 'contractor', 'shopkeeper'] },
+      { emoji: '🌱', name: 'Hybrid Seeds 500g', price: 180, old: 240, cat: 'krushi', why: 'High yield this season', types: ['farmer'] },
+      { emoji: '🌿', name: 'DAP Fertilizer 5kg', price: 650, old: 780, cat: 'krushi', why: 'Best for Kharif crops', types: ['farmer'] },
+      { emoji: '🔨', name: 'Steel Hammer', price: 220, old: 280, cat: 'hardware', why: 'Heavy duty quality', types: ['contractor'] },
+      { emoji: '🪛', name: 'Screwdriver Set', price: 180, old: 250, cat: 'hardware', why: 'Essential toolkit', types: ['contractor', 'household'] },
+      { emoji: '📱', name: 'Mobile Charger', price: 199, old: 299, cat: 'electronics', why: 'Fast charging', types: ['household', 'shopkeeper'] },
+      { emoji: '🌀', name: 'Table Fan', price: 850, old: 1100, cat: 'electronics', why: 'Best for summer', types: ['household', 'shopkeeper'] },
+      { emoji: '🛋', name: 'Wooden Chair', price: 1200, old: 1600, cat: 'furniture', why: 'Ready-made, strong build', types: ['shopkeeper', 'household'] },
+      { emoji: '🔌', name: 'Electric Wire 10m', price: 280, old: 340, cat: 'electrical', why: 'ISI certified', types: ['contractor'] },
+      { emoji: '💧', name: 'Pesticide Spray 1L', price: 320, old: 420, cat: 'krushi', why: 'Effective pest control', types: ['farmer'] },
+    ];
 
-async function loadRecs(type, btn) {
-  if(btn) {
-    document.querySelectorAll('.rec-chip').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  }
-  const grid = document.getElementById('rec-grid');
-  grid.innerHTML = `<div class="rec-loading">Finding best products for you <div class="dot-pulse"><span></span><span></span><span></span></div></div>`;
+    async function loadRecs(type, btn) {
+      if (btn) {
+        document.querySelectorAll('.rec-chip').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      }
+      const grid = document.getElementById('rec-grid');
+      grid.innerHTML = `<div class="rec-loading">Finding best products for you <div class="dot-pulse"><span></span><span></span><span></span></div></div>`;
 
-  const system = `You are a product recommendation engine for UG Bazaar store in rural Maharashtra.
-Products: ${allProds.map(p=>p.name+'(₹'+p.price+')').join(', ')}.
+      const system = `You are a product recommendation engine for UG Bazaar store in rural Maharashtra.
+Products: ${allProds.map(p => p.name + '(₹' + p.price + ')').join(', ')}.
 Return ONLY a JSON array of exactly 6 product names from the list with a short reason (max 5 words each).
 Format: [{"name":"Product Name","why":"Short reason here"}]
 No markdown, no extra text.`;
 
-  const typeLabels = { household:'household family in rural Maharashtra', farmer:'farmer in Vidarbha region', contractor:'building contractor/mistri', shopkeeper:'small shopkeeper' };
-  const result = await callClaude(system, `Customer type: ${typeLabels[type]}. Recommend 6 best products.`, 300);
+      const typeLabels = { household: 'household family in rural Maharashtra', farmer: 'farmer in Vidarbha region', contractor: 'building contractor/mistri', shopkeeper: 'small shopkeeper' };
+      const result = await callClaude(system, `Customer type: ${typeLabels[type]}. Recommend 6 best products.`, 300);
 
-  let recs = [];
-  try {
-    const clean = result.replace(/```json|```/g,'').trim();
-    recs = JSON.parse(clean);
-  } catch(e) {
-    recs = allProds.filter(p => p.types.includes(type)).slice(0,6).map(p => ({ name:p.name, why:p.why }));
-  }
+      let recs = [];
+      try {
+        const clean = result.replace(/```json|```/g, '').trim();
+        recs = JSON.parse(clean);
+      } catch (e) {
+        recs = allProds.filter(p => p.types.includes(type)).slice(0, 6).map(p => ({ name: p.name, why: p.why }));
+      }
 
-  grid.innerHTML = recs.slice(0,6).map(r => {
-    const p = allProds.find(x => x.name.toLowerCase().includes((r.name||'').toLowerCase().split(' ')[0])) || allProds[0];
-    return `<div class="rec-pcard" onclick="showToast('🛒 ${p.name} — product page kholenge!')">
+      grid.innerHTML = recs.slice(0, 6).map(r => {
+        const p = allProds.find(x => x.name.toLowerCase().includes((r.name || '').toLowerCase().split(' ')[0])) || allProds[0];
+        return `<div class="rec-pcard" onclick="showToast('🛒 ${p.name} — product page kholenge!')">
       <div class="rec-pcard-img">
         <span>${p.emoji}</span>
         <div class="rec-ai-tag">For You</div>
@@ -824,13 +2221,14 @@ No markdown, no extra text.`;
         </div>
       </div>
     </div>`;
-  }).join('');
-}
+      }).join('');
+    }
 
-// Load recommendations on page load
-loadRecs('household');
-</script>
-<script src="api.js"></script>
-<script src="nav-fix.js"></script>
+    // Load recommendations on page load
+    loadRecs('household');
+  </script>
+  <script src="api.js"></script>
+  <script src="nav-fix.js"></script>
 </body>
+
 </html>
